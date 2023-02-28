@@ -1,0 +1,4 @@
+﻿  Vcpkg is unable to link because we cannot decide between Release and Debug libraries. Please define the property VcpkgConfiguration to be 'Release' or 'Debug' (currently 'Profile').
+  OverlordProject.vcxproj -> D:\DAE\SEM4\Graphics Programming 2\OverlordEngine\Build\Profile\OverlordProject.exe
+  0 File(s) copied
+  0 File(s) copied

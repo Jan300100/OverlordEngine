@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MainGame.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Materials\ColorMaterial.cpp" />
+    <ClCompile Include="Materials\SpikeyMaterial.cpp" />
+    <ClCompile Include="Materials\DiffuseMaterial.cpp" />
+    <ClCompile Include="Materials\UberMaterial.cpp" />
+    <ClCompile Include="Materials\SkinnedDiffuseMaterial.cpp" />
+    <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow.cpp" />
+    <ClCompile Include="Materials\Shadow\SkinnedDiffuseMaterial_Shadow.cpp" />
+    <ClCompile Include="Materials\Pbr\PbrFoliageMaterial.cpp" />
+    <ClCompile Include="Materials\Pbr\PbrGroundMaterial.cpp" />
+    <ClCompile Include="Materials\Pbr\PbrMaterial.cpp" />
+    <ClCompile Include="Materials\Pbr\PbrMaterial_Shadow.cpp" />
+    <ClCompile Include="Materials\Pbr\PbrPropsMaterial.cpp" />
+    <ClCompile Include="CourseObjects\TR\TRScene.cpp" />
+    <ClCompile Include="CourseObjects\TR\TRTile.cpp" />
+    <ClCompile Include="CourseObjects\TR\TRRoad.cpp" />
+    <ClCompile Include="CourseObjects\TR\TRCrossRoads.cpp" />
+    <ClCompile Include="CourseObjects\TR\TRHelpers.cpp" />
+    <ClCompile Include="CourseObjects\TR\TRCharacter.cpp" />
+    <ClCompile Include="Materials\TR\TRMaterial.cpp" />
+    <ClCompile Include="Materials\TR\TRPropsMaterial.cpp" />
+    <ClCompile Include="Materials\TR\TRGroundMaterial.cpp" />
+    <ClCompile Include="Materials\TR\TRSkinnedMaterial.cpp" />
+    <ClCompile Include="Materials\Post\PostBlur.cpp" />
+    <ClCompile Include="Materials\Post\PostGrayscale.cpp" />
+    <ClCompile Include="Materials\Post\PostFog.cpp" />
+    <ClCompile Include="Materials\Post\PostFilters.cpp" />
+    <ClCompile Include="CourseObjects\TR\TRCamera.cpp" />
+    <ClCompile Include="Materials\Post\PostFXAA.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MainGame.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Materials\ColorMaterial.h" />
+    <ClInclude Include="Materials\SpikeyMaterial.h" />
+    <ClInclude Include="Materials\DiffuseMaterial.h" />
+    <ClInclude Include="Materials\UberMaterial.h" />
+    <ClInclude Include="Materials\SkinnedDiffuseMaterial.h" />
+    <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow.h" />
+    <ClInclude Include="Materials\Shadow\SkinnedDiffuseMaterial_Shadow.h" />
+    <ClInclude Include="Materials\PBR\PbrMaterial.h" />
+    <ClInclude Include="Materials\Pbr\PbrFoliageMaterial.h" />
+    <ClInclude Include="Materials\Pbr\PbrGroundMaterial.h" />
+    <ClInclude Include="Materials\Pbr\PbrMaterial.h" />
+    <ClInclude Include="Materials\Pbr\PbrMaterial_Shadow.h" />
+    <ClInclude Include="Materials\Pbr\PbrPropsMaterial.h" />
+    <ClInclude Include="CourseObjects\TR\TRScene.h" />
+    <ClInclude Include="CourseObjects\TR\TRTile.h" />
+    <ClInclude Include="CourseObjects\TR\TRRoad.h" />
+    <ClInclude Include="CourseObjects\TR\TRCrossRoads.h" />
+    <ClInclude Include="CourseObjects\TR\TRHelpers.h" />
+    <ClInclude Include="CourseObjects\TR\TRCharacter.h" />
+    <ClInclude Include="Materials\TR\TRMaterial.h" />
+    <ClInclude Include="Materials\TR\TRPropsMaterial.h" />
+    <ClInclude Include="Materials\TR\TRGroundMaterial.h" />
+    <ClInclude Include="Materials\TR\TRSkinnedMaterial.h" />
+    <ClInclude Include="Materials\Post\PostBlur.h" />
+    <ClInclude Include="Materials\Post\PostGrayscale.h" />
+    <ClInclude Include="Materials\Post\PostFog.h" />
+    <ClInclude Include="Materials\Post\PostFilters.h" />
+    <ClInclude Include="CourseObjects\TR\TRCamera.h" />
+    <ClInclude Include="Materials\Post\PostFXAA.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
