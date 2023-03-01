@@ -98,10 +98,6 @@
     <ClCompile Include="EffectLoader.cpp">
       <Filter>Content</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="MaterialManager.cpp" />
-    <ClCompile Include="MeshFilter.cpp" />
-    <ClCompile Include="TextureData.cpp" />
     <ClCompile Include="ModelComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -114,11 +110,6 @@
     <ClCompile Include="ControllerComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="ModelAnimator.cpp" />
-    <ClCompile Include="ShadowMapMaterial.cpp" />
-    <ClCompile Include="SpriteFont.cpp" />
-    <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="PostProcessingMaterial.cpp" />
     <ClCompile Include="InstancedRenderer.cpp">
       <Filter>Graphics\InstancedRendering</Filter>
     </ClCompile>
@@ -166,6 +157,33 @@
     </ClCompile>
     <ClCompile Include="MeshFilterLoader.cpp">
       <Filter>Content</Filter>
+    </ClCompile>
+    <ClCompile Include="PostProcessingMaterial.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMapMaterial.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureData.cpp">
+      <Filter>Graphics\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelAnimator.cpp">
+      <Filter>Graphics\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshFilter.cpp">
+      <Filter>Graphics\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteFont.cpp">
+      <Filter>Graphics\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialManager.cpp">
+      <Filter>Graphics\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Graphics\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Graphics\DirectX11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -293,10 +311,6 @@
     <ClInclude Include="EffectLoader.h">
       <Filter>Content</Filter>
     </ClInclude>
-    <ClInclude Include="MaterialManager.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="MeshFilter.h" />
-    <ClInclude Include="TextureData.h" />
     <ClInclude Include="ModelComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -309,11 +323,6 @@
     <ClInclude Include="ControllerComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="ModelAnimator.h" />
-    <ClInclude Include="ShadowMapMaterial.h" />
-    <ClInclude Include="SpriteFont.h" />
-    <ClInclude Include="Particle.h" />
-    <ClInclude Include="PostProcessingMaterial.h" />
     <ClInclude Include="InstancedRenderer.h">
       <Filter>Graphics\InstancedRendering</Filter>
     </ClInclude>
@@ -368,6 +377,33 @@
     <ClInclude Include="MeshFilterLoader.h">
       <Filter>Content</Filter>
     </ClInclude>
+    <ClInclude Include="PostProcessingMaterial.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMapMaterial.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshFilter.h">
+      <Filter>Graphics\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureData.h">
+      <Filter>Graphics\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelAnimator.h">
+      <Filter>Graphics\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteFont.h">
+      <Filter>Graphics\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialManager.h">
+      <Filter>Graphics\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Graphics\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Graphics\DirectX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Base">
@@ -402,6 +438,12 @@
     </Filter>
     <Filter Include="imgui">
       <UniqueIdentifier>{00d0fc78-b646-4017-9c19-63e5baf1be34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Generic">
+      <UniqueIdentifier>{139d21b7-35c2-4df6-aa25-fb03c5d4d120}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\DirectX11">
+      <UniqueIdentifier>{a870f348-db3b-4871-820c-8279b518c20f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -3,7 +3,7 @@
 #include "Material.h"
 
 MaterialManager::MaterialManager():
-	m_pMaterials(std::map<UINT, Material*>())
+	m_pMaterials()
 {
 }
 
