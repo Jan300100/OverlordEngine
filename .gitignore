@@ -1,3 +1,7 @@
 Build/
 x64/
+OverlordEngine/x64/
+OverlordEngine/Debug/
+OverlordEngine/Release/
+OverlordEngine/Profile/
 .vs/
