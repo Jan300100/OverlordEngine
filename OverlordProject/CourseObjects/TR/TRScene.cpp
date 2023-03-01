@@ -1,25 +1,34 @@
 #include "stdafx.h"
+
+#include <imgui\imgui.h>
+
+#include <PhysxProxy.h>
+#include <OverlordGame.h>
+#include <SpriteFont.h>
+#include <CmdOptions.h>
+
+#include <ContentManager.h>
+#include <SoundManager.h>
+
+#include <TextRenderer.h>
+#include <DebugRenderer.h>
+
+#include <TransformComponent.h>
+#include <SpriteComponent.h>
+#include <ParticleEmitterComponent.h>
+
 #include "TRScene.h"
 #include "TRCrossRoads.h"
+#include "TRCharacter.h"
+
 #include "../../Materials/TR/TRGroundMaterial.h"
 #include "../../Materials/TR/TRMaterial.h"
 #include "../../Materials/TR/TRPropsMaterial.h"
-#include "PhysxProxy.h"
-#include "TRCharacter.h"
-#include "TransformComponent.h"
-#include "SpriteComponent.h"
-#include <imgui\imgui.h>
+
 #include "../../Materials/Post/PostBlur.h"
 #include "../../Materials/Post/PostGrayscale.h"
 #include "../../Materials/Post/PostFog.h"
 #include "../../Materials/Post/PostFilters.h"
-#include <OverlordGame.h>
-#include <ContentManager.h>
-#include <TextRenderer.h>
-#include <SpriteFont.h>
-#include <SoundManager.h>
-#include <DebugRenderer.h>
-#include <ParticleEmitterComponent.h>
 
 const float TRScene::TILE_SIZE = 40.0f;
 
@@ -101,17 +110,20 @@ void TRScene::Update()
 {
 	PIX_PROFILE();
 
-	ImGui::Begin("STATS", 0, 
-		ImGuiWindowFlags_NoTitleBar 
-		| ImGuiWindowFlags_NoResize
-		| ImGuiWindowFlags_NoCollapse
-		| ImGuiWindowFlags_NoBackground
-		| ImGuiWindowFlags_NoMove
-	);
-	ImGui::SetWindowPos(ImVec2(25, 25), ImGuiCond_::ImGuiCond_Always);
-	ImGui::SetWindowSize(ImVec2(100, 25), ImGuiCond_::ImGuiCond_Always);
-	ImGui::Text("FPS: %d", GetGameContext().pGameTime->GetFPS());
-	ImGui::End();
+	if (CmdOptions::Exists(L"sHowFPS"))
+	{
+		ImGui::Begin("FPS", 0,
+			ImGuiWindowFlags_NoTitleBar
+			| ImGuiWindowFlags_NoResize
+			| ImGuiWindowFlags_NoCollapse
+			| ImGuiWindowFlags_NoBackground
+			| ImGuiWindowFlags_NoMove
+		);
+		ImGui::SetWindowPos(ImVec2(25, 25), ImGuiCond_::ImGuiCond_Always);
+		ImGui::SetWindowSize(ImVec2(100, 25), ImGuiCond_::ImGuiCond_Always);
+		ImGui::Text("FPS: %d", GetGameContext().pGameTime->GetFPS());
+		ImGui::End();
+	}
 
 	static bool create{};
 	if (GetGameContext().pInput->IsActionTriggered((int)GameActions::ToggleSetCreation))

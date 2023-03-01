@@ -1,16 +1,19 @@
 #include "stdafx.h"
 //#include <vld.h>
 #include "MainGame.h"
+#include "CmdOptions.h"
 #include <dxgidebug.h>
 
 int wmain(int argc, wchar_t* argv[])
 {
-	UNREFERENCED_PARAMETER(argc);
-	UNREFERENCED_PARAMETER(argv);
-
+	std::wstring cmdLine{};
+	for (int i = 0; i < argc; i++)
+	{
+		cmdLine += argv[i];
+	}
 #pragma warning(push)
 #pragma warning(disable: 6387)
-	wWinMain(GetModuleHandle(0), 0, 0, SW_SHOW);
+	wWinMain(GetModuleHandle(0), 0, (PWSTR)cmdLine.c_str(), SW_SHOW);
 #pragma warning(pop)
 }
 
@@ -18,6 +21,8 @@ int wmain(int argc, wchar_t* argv[])
 #pragma warning(disable: 28251 6387)
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow)
 {
+	CmdOptions::Create(pCmdLine);
+
 	UNREFERENCED_PARAMETER(nCmdShow);
 	UNREFERENCED_PARAMETER(pCmdLine);
 	//notify user if heap is corrupt

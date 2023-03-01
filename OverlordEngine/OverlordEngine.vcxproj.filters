@@ -185,6 +185,9 @@
     <ClCompile Include="Material.cpp">
       <Filter>Graphics\DirectX11</Filter>
     </ClCompile>
+    <ClCompile Include="CmdOptions.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -403,6 +406,9 @@
     </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Graphics\DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="CmdOptions.h">
+      <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
