@@ -108,8 +108,9 @@ float4 DoubleSidedPS(PS_Input input) : SV_TARGET
 	//Ambient occlusion
     float aoValue = pow(gRDAM.Sample(gTextureSampler, input.TexCoord).b, gAoStrength) * gUseAO + !gUseAO * 1.0f;
 	//FINAL COLOR CALCULATION
-    finalColor *= ((shadowValue) * aoValue * abs(dot(-newNormal, normalize(gLightDirection))))  ;
-    finalColor *= gLightIntensity;
+    float4 lightContribution = dot(-newNormal, normalize(gLightDirection)) * gLightColor;
+    lightContribution = (saturate(shadowValue + gAmbient) * lightContribution) * aoValue;
+    finalColor = finalColor * lightContribution * gLightIntensity;
     return finalColor;
 }
 

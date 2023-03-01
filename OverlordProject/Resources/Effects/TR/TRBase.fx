@@ -27,6 +27,7 @@ SamplerState gTextureSampler
 
 //LIGHT
 //*****
+float4 gLightColor = float4(1.0f, 1.0f, 1.0f, 1.0);
 float3 gLightDirection : DIRECTION = float3(0.577f, -0.577f, 0.577f);
 float gLightIntensity = 5.0f;
 
@@ -165,8 +166,9 @@ float4 MainPS(PS_Input input) : SV_TARGET
         aoValue = pow(gRDAM.Sample(gTextureSampler, input.TexCoord).b, gAoStrength);
     }
 	//FINAL COLOR CALCULATION
-    finalColor *= ((1.0f - gAmbient) * (shadowValue * dot(-newNormal, normalize(gLightDirection))) + gAmbient) * aoValue;
-    finalColor *= gLightIntensity;
+    float4 lightContribution = dot(-newNormal, normalize(gLightDirection)) * gLightColor;
+    lightContribution = (saturate(shadowValue + gAmbient) * lightContribution) * aoValue;
+    finalColor = finalColor * lightContribution * gLightIntensity;
     return finalColor;
 }
 
