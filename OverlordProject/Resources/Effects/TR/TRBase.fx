@@ -70,7 +70,7 @@ Texture2D gNormalMap;
 //*********
 float4x4 gViewProj_Light;
 float gShadowMapBias = 0.001f;
-float gAmbient = 0.2f;
+float gAmbient = 0.1f;
 Texture2D gShadowMap;
 
 float2 texOffset(int u, int v)
@@ -165,9 +165,9 @@ float4 MainPS(PS_Input input) : SV_TARGET
     {
         aoValue = pow(gRDAM.Sample(gTextureSampler, input.TexCoord).b, gAoStrength);
     }
+
 	//FINAL COLOR CALCULATION
-    float4 lightContribution = dot(-newNormal, normalize(gLightDirection)) * gLightColor;
-    lightContribution = (saturate(shadowValue + gAmbient) * lightContribution) * aoValue;
+    float4 lightContribution = ((1.0 - gAmbient) * dot(-newNormal, normalize(gLightDirection)) * shadowValue + gAmbient) * gLightColor;
     finalColor = finalColor * lightContribution * gLightIntensity;
     return finalColor;
 }

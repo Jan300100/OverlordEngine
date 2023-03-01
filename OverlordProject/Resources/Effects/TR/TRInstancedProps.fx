@@ -96,8 +96,12 @@ float4 DoubleSidedPS(PS_Input input) : SV_TARGET
 
 	float shadowValue = EvaluateShadowMap(input.lPos);
 	//NORMAL
+
     float3 newNormal = normalize(input.Normal);
     float3 newTangent = normalize(input.Tangent);
+
+    float3 viewDirection = normalize(input.Position.xyz - gMatrixViewInverse[3].xyz);
+
     float3 binormal = normalize(cross(newTangent, newNormal));
     binormal = (((gFlipGreenChannel)*2)-1) * binormal;
     float3x3 localAxis = float3x3(newTangent, binormal, newNormal);
@@ -105,11 +109,15 @@ float4 DoubleSidedPS(PS_Input input) : SV_TARGET
     newNormal = 2.0f * newNormal - 1.0f; //remap to [-1,1]
     newNormal = (mul(newNormal, localAxis)) * gUseNormalMap + !gUseNormalMap * input.Normal;
 
+    //if (dot(viewDirection, newNormal) < 0) //normal away from camera
+    //{
+    //    newNormal = -newNormal;
+    //}
+
 	//Ambient occlusion
     float aoValue = pow(gRDAM.Sample(gTextureSampler, input.TexCoord).b, gAoStrength) * gUseAO + !gUseAO * 1.0f;
-	//FINAL COLOR CALCULATION
-    float4 lightContribution = dot(-newNormal, normalize(gLightDirection)) * gLightColor;
-    lightContribution = (saturate(shadowValue + gAmbient) * lightContribution) * aoValue;
+    //FINAL COLOR CALCULATION
+    float4 lightContribution = ((1.0 - gAmbient) * dot(-newNormal, normalize(gLightDirection)) * shadowValue + gAmbient) * gLightColor;
     finalColor = finalColor * lightContribution * gLightIntensity;
     return finalColor;
 }
