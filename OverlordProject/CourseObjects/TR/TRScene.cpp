@@ -101,6 +101,18 @@ void TRScene::Update()
 {
 	PIX_PROFILE();
 
+	ImGui::Begin("STATS", 0, 
+		ImGuiWindowFlags_NoTitleBar 
+		| ImGuiWindowFlags_NoResize
+		| ImGuiWindowFlags_NoCollapse
+		| ImGuiWindowFlags_NoBackground
+		| ImGuiWindowFlags_NoMove
+	);
+	ImGui::SetWindowPos(ImVec2(25, 25), ImGuiCond_::ImGuiCond_Always);
+	ImGui::SetWindowSize(ImVec2(100, 25), ImGuiCond_::ImGuiCond_Always);
+	ImGui::Text("FPS: %d", GetGameContext().pGameTime->GetFPS());
+	ImGui::End();
+
 	static bool create{};
 	if (GetGameContext().pInput->IsActionTriggered((int)GameActions::ToggleSetCreation))
 	{
