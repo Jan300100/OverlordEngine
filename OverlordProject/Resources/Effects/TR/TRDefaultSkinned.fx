@@ -48,6 +48,7 @@ PS_Input MainVS(VS_Input input) {
     PS_Input output = (PS_Input) 0;
     
     output.Position = mul(transformedPosition, gMatrixWVP);
+    output.WorldPosition = mul(transformedPosition, gMatrixWorld).xyz;
     output.Normal = mul(transformedNormal, (float3x3) gMatrixWorld);
     output.Tangent = mul(transformedTangent, (float3x3) gMatrixWorld);
     output.TexCoord = input.TexCoord;

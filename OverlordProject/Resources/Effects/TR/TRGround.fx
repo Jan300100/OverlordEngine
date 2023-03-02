@@ -72,7 +72,6 @@ VS_Output MainVS(VS_Input input, VS_Instance instance) {
     input.Position.z += instance.WorldPositionXZ.y;
 
     output.Position = float4(input.Position, 1.0);
-    float4 worldPosition = mul(float4(input.Position, 1.0), gMatrixWorld);
     output.Normal = input.Normal;
     output.Tangent = mul(input.Tangent, (float3x3)gMatrixWorld);
 	output.TexCoord = input.TexCoord;
@@ -157,6 +156,9 @@ PS_Input MainDS(PatchTess patchTess,
     h += ((gNoiseTexture.SampleLevel(gTextureSampler, float2(worldPos.x / gNoiseUVScale, worldPos.z / gNoiseUVScale), 0).r) - 0.5f) * gNoiseHeight;
     output.Position += float4((gDisplacementAmount * (h)) * output.Normal, 0);
 
+    //calculate worldPos
+    output.WorldPosition = mul(output.Position, gMatrixWorld).xyz;
+    
     //put positions in the corrects space
     output.Position = mul(output.Position, gMatrixWVP);
     output.Normal = mul(output.Normal, (float3x3) gMatrixWorld);

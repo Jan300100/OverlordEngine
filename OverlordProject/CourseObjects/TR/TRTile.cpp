@@ -181,7 +181,7 @@ void TRTile::Initialize(const GameContext& gameContext)
 	}
 	if (m_Level < 4)
 	{
-		m_DesiredDetails[size_t(DetailType::Grass)] = (m_Level > 0) ? max(200 - 100 * int(m_Level - 1), 0) : 100;
+		m_DesiredDetails[size_t(DetailType::Grass)] = (m_Level > 0) ? max(200 - 150 * int(m_Level - 1), 0) : 100;
 		m_DesiredDetails[size_t(DetailType::Zont)] = (m_Level > 0) ? size_t(randF(0.0f, 100) / (m_Level * 3)) : rand() % 5;
 		m_DesiredDetails[size_t(DetailType::Nettle)] = (m_Level > 0) ? size_t(randF(0.0f, 100) / (m_Level * 3)) : rand() % 5;
 		m_DesiredDetails[size_t(DetailType::Oduvanchik)] = (m_Level > 0) ? size_t(randF(0.0f, 100) / (m_Level * 3)) : rand() % 5;

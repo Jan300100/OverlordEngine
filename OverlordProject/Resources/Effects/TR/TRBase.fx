@@ -27,7 +27,7 @@ SamplerState gTextureSampler
 
 //LIGHT
 //*****
-float4 gLightColor = float4(1.0f, 1.0f, 1.0f, 1.0);
+float4 gLightColor = float4(1.0f, 0.95, 0.9f, 1.0);
 float3 gLightDirection : DIRECTION = float3(0.577f, -0.577f, 0.577f);
 float gLightIntensity = 5.0f;
 
@@ -70,7 +70,7 @@ Texture2D gNormalMap;
 //*********
 float4x4 gViewProj_Light;
 float gShadowMapBias = 0.001f;
-float gAmbient = 0.1f;
+float gAmbient = 0.15f;
 Texture2D gShadowMap;
 
 float2 texOffset(int u, int v)
@@ -137,6 +137,7 @@ struct PS_Input
     float2 TexCoord : TEXCOORD0;
     float4 Position : SV_POSITION;
     float4 lPos : TEXCOORD1;
+    float3 WorldPosition : TEXCOORD2;
 };
 
 //MAIN PIXEL SHADER
@@ -151,13 +152,23 @@ float4 MainPS(PS_Input input) : SV_TARGET
     float shadowValue = EvaluateShadowMap(input.lPos);
 	//NORMAL
     float3 newNormal = normalize(input.Normal);
-    float3 newTangent = normalize(input.Tangent);
-    float3 binormal = normalize(cross(newTangent, newNormal));
-    binormal = (((gFlipGreenChannel)*2)-1) * binormal;
-    float3x3 localAxis = float3x3(newTangent, binormal, newNormal);
-    newNormal = gNormalMap.Sample(gTextureSampler, input.TexCoord).xyz;
-    newNormal = 2.0f * newNormal - 1.0f; //remap to [-1,1]
-    newNormal = (mul(newNormal, localAxis)) * gUseNormalMap + !gUseNormalMap * input.Normal;
+    if (gUseNormalMap)
+    {
+    
+        float3 newTangent = normalize(input.Tangent);
+        float3 binormal = normalize(cross(newTangent, newNormal));
+        binormal = (((gFlipGreenChannel) * 2) - 1) * binormal;
+        float3x3 localAxis = float3x3(newTangent, binormal, newNormal);
+        newNormal = gNormalMap.Sample(gTextureSampler, input.TexCoord).xyz;
+        newNormal = 2.0f * newNormal - 1.0f; //remap to [-1,1]
+        newNormal = normalize(mul(newNormal, localAxis));
+    }
+    
+    float3 viewDir = normalize(input.WorldPosition - gMatrixViewInverse[3].xyz);
+    if (dot(viewDir, newNormal) > 0)
+    {
+        newNormal = normalize(-newNormal);
+    }
 
 	//Ambient occlusion
     float aoValue = 1.0f;
@@ -167,7 +178,7 @@ float4 MainPS(PS_Input input) : SV_TARGET
     }
 
 	//FINAL COLOR CALCULATION
-    float4 lightContribution = ((1.0 - gAmbient) * dot(-newNormal, normalize(gLightDirection)) * shadowValue + gAmbient) * gLightColor;
+    float4 lightContribution = ((1.0 - gAmbient) * max(0.0f, dot(-newNormal, normalize(gLightDirection))) * shadowValue + gAmbient) * gLightColor;
     finalColor = finalColor * lightContribution * gLightIntensity;
     return finalColor;
 }

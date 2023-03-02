@@ -90,7 +90,6 @@ void TRScene::Initialize()
 	m_pFont64 = ContentManager::Load<SpriteFont>(L"./Resources/SpriteFonts/Astrantia_64_Bold.fnt");
 	m_pFont48 = ContentManager::Load<SpriteFont>(L"./Resources/SpriteFonts/Astrantia_48_Bold.fnt");
 
-
 	//main menu banner
 	GameObject* bannerObj = new GameObject{};
 	m_pMenuBanner = new SpriteComponent(L"./Resources/Textures/GP2Exam2020_MainMenu.png", DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(1, 1, 1, 1.f));
@@ -110,7 +109,7 @@ void TRScene::Update()
 {
 	PIX_PROFILE();
 
-	if (CmdOptions::Exists(L"sHowFPS"))
+	if (CmdOptions::Exists(L"showfps"))
 	{
 		ImGui::Begin("FPS", 0,
 			ImGuiWindowFlags_NoTitleBar

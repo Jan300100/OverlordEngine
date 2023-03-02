@@ -34,8 +34,8 @@ DepthStencilState EnableDepth
 
 //rasterizerstates
 RasterizerState gRS_doubleSided 
-{ 
-	CullMode = NONE; 
+{
+    CullMode = NONE;
 };
 RasterizerState gRS_Cull
 {
@@ -66,20 +66,24 @@ PS_Input MainVS(VS_Vertex vertex, VS_Instance instance)
 
     //set y position to be in relation to the ground
     instance.m3.y += ((gNoiseTexture.SampleLevel(gTextureSampler, float2(instance.m3.x / gNoiseUVScale, instance.m3.z / gNoiseUVScale), 0).r) - 0.5f) * gNoiseHeight;
+    
     //construct WVP
     float4x4 world = float4x4(instance.m0, instance.m1, instance.m2, instance.m3);
+    
     //windEffect
     float4 wPos = mul(float4(vertex.Position, 1.0f), world);
     float randomStrength = gNoiseTexture.SampleLevel(gTextureSampler, float2(instance.m3.x / gNoiseUVScale, instance.m3.z / gNoiseUVScale) + gWindDirection * gWindForce * gTimePassed,0).r - 0.5f;
     float distance = wPos.y - instance.m3.y;
     distance = (pow(distance * gDistanceInfluence, 2) * randomStrength) * gInfluence;
     wPos.xz += distance * gWindDirection.xy;
+    
     //
+    output.WorldPosition = wPos.xyz;
     output.Position = mul(wPos, mul(gMatrixView, gMatrixProj));
-    output.Normal = mul(vertex.Normal, (float3x3) world);
+    output.Normal = mul(vertex.Normal, (float3x3)world);
     output.Tangent = mul(vertex.Tangent, (float3x3)world);
 	output.TexCoord = vertex.TexCoord;
-    output.lPos = mul(wPos, gViewProj_Light); 
+    output.lPos = mul(wPos, gViewProj_Light);
 
     return output;
 }
@@ -98,26 +102,33 @@ float4 DoubleSidedPS(PS_Input input) : SV_TARGET
 	//NORMAL
 
     float3 newNormal = normalize(input.Normal);
-    float3 newTangent = normalize(input.Tangent);
+    if (gUseNormalMap)
+    {
+        float3 newTangent = normalize(input.Tangent);
 
-    float3 viewDirection = normalize(input.Position.xyz - gMatrixViewInverse[3].xyz);
-
-    float3 binormal = normalize(cross(newTangent, newNormal));
-    binormal = (((gFlipGreenChannel)*2)-1) * binormal;
-    float3x3 localAxis = float3x3(newTangent, binormal, newNormal);
-    newNormal = gNormalMap.Sample(gTextureSampler, input.TexCoord).xyz;
-    newNormal = 2.0f * newNormal - 1.0f; //remap to [-1,1]
-    newNormal = (mul(newNormal, localAxis)) * gUseNormalMap + !gUseNormalMap * input.Normal;
-
-    //if (dot(viewDirection, newNormal) < 0) //normal away from camera
-    //{
-    //    newNormal = -newNormal;
-    //}
-
+        float3 binormal = normalize(cross(newTangent, newNormal));
+        binormal = (((gFlipGreenChannel) * 2) - 1) * binormal;
+        float3x3 localAxis = float3x3(newTangent, binormal, newNormal);
+        newNormal = gNormalMap.Sample(gTextureSampler, input.TexCoord).xyz;
+        newNormal = 2.0f * newNormal - 1.0f; //remap to [-1,1]
+        newNormal = normalize((mul(newNormal, localAxis)));
+    }
+    
+    float3 viewDir = normalize(input.WorldPosition - gMatrixViewInverse[3].xyz);
+    if (dot(viewDir, newNormal) > 0)
+    {
+        newNormal = normalize(-newNormal);
+    }
+           
 	//Ambient occlusion
-    float aoValue = pow(gRDAM.Sample(gTextureSampler, input.TexCoord).b, gAoStrength) * gUseAO + !gUseAO * 1.0f;
-    //FINAL COLOR CALCULATION
-    float4 lightContribution = ((1.0 - gAmbient) * dot(-newNormal, normalize(gLightDirection)) * shadowValue + gAmbient) * gLightColor;
+    float aoValue = 1.0f;
+    if (gUseAO)
+    {
+        aoValue = pow(gRDAM.Sample(gTextureSampler, input.TexCoord).b, gAoStrength);
+    }
+    
+	//FINAL COLOR CALCULATION
+    float4 lightContribution = ((1.0 - gAmbient) * max(0.0f, dot(-newNormal, normalize(gLightDirection))) * shadowValue + gAmbient) * gLightColor;
     finalColor = finalColor * lightContribution * gLightIntensity;
     return finalColor;
 }
@@ -152,7 +163,6 @@ technique11 tFoliage {
 
 float4 ShadowMapVS(VS_Vertex vertex, VS_Instance instance) : SV_POSITION
 {
-    
     PS_Input output = (PS_Input) 0;
    
     //set y position to be in relation to the ground
@@ -197,7 +207,7 @@ technique11 tGenerateShadowsFoliage
     pass P0
     {
 
-        SetBlendState(gBS_EnableBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+        SetBlendState(NULL, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
         SetDepthStencilState(EnableDepth, 0);
         SetRasterizerState(gRS_doubleSided);
         SetVertexShader(CompileShader(vs_5_0, ShadowMapVS()));

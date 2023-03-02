@@ -31,9 +31,9 @@ PS_Input MainVS(VS_Vertex vertex, VS_Instance instance) {
 
     //construct WVP
     float4x4 world = float4x4(instance.M0, instance.M1, instance.M2, instance.M3);
-    float4x4 wvp = mul(world, mul(gMatrixView, gMatrixProj));
 
-    output.Position = mul(float4(vertex.Position,1), wvp);
+    output.WorldPosition = mul(float4(vertex.Position, 1), world).xyz;
+    output.Position = mul(float4(output.WorldPosition, 1), mul(gMatrixView, gMatrixProj));
     output.Normal = mul(vertex.Normal, (float3x3) world);
     output.Tangent = mul(vertex.Tangent, (float3x3) world);
     output.TexCoord = vertex.TexCoord;
