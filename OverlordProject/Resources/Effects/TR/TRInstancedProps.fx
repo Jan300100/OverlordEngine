@@ -128,7 +128,16 @@ float4 DoubleSidedPS(PS_Input input) : SV_TARGET
     }
     
 	//FINAL COLOR CALCULATION
-    float4 lightContribution = ((1.0 - gAmbient) * max(0.0f, dot(-newNormal, normalize(gLightDirection))) * shadowValue + gAmbient) * gLightColor;
+    float lambertDot = dot(-newNormal, normalize(gLightDirection));
+    float lightContribution = max(0.0f, lambertDot);
+    if (lambertDot < 0)
+    {
+        //some fake subsurface scattering by lighting up foliage faces turned away from the sun.
+        float sssIntensity = 0.75f;
+        lightContribution = -lambertDot * sssIntensity; 
+    }
+    
+    lightContribution = ((1.0 - gAmbient) * lightContribution * shadowValue + gAmbient) * gLightColor;
     finalColor = finalColor * lightContribution * gLightIntensity;
     return finalColor;
 }
