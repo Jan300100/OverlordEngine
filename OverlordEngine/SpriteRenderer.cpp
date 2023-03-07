@@ -131,7 +131,7 @@ void SpriteRenderer::UpdateBuffer(const GameContext& gameContext)
 		Desc.Usage = D3D11_USAGE_DYNAMIC;
 		Desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		Logger::LogHResult(gameContext.pDevice->CreateBuffer(&Desc, NULL, &m_pVertexBuffer), L"SpriteRenderer", true);
+		Logger::LogHResult(gameContext.pRenderer->GetDevice()->CreateBuffer(&Desc, NULL, &m_pVertexBuffer), L"SpriteRenderer", true);
 	}
 
 
@@ -163,11 +163,11 @@ void SpriteRenderer::UpdateBuffer(const GameContext& gameContext)
 		// Finally fill the  buffer. You will need to create a D3D11_MAPPED_SUBRESOURCE
 		D3D11_MAPPED_SUBRESOURCE data;
 		// Next you will need to use the device context to map the vertex buffer to the mapped resource
-		gameContext.pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, {}, &data);
+		gameContext.pRenderer->GetDeviceContext()->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, {}, &data);
 		// use memcpy to copy all our sprites to the mapped resource
 		memcpy(data.pData, m_Sprites.data(), (uint32_t)m_Sprites.size() * sizeof(SpriteVertex));
 		// unmap the vertex buffer
-		gameContext.pDeviceContext->Unmap(m_pVertexBuffer, 0);
+		gameContext.pRenderer->GetDeviceContext()->Unmap(m_pVertexBuffer, 0);
 	}
 }
 
@@ -181,12 +181,12 @@ void SpriteRenderer::Draw(const GameContext& gameContext)
 	UpdateBuffer(gameContext);
 
 	//Set Render Pipeline
-	gameContext.pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	gameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	unsigned int stride = sizeof(SpriteVertex);
 	unsigned int offset = 0;
-	gameContext.pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
-	gameContext.pDeviceContext->IASetInputLayout(m_pInputLayout);
+	gameContext.pRenderer->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+	gameContext.pRenderer->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
 
 	unsigned int batchSize = 1;
 	unsigned int batchOffset = 0;
@@ -214,8 +214,8 @@ void SpriteRenderer::Draw(const GameContext& gameContext)
 		m_pTechnique->GetDesc(&techDesc);
 		for (unsigned int j = 0; j < techDesc.Passes; ++j)
 		{
-			m_pTechnique->GetPassByIndex(j)->Apply(0, gameContext.pDeviceContext);
-			gameContext.pDeviceContext->Draw(batchSize, batchOffset);
+			m_pTechnique->GetPassByIndex(j)->Apply(0, gameContext.pRenderer->GetDeviceContext());
+			gameContext.pRenderer->GetDeviceContext()->Draw(batchSize, batchOffset);
 		}
 
 		batchOffset += batchSize;
@@ -269,7 +269,7 @@ void SpriteRenderer::DrawImmediate(const GameContext& gameContext, ID3D11ShaderR
 		buffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		buffDesc.MiscFlags = 0;
 
-		const auto hr = gameContext.pDevice->CreateBuffer(&buffDesc, nullptr, &m_pImmediateVertexBuffer);
+		const auto hr = gameContext.pRenderer->GetDevice()->CreateBuffer(&buffDesc, nullptr, &m_pImmediateVertexBuffer);
 		if (Logger::LogHResult(hr, L"SpriteRenderer::DrawImmediate > Immediate Vertexbuffer creation failed!"))
 			return;
 	}
@@ -284,19 +284,19 @@ void SpriteRenderer::DrawImmediate(const GameContext& gameContext, ID3D11ShaderR
 	if (!m_ImmediateVertex.Equals(vertex))
 	{
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		gameContext.pDeviceContext->Map(m_pImmediateVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
+		gameContext.pRenderer->GetDeviceContext()->Map(m_pImmediateVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
 		memcpy(mappedResource.pData, &vertex, sizeof(SpriteVertex));
-		gameContext.pDeviceContext->Unmap(m_pImmediateVertexBuffer, 0);
+		gameContext.pRenderer->GetDeviceContext()->Unmap(m_pImmediateVertexBuffer, 0);
 		m_ImmediateVertex = vertex;
 	}
 
 	//Set Render Pipeline
-	gameContext.pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
+	gameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	unsigned int stride = sizeof(SpriteVertex);
 	unsigned int offset = 0;
-	gameContext.pDeviceContext->IASetVertexBuffers(0, 1, &m_pImmediateVertexBuffer, &stride, &offset);
-	gameContext.pDeviceContext->IASetInputLayout(m_pInputLayout);
+	gameContext.pRenderer->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pImmediateVertexBuffer, &stride, &offset);
+	gameContext.pRenderer->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
 
 	//Set Texture
 	m_pTextureSRV->SetResource(pSrv);
@@ -319,8 +319,8 @@ void SpriteRenderer::DrawImmediate(const GameContext& gameContext, ID3D11ShaderR
 	m_pTechnique->GetDesc(&techDesc);
 	for (unsigned int i = 0; i < techDesc.Passes; ++i)
 	{
-		m_pTechnique->GetPassByIndex(i)->Apply(0, gameContext.pDeviceContext);
-		gameContext.pDeviceContext->Draw(1, 0);
+		m_pTechnique->GetPassByIndex(i)->Apply(0, gameContext.pRenderer->GetDeviceContext());
+		gameContext.pRenderer->GetDeviceContext()->Draw(1, 0);
 	}
 }
 

@@ -103,7 +103,7 @@ void GameScene::RemoveChild(GameObject* obj, bool deleteObject)
 		obj->m_pParentScene = nullptr;
 }
 
-void GameScene::RootInitialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
+void GameScene::RootInitialize(IRenderer* pRenderer)
 {
 	PIX_PROFILE();
 
@@ -130,8 +130,7 @@ void GameScene::RootInitialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDevi
 	m_GameContext.pMaterialManager = new MaterialManager();
 	m_GameContext.pShadowMapper = new ShadowMapRenderer();
 
-	m_GameContext.pDevice = pDevice;
-	m_GameContext.pDeviceContext = pDeviceContext;
+	m_GameContext.pRenderer = pRenderer;
 
 	//Initialize ShadowMapper
 	m_GameContext.pShadowMapper->Initialize(m_GameContext);
@@ -238,24 +237,23 @@ void GameScene::RootDraw()
 	//Post Processing
 	if (!m_pPostProcessingEffects.empty())
 	{
-		OverlordGame* pGame = SceneManager::GetInstance()->GetGame();
-		RenderTarget* original_rt = pGame->GetRenderTarget(); //first effect uses the first render
+		RenderTarget* original_rt = m_GameContext.pRenderer->GetRenderTarget(); //first effect uses the first render
 		RenderTarget* prev_rt = original_rt;
 		RenderTarget* temp_rt;
 		for (auto pMat : m_pPostProcessingEffects)
 		{
 			temp_rt = pMat->GetRenderTarget();
-			pGame->SetRenderTarget(temp_rt);
+			m_GameContext.pRenderer->SetRenderTarget(temp_rt);
 			pMat->Draw(m_GameContext,prev_rt, original_rt);
 			prev_rt = temp_rt;
 		}
 
 		//unbind srv to bind as rt again?
 		ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
-		m_GameContext.pDeviceContext->PSSetShaderResources(0, 1	, pSRV);
+		m_GameContext.pRenderer->GetDeviceContext()->PSSetShaderResources(0, 1	, pSRV);
 
 
-		pGame->SetRenderTarget(original_rt); //reset rt to original
+		m_GameContext.pRenderer->SetRenderTarget(original_rt); //reset rt to original
 		SpriteRenderer::GetInstance()->DrawImmediate(m_GameContext, prev_rt->GetShaderResourceView(), DirectX::XMFLOAT2{ 0.0f,0.0f });
 
 	}

@@ -1,5 +1,6 @@
 #pragma once
 
+class IRenderer;
 class RenderTarget;
 
 class OverlordGame
@@ -17,10 +18,7 @@ public:
 
 	HRESULT Run(HINSTANCE hInstance);
 
-
-	void ResetViewPort();
-	void SetRenderTarget(RenderTarget* renderTarget);
-	RenderTarget* GetRenderTarget() const;
+	IRenderer* GetRenderer() const;
 
 protected:
 	virtual void OnGamePreparing(GameSettings& gameSettings){ UNREFERENCED_PARAMETER(gameSettings); }
@@ -32,12 +30,12 @@ private:
 
 	//FUNCTIONS
 	//Initializations
-	HRESULT InitializeAdapterAndOutput();
 	HRESULT InitializeWindow();
-	HRESULT InitializeDirectX();
+	HRESULT InitializeRenderer();
 	HRESULT InitializeImGui();
 	HRESULT InitializePhysX() const;
 	HRESULT InitializeGame();
+
 	void GameLoop() const;
 
 	//Windows Proc
@@ -49,11 +47,7 @@ private:
 
 	HINSTANCE m_hInstance;
 	HWND m_WindowHandle;	
-	ID3D11Device* m_pDevice;
-	ID3D11DeviceContext* m_pDeviceContext;
-	IDXGISwapChain* m_pSwapchain;
-	IDXGIFactory* m_pDxgiFactory;
-	RenderTarget* m_pDefaultRenderTarget, * m_pCurrentRenderTarget = nullptr; 
-	D3D11_VIEWPORT m_Viewport{};
+
+	IRenderer* m_pRenderer;
 };
 

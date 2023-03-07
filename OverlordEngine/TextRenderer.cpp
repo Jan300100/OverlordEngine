@@ -106,12 +106,12 @@ void TextRenderer::Draw(const GameContext& gameContext)
 	UpdateBuffer(gameContext);
 
 	//Set Render Pipeline
-	gameContext.pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
+	gameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	unsigned int stride = sizeof(TextVertex);
 	unsigned int offset = 0;
-	gameContext.pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
-	gameContext.pDeviceContext->IASetInputLayout(m_pInputLayout);
+	gameContext.pRenderer->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+	gameContext.pRenderer->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
 
 	for each (SpriteFont* pFont in m_SpriteFonts)
 	{
@@ -129,8 +129,8 @@ void TextRenderer::Draw(const GameContext& gameContext)
 		m_pTechnique->GetDesc(&techDesc);
 		for (unsigned int i = 0; i < techDesc.Passes; ++i)
 		{
-			m_pTechnique->GetPassByIndex(i)->Apply(0, gameContext.pDeviceContext);
-			gameContext.pDeviceContext->Draw(pFont->GetBufferSize(), pFont->GetBufferStart());
+			m_pTechnique->GetPassByIndex(i)->Apply(0, gameContext.pRenderer->GetDeviceContext());
+			gameContext.pRenderer->GetDeviceContext()->Draw(pFont->GetBufferSize(), pFont->GetBufferStart());
 		}
 
 		pFont->SetAddedToRenderer(false);
@@ -160,14 +160,14 @@ void TextRenderer::UpdateBuffer(const GameContext& gameContext)
 		buffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		buffDesc.MiscFlags = 0;
 
-		auto hr = gameContext.pDevice->CreateBuffer(&buffDesc, nullptr, &m_pVertexBuffer);
+		auto hr = gameContext.pRenderer->GetDevice()->CreateBuffer(&buffDesc, nullptr, &m_pVertexBuffer);
 		if (Logger::LogHResult(hr, L"TextRenderer::UpdateBuffer"))
 			return;
 	}
 
 	//Fill Buffer
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	gameContext.pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
+	gameContext.pRenderer->GetDeviceContext()->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
 	int bufferPosition = 0;
 	for each (SpriteFont* pFont in m_SpriteFonts)
 	{
@@ -181,7 +181,7 @@ void TextRenderer::UpdateBuffer(const GameContext& gameContext)
 		pFont->SetBufferSize(bufferPosition - pFont->GetBufferStart());
 		pFont->ClearCache();
 	}
-	gameContext.pDeviceContext->Unmap(m_pVertexBuffer, 0);
+	gameContext.pRenderer->GetDeviceContext()->Unmap(m_pVertexBuffer, 0);
 
 	m_NumCharacters = 0;
 }

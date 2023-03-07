@@ -4,14 +4,14 @@
 #include "InputManager.h"
 #include "MaterialManager.h"
 #include "ShadowMapRenderer.h"
+#include "Renderer/IRenderer.h"
 
 class CameraComponent;
 
 struct GameSettings
 {
 	GameSettings():
-		Window(WindowSettings()),
-		DirectX(DirectXSettings())
+		Window(WindowSettings())
 	{}
 
 #pragma region
@@ -34,26 +34,13 @@ struct GameSettings
 	}Window;
 #pragma endregion WINDOW_SETTINGS
 
-#pragma region
-	struct DirectXSettings
-	{
-		DirectXSettings() :
-			pAdapter(nullptr),
-			pOutput(nullptr)
-		{}
-
-		IDXGIAdapter* pAdapter;
-		IDXGIOutput* pOutput;
-	}DirectX;
-#pragma endregion DIRECTX_SETTINGS
 };
 
 struct GameContext
 {
 	GameTime* pGameTime;
 	CameraComponent* pCamera;
-	ID3D11Device* pDevice;
-	ID3D11DeviceContext* pDeviceContext;
+	IRenderer* pRenderer;
 	InputManager* pInput;
 	MaterialManager* pMaterialManager;
 	ShadowMapRenderer* pShadowMapper;

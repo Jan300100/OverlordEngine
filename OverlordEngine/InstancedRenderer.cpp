@@ -38,7 +38,7 @@ bool InstancedRenderer::CreateInstanceBuffer(const Key& key)
 	iBufferDesc.StructureByteStride = 0;
 
 	ID3D11Buffer* d3dBuffer;
-	HRESULT result = m_GameContext.pDevice->CreateBuffer(&iBufferDesc, nullptr, &d3dBuffer);
+	HRESULT result = m_GameContext.pRenderer->GetDevice()->CreateBuffer(&iBufferDesc, nullptr, &d3dBuffer);
 	if (Logger::LogHResult(result, L"Failed to create instanceBUFFER in InstancedRenderer::createInstanceBuffer"))
 		return false;
 
@@ -62,9 +62,9 @@ void InstancedRenderer::UpdateInstanceBuffers()
 
 			D3D11_MAPPED_SUBRESOURCE data;
 			ZeroMemory(&data, sizeof(D3D11_MAPPED_SUBRESOURCE));
-			m_GameContext.pDeviceContext->Map(bufs.first, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
+			m_GameContext.pRenderer->GetDeviceContext()->Map(bufs.first, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
 			memcpy(data.pData, instanceData, bufs.second.second.size() * key.typeInfo.second);
-			m_GameContext.pDeviceContext->Unmap(bufs.first, 0);
+			m_GameContext.pRenderer->GetDeviceContext()->Unmap(bufs.first, 0);
 		}
 	}
 	
@@ -116,7 +116,7 @@ void InstancedRenderer::DrawInstanced(uint32_t materialID, MeshFilter* pMeshFilt
 	pMat->SetEffectVariables(m_GameContext, nullptr);
 
 	//Set Inputlayout
-	m_GameContext.pDeviceContext->IASetInputLayout(pMat->GetInputLayout());
+	m_GameContext.pRenderer->GetDeviceContext()->IASetInputLayout(pMat->GetInputLayout());
 
 	//Set Vertex Buffer
 	const VertexBufferData& vBuffer = pMeshFilter->GetVertexBufferData(m_GameContext, pMat);
@@ -124,19 +124,19 @@ void InstancedRenderer::DrawInstanced(uint32_t materialID, MeshFilter* pMeshFilt
 	UINT strides[2] = { vBuffer.VertexStride, stride };
 	ID3D11Buffer* buffers[2] = { vBuffer.pVertexBuffer, pBuffer };
 
-	m_GameContext.pDeviceContext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
+	m_GameContext.pRenderer->GetDeviceContext()->IASetVertexBuffers(0, 2, buffers, strides, offsets);
 
 	//Set Index Buffer
-	m_GameContext.pDeviceContext->IASetIndexBuffer(pMeshFilter->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	m_GameContext.pRenderer->GetDeviceContext()->IASetIndexBuffer(pMeshFilter->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	//Set Primitive Topology
 	if (!pMat->UsesTesselation())
 	{
-		m_GameContext.pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		m_GameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 	else
 	{
-		m_GameContext.pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+		m_GameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	}
 
 	//DRAW
@@ -145,8 +145,8 @@ void InstancedRenderer::DrawInstanced(uint32_t materialID, MeshFilter* pMeshFilt
 	tech->GetDesc(&techDesc);
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
-		tech->GetPassByIndex(p)->Apply(0, m_GameContext.pDeviceContext);
-		m_GameContext.pDeviceContext->DrawIndexedInstanced(pMeshFilter->m_IndexCount, instances, 0, 0, 0);
+		tech->GetPassByIndex(p)->Apply(0, m_GameContext.pRenderer->GetDeviceContext());
+		m_GameContext.pRenderer->GetDeviceContext()->DrawIndexedInstanced(pMeshFilter->m_IndexCount, instances, 0, 0, 0);
 	}
 }
 
@@ -166,7 +166,7 @@ void InstancedRenderer::DrawInstancedShadowMap(uint32_t materialID, MeshFilter* 
 
 	pMat->SetEffectVariables(m_GameContext, nullptr);
 	//Set Inputlayout
-	m_GameContext.pDeviceContext->IASetInputLayout(pMat->GetInputLayout());
+	m_GameContext.pRenderer->GetDeviceContext()->IASetInputLayout(pMat->GetInputLayout());
 
 	//Set Vertex Buffer
 	const VertexBufferData& vBuffer = pMeshFilter->GetVertexBufferData(m_GameContext, pMat);
@@ -174,19 +174,19 @@ void InstancedRenderer::DrawInstancedShadowMap(uint32_t materialID, MeshFilter* 
 	UINT strides[2] = { vBuffer.VertexStride, stride };
 	ID3D11Buffer* buffers[2] = { vBuffer.pVertexBuffer, pBuffer };
 
-	m_GameContext.pDeviceContext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
+	m_GameContext.pRenderer->GetDeviceContext()->IASetVertexBuffers(0, 2, buffers, strides, offsets);
 
 	//Set Index Buffer
-	m_GameContext.pDeviceContext->IASetIndexBuffer(pMeshFilter->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	m_GameContext.pRenderer->GetDeviceContext()->IASetIndexBuffer(pMeshFilter->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	//Set Primitive Topology
 	if (!pMat->UsesTesselation())
 	{
-		m_GameContext.pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		m_GameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 	else
 	{
-		m_GameContext.pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+		m_GameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	}
 
 	//DRAW
@@ -195,8 +195,8 @@ void InstancedRenderer::DrawInstancedShadowMap(uint32_t materialID, MeshFilter* 
 	tech->GetDesc(&techDesc);
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
-		tech->GetPassByIndex(p)->Apply(0, m_GameContext.pDeviceContext);
-		m_GameContext.pDeviceContext->DrawIndexedInstanced(pMeshFilter->m_IndexCount, instances, 0, 0, 0);
+		tech->GetPassByIndex(p)->Apply(0, m_GameContext.pRenderer->GetDeviceContext());
+		m_GameContext.pRenderer->GetDeviceContext()->DrawIndexedInstanced(pMeshFilter->m_IndexCount, instances, 0, 0, 0);
 	}
 
 }

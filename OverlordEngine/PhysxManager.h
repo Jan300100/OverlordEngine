@@ -14,7 +14,7 @@ class PhysxManager final : public Singleton<PhysxManager>
 public:
 	friend class Singleton<PhysxManager>;
 
-	void Init(void* pDevice);
+	void Init(void* pDevice = nullptr);
 
 	physx::PxPhysics* GetPhysics() const { return m_pPhysics; }
 	physx::PxScene* CreateScene(GameScene* pScene) const;

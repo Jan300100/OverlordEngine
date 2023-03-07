@@ -71,7 +71,7 @@ void MeshFilter::BuildIndexBuffer(const GameContext& gameContext)
 	D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = m_Indices.data();
 
-	auto hr = gameContext.pDevice->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
+	auto hr = gameContext.pRenderer->GetDevice()->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
 	Logger::LogHResult(hr, L"MeshFilter::BuildIndexBuffer()");
 }
 
@@ -192,7 +192,7 @@ void MeshFilter::BuildVertexBuffer(const GameContext& gameContext, UINT inputLay
 	D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = data.pDataStart;
 	//create a ID3D10Buffer in graphics memory containing the vertex info
-	gameContext.pDevice->CreateBuffer(&bd, &initData, &data.pVertexBuffer);
+	gameContext.pRenderer->GetDevice()->CreateBuffer(&bd, &initData, &data.pVertexBuffer);
 
 	m_VertexBuffers.push_back(data);
 }

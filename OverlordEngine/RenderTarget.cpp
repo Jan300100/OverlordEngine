@@ -274,8 +274,8 @@ void RenderTarget::Clear(const GameContext& gameContext, const FLOAT colorRGBA[4
 	PIX_PROFILE();
 
 	if (m_Desc.EnableColorBuffer)
-		gameContext.pDeviceContext->ClearRenderTargetView(GetRenderTargetView(), colorRGBA);
+		gameContext.pRenderer->GetDeviceContext()->ClearRenderTargetView(GetRenderTargetView(), colorRGBA);
 
 	if (m_Desc.EnableDepthBuffer)
-		gameContext.pDeviceContext->ClearDepthStencilView(GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		gameContext.pRenderer->GetDeviceContext()->ClearDepthStencilView(GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }

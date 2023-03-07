@@ -10,8 +10,6 @@ SceneManager::SceneManager():
 	m_IsInitialized(false),
 	m_ActiveScene(nullptr),
 	m_NewActiveScene(nullptr),
-	m_pDevice(nullptr),
-	m_pDeviceContext(nullptr),
 	m_pGame(nullptr)
 {
 }
@@ -35,7 +33,7 @@ void SceneManager::AddGameScene(GameScene* pScene)
 		m_pScenes.push_back(pScene);
 
 		if (m_IsInitialized)
-			pScene->RootInitialize(m_pDevice, m_pDeviceContext);
+			pScene->RootInitialize(m_pRenderer);
 
 		if (m_ActiveScene == nullptr && m_NewActiveScene == nullptr)
 			m_NewActiveScene = pScene;
@@ -108,7 +106,7 @@ void SceneManager::WindowStateChanged(int state, bool active) const
 	}
 }
 
-void SceneManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, OverlordGame* pGame)
+void SceneManager::Initialize(IRenderer* pRenderer, OverlordGame* pGame)
 {
 	PIX_PROFILE();
 
@@ -116,13 +114,11 @@ void SceneManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDevic
 		return;
 
 	m_pGame = pGame;
-
-	m_pDevice = pDevice;
-	m_pDeviceContext = pDeviceContext;
+	m_pRenderer = pRenderer;
 
 	for (GameScene* scene : m_pScenes)
 	{
-		scene->RootInitialize(pDevice, pDeviceContext);
+		scene->RootInitialize(pRenderer);
 	}
 
 	m_IsInitialized = true;

@@ -219,10 +219,10 @@ void DebugRenderer::Draw(const GameContext& gameContext)
 	{
 		Logger::LogInfo(L"DebugRenderer::Draw() > Increasing Vertexbuffer Size!");
 		m_BufferSize = dynamicSize;
-		CreateVertexBuffer(gameContext.pDevice);
+		CreateVertexBuffer(gameContext.pRenderer->GetDevice());
 	}
 
-	auto pDevContext = gameContext.pDeviceContext;
+	auto pDevContext = gameContext.pRenderer->GetDeviceContext();
 
 	if (dynamicSize > 0)
 	{

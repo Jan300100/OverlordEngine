@@ -1,8 +1,14 @@
 Build/
 x64/
+.vs/
 OverlordEngine/x64/
 OverlordEngine/Debug/
-OverlordEngine/Release/
 OverlordEngine/Profile/
-.vs/
+OverlordEngine/Release/
+OverlordProject/x64/
+OverlordProject/Debug/
+OverlordProject/Profile/
+OverlordProject/Release/
 OverlordProject/imgui.ini
+OverlordProject/OverlordProject.vcxproj.user
+OverlordProject/OverlordProject.vcxproj.user

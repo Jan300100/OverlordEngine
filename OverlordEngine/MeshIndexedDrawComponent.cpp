@@ -57,7 +57,7 @@ void MeshIndexedDrawComponent::LoadEffect(const GameContext& gameContext)
 
 	D3DX11_PASS_DESC PassDesc;
 	m_pTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
-	const auto result = gameContext.pDevice->CreateInputLayout(layout, numElements, PassDesc.pIAInputSignature,
+	const auto result = gameContext.pRenderer->GetDevice()->CreateInputLayout(layout, numElements, PassDesc.pIAInputSignature,
 	                                                     PassDesc.IAInputSignatureSize, &m_pInputLayout);
 	Logger::LogHResult(result, L"MeshIndexedDrawComponent::LoadEffect(...)");
 
@@ -81,7 +81,7 @@ void MeshIndexedDrawComponent::InitializeVertexBuffer(const GameContext& gameCon
 	vertexBuffDesc.CPUAccessFlags = D3D10_CPU_ACCESS_FLAG::D3D10_CPU_ACCESS_WRITE;
 	vertexBuffDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
 	vertexBuffDesc.MiscFlags = 0;
-	gameContext.pDevice->CreateBuffer(&vertexBuffDesc, nullptr, &m_pVertexBuffer);
+	gameContext.pRenderer->GetDevice()->CreateBuffer(&vertexBuffDesc, nullptr, &m_pVertexBuffer);
 }
 
 void MeshIndexedDrawComponent::InitializeIndexBuffer(const GameContext& gameContext)
@@ -97,7 +97,7 @@ void MeshIndexedDrawComponent::InitializeIndexBuffer(const GameContext& gameCont
 	indexBufDesc.CPUAccessFlags = D3D10_CPU_ACCESS_FLAG::D3D10_CPU_ACCESS_WRITE;
 	indexBufDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
 	indexBufDesc.MiscFlags = 0;
-	gameContext.pDevice->CreateBuffer(&indexBufDesc, nullptr, &m_pIndexBuffer);
+	gameContext.pRenderer->GetDevice()->CreateBuffer(&indexBufDesc, nullptr, &m_pIndexBuffer);
 }
 
 void MeshIndexedDrawComponent::UpdateVertexBuffer()
@@ -123,9 +123,9 @@ void MeshIndexedDrawComponent::UpdateVertexBuffer()
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		auto gameContext = scene->GetGameContext();
-		gameContext.pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
+		gameContext.pRenderer->GetDeviceContext()->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
 		memcpy(mappedResource.pData, m_vecVertices.data(), sizeof(VertexPosNormCol) * size);
-		gameContext.pDeviceContext->Unmap(m_pVertexBuffer, 0);
+		gameContext.pRenderer->GetDeviceContext()->Unmap(m_pVertexBuffer, 0);
 	}
 }
 
@@ -152,9 +152,9 @@ void MeshIndexedDrawComponent::UpdateIndexBuffer()
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		auto gameContext = scene->GetGameContext();
-		gameContext.pDeviceContext->Map(m_pIndexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
+		gameContext.pRenderer->GetDeviceContext()->Map(m_pIndexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
 		memcpy(mappedResource.pData, m_vecIndices.data(), sizeof(unsigned int) * size);
-		gameContext.pDeviceContext->Unmap(m_pIndexBuffer, 0);
+		gameContext.pRenderer->GetDeviceContext()->Unmap(m_pIndexBuffer, 0);
 	}
 }
 
@@ -179,24 +179,24 @@ void MeshIndexedDrawComponent::Draw(const GameContext& gameContext)
 	//Set Vertexbuffer
 	unsigned int offset = 0;
 	unsigned int stride = sizeof(VertexPosNormCol);
-	gameContext.pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+	gameContext.pRenderer->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
 	//Set Indexbuffer
-	gameContext.pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	gameContext.pRenderer->GetDeviceContext()->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	//Set the input layout
-	gameContext.pDeviceContext->IASetInputLayout(m_pInputLayout);
+	gameContext.pRenderer->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
 
 	//Set primitive topology
-	gameContext.pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	gameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	m_pTechnique->GetDesc(&techDesc);
 	for (unsigned int p = 0; p < techDesc.Passes; ++p)
 	{
-		m_pTechnique->GetPassByIndex(p)->Apply(0, gameContext.pDeviceContext);
-		gameContext.pDeviceContext->DrawIndexed(static_cast<uint32_t>(m_vecIndices.size()), 0, 0);
+		m_pTechnique->GetPassByIndex(p)->Apply(0, gameContext.pRenderer->GetDeviceContext());
+		gameContext.pRenderer->GetDeviceContext()->DrawIndexed(static_cast<uint32_t>(m_vecIndices.size()), 0, 0);
 	}
 }
 

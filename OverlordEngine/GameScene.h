@@ -43,7 +43,7 @@ protected:
 private:
 	friend class SceneManager;
 
-	void RootInitialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+	void RootInitialize(IRenderer* pRenderer);
 	void RootUpdate();
 	void RootDraw();
 	void RootSceneActivated();

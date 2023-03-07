@@ -7,7 +7,7 @@ class DebugRenderer final
 {
 public:
 
-	static void InitRenderer(ID3D11Device *pDevice, UINT bufferSize = 100);
+	static void InitRenderer(ID3D11Device* pDevice, UINT bufferSize = 100);
 	static void ToggleDebugRenderer();
 	static void Release();
 

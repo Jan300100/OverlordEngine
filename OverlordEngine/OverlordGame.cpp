@@ -8,6 +8,11 @@
 #include "SoundManager.h"
 #include "SpriteRenderer.h"
 #include "TextRenderer.h"
+#include "GameScene.h"
+
+#include "Renderer/IRenderer.h"
+#include "Renderer/DX11/DX11Renderer.h"
+#include <CmdOptions.h>
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -23,12 +28,7 @@ GameSettings OverlordGame::m_GameSettings = GameSettings();
 OverlordGame::OverlordGame():
 	m_IsActive(true),
 	m_hInstance(nullptr),
-	m_WindowHandle(nullptr),
-	m_pDevice(nullptr),
-	m_pDeviceContext(nullptr),
-	m_pSwapchain(nullptr),
-	m_pDxgiFactory(nullptr),
-	m_pDefaultRenderTarget(nullptr)
+	m_WindowHandle(nullptr)
 {
 	Logger::Initialize();
 }
@@ -41,10 +41,6 @@ OverlordGame::~OverlordGame()
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
-	//GameSettings Cleanup
-	SafeRelease(m_GameSettings.DirectX.pAdapter);
-	SafeRelease(m_GameSettings.DirectX.pOutput);
-
 	//Game Cleanup
 	DebugRenderer::Release();
 	SpriteRenderer::DestroyInstance();
@@ -55,20 +51,8 @@ OverlordGame::~OverlordGame()
 	SoundManager::DestroyInstance();
 	Logger::Release();
 
-	//DirectX Cleanup
-	SafeDelete(m_pDefaultRenderTarget);
-	SafeRelease(m_pDxgiFactory);
-	SafeRelease(m_pSwapchain);
-
-	if(m_pDeviceContext)
-	{
-		m_pDeviceContext->ClearState();
-		m_pDeviceContext->Flush();
-		SafeRelease(m_pDeviceContext);
-	}
-
-	SafeRelease(m_pDevice);
-	
+	m_pRenderer->Destroy();
+	delete m_pRenderer;
 }
 
 HRESULT OverlordGame::Run(HINSTANCE hInstance)
@@ -81,13 +65,11 @@ HRESULT OverlordGame::Run(HINSTANCE hInstance)
 
 	//INITIALIZE
 	//**********
-	auto hr = InitializeAdapterAndOutput();
-	if(Logger::LogHResult(hr, L"OverlordGame::InitializeAdapterAndOutput")) return hr;
 
-	hr = InitializeWindow();
+	HRESULT hr = InitializeWindow();
 	if(Logger::LogHResult(hr, L"OverlordGame::InitializeWindow")) return hr;
 
-	hr = InitializeDirectX();
+	hr = InitializeRenderer();
 	if(Logger::LogHResult(hr, L"OverlordGame::InitializeDirectX")) return hr;
 
 	hr = InitializeImGui();
@@ -118,32 +100,6 @@ HRESULT OverlordGame::Run(HINSTANCE hInstance)
 	return S_OK;
 }
 
-#pragma region
-HRESULT OverlordGame::InitializeAdapterAndOutput()
-{
-	auto hr = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&m_pDxgiFactory));
-	if(FAILED(hr)) return hr;
-
-	if(!m_GameSettings.DirectX.pAdapter)
-	{	
-		hr = m_pDxgiFactory->EnumAdapters(0, &m_GameSettings.DirectX.pAdapter);
-		if(FAILED(hr)) return hr;
-	}
-
-	if(!m_GameSettings.DirectX.pOutput)
-	{
-		IDXGIOutput *tempOutput;
-		hr = m_GameSettings.DirectX.pAdapter->EnumOutputs(0, &tempOutput);
-		if(FAILED(hr)) return hr;
-
-		hr = tempOutput->QueryInterface(__uuidof(IDXGIOutput),reinterpret_cast<void**>(&m_GameSettings.DirectX.pOutput));
-		if(FAILED(hr)) return hr;
-		SafeRelease(tempOutput);
-	}
-
-	return S_OK;
-}
-
 HRESULT OverlordGame::InitializeWindow()
 {
 	//1. Create Windowclass
@@ -167,17 +123,14 @@ HRESULT OverlordGame::InitializeWindow()
 
 	//2. Create Window
 	//****************
-	DXGI_OUTPUT_DESC outputDesc;
-	const auto hr = m_GameSettings.DirectX.pOutput->GetDesc(&outputDesc);
-	if(FAILED(hr))return hr;
 
 	RECT r = {0, 0, m_GameSettings.Window.Width, m_GameSettings.Window.Height};
 	AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
 	const auto winWidth = r.right - r.left;
 	const auto winHeight = r.bottom - r.top;
 
-	const int x = outputDesc.DesktopCoordinates.left + ((outputDesc.DesktopCoordinates.right - outputDesc.DesktopCoordinates.left)/ 2) - winWidth/ 2;
-	const int y = (outputDesc.DesktopCoordinates.bottom - outputDesc.DesktopCoordinates.top)/ 2 - winHeight/ 2;
+	const int x = 0;
+	const int y = 0;
 
 	m_WindowHandle = CreateWindow(className,
 									m_GameSettings.Window.Title.c_str(), 
@@ -205,90 +158,19 @@ HRESULT OverlordGame::InitializeWindow()
 	return S_OK;
 }
 
-HRESULT OverlordGame::InitializeDirectX()
+HRESULT OverlordGame::InitializeRenderer()
 {
-	//Create DX11 Device & Context
-	UINT createDeviceFlags = 0;
-
-	#if defined(DEBUG) || defined(_DEBUG)
-		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-	#endif
-
-#pragma warning(push)
-#pragma warning(disable: 26812)
-	D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
-	auto hr = D3D11CreateDevice(m_GameSettings.DirectX.pAdapter,
-								D3D_DRIVER_TYPE_UNKNOWN,
-								nullptr,
-								createDeviceFlags,
-								nullptr,0,
-								D3D11_SDK_VERSION,
-								&m_pDevice,
-								&featureLevel,
-								&m_pDeviceContext);
-#pragma warning(pop)
-
-	if(FAILED(hr))return hr;
-	if(featureLevel < D3D_FEATURE_LEVEL_10_0)
+	if (CmdOptions::Exists(L"dx11"))
 	{
-		Logger::LogHResult(-1, L"Feature level 10.0+ not supported on this device!");
-		exit(-1);
+		m_pRenderer = new DX11Renderer();
 	}
-	if (featureLevel < D3D_FEATURE_LEVEL_11_0)
+	else
 	{
-		Logger::LogWarning(L"Feature level 10.1, some DirectX11 specific features won't be available on this device!");
+		Logger::LogInfo(L"No Render api specified, falling back to directx 11");
+		m_pRenderer = new DX11Renderer();
 	}
 
-	//Create Swapchain descriptor
-	DXGI_SWAP_CHAIN_DESC swapChainDesc;
-	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
-	swapChainDesc.BufferDesc.Width = m_GameSettings.Window.Width;
-	swapChainDesc.BufferDesc.Height = m_GameSettings.Window.Height;
-	swapChainDesc.BufferDesc.RefreshRate.Numerator = 1;
-	swapChainDesc.BufferDesc.RefreshRate.Denominator = 60;
-	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	swapChainDesc.SampleDesc.Count = 1;
-	swapChainDesc.SampleDesc.Quality = 0;
-	// Update PP
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
-	swapChainDesc.BufferCount = 1;
-	swapChainDesc.OutputWindow = m_WindowHandle;
-	swapChainDesc.Windowed = true;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	swapChainDesc.Flags = 0;
-
-	hr = m_pDxgiFactory->CreateSwapChain(m_pDevice, &swapChainDesc, &m_pSwapchain);
-	if(FAILED(hr))	return hr;
-
-	//Create the default rendertarget.
-	m_pDefaultRenderTarget = new RenderTarget(m_pDevice);
-	
-	ID3D11Texture2D *pBackbuffer = nullptr;
-	hr = m_pSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackbuffer));
-	if(FAILED(hr)) return hr;
-
-	RENDERTARGET_DESC rtDesc;
-	rtDesc.pColor = pBackbuffer;
-	rtDesc.EnableDepthSRV = true;
-	hr = m_pDefaultRenderTarget->Create(rtDesc);
-	if(FAILED(hr)) return hr;
-
-	//Set Default Rendertarget 
-	SetRenderTarget(nullptr);
-
-	Logger::LogFixMe(L"Viewport ownership, overlordgame");
-	m_Viewport.Width	= static_cast<FLOAT>(m_GameSettings.Window.Width);
-	m_Viewport.Height	= static_cast<FLOAT>(m_GameSettings.Window.Height);
-	m_Viewport.TopLeftX = 0;
-	m_Viewport.TopLeftY = 0;
-	m_Viewport.MinDepth = 0.0f;
-	m_Viewport.MaxDepth = 1.0f;
-	m_pDeviceContext->RSSetViewports(1,&m_Viewport);
-
-	//m_pSwapchain->SetFullscreenState(true, nullptr);
-
+	m_pRenderer->Initialize();
 	return S_OK;
 }
 
@@ -305,14 +187,26 @@ HRESULT OverlordGame::InitializeImGui()
 
 	// Setup Platform/Renderer bindings
 	ImGui_ImplWin32_Init(m_WindowHandle);
-	ImGui_ImplDX11_Init(m_pDevice, m_pDeviceContext);
+
+	if (CmdOptions::Exists(L"dx11"))
+	{
+		DX11Renderer* pRenderer = static_cast<DX11Renderer*>(m_pRenderer);
+		ImGui_ImplDX11_Init(pRenderer->GetDevice(), pRenderer->GetDeviceContext());
+	}
+	else
+	{
+		Logger::LogInfo(L"No Render api specified: imgui falling back to directx11");
+
+		DX11Renderer* pRenderer = static_cast<DX11Renderer*>(m_pRenderer);
+		ImGui_ImplDX11_Init(pRenderer->GetDevice(), pRenderer->GetDeviceContext());
+	}
 
 	return S_OK;
 }
 
 HRESULT OverlordGame::InitializePhysX() const
 {
-	PhysxManager::GetInstance()->Init(m_pDevice);
+	PhysxManager::GetInstance()->Init();
 	return S_OK;
 }
 
@@ -320,14 +214,14 @@ HRESULT OverlordGame::InitializeGame()
 {
 	//******************
 	//MANAGER INITIALIZE
-	ContentManager::Initialize(m_pDevice);
-	DebugRenderer::InitRenderer(m_pDevice);
-	SpriteRenderer::GetInstance()->InitRenderer(m_pDevice);
-	TextRenderer::GetInstance()->InitRenderer(m_pDevice);
+	ContentManager::Initialize(m_pRenderer->GetDevice());
+	DebugRenderer::InitRenderer(m_pRenderer->GetDevice());
+	SpriteRenderer::GetInstance()->InitRenderer(m_pRenderer->GetDevice());
+	TextRenderer::GetInstance()->InitRenderer(m_pRenderer->GetDevice());
 	SoundManager::GetInstance(); //Constructor calls Initialize
 
 	// Update PP
-	SceneManager::GetInstance()->Initialize(m_pDevice, m_pDeviceContext, this);
+	SceneManager::GetInstance()->Initialize(m_pRenderer,this);
 
 	//***************
 	//GAME INITIALIZE
@@ -436,13 +330,17 @@ LRESULT OverlordGame::WindowProcedureHook(HWND hWnd, UINT message, WPARAM wParam
 #pragma endregion Windows Procedures
 
 #pragma region
+
+IRenderer* OverlordGame::GetRenderer() const
+{
+	return m_pRenderer;
+}
+
 void OverlordGame::GameLoop() const
 {
 	PIX_PROFILE();
 
-	//Clear Backbuffer
-	m_pDeviceContext->ClearRenderTargetView(m_pCurrentRenderTarget->GetRenderTargetView(), reinterpret_cast<const float*>(&DirectX::Colors::CornflowerBlue));
-	m_pDeviceContext->ClearDepthStencilView(m_pCurrentRenderTarget->GetDepthStencilView(), D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pRenderer->ClearBackBuffer();
 
 	//***********
 	//IMGUI FRAME
@@ -467,37 +365,19 @@ void OverlordGame::GameLoop() const
 	{
 		PIX_PROFILE_NAME("ImGui::Render");
 		ImGui::Render();
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+		if (CmdOptions::Exists(L"dx11"))
+		{
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		}
+		else 
+		{
+			// Logger::LogInfo(L"No Render api specified: imgui falling back to directx11");
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		}
 	}
 
-	{
-		PIX_PROFILE_NAME("IDXGISwapChain::Present");
-		//Present Backbuffer
-		m_pSwapchain->Present(0, 0);
-	}
+	m_pRenderer->Present();
 }
 
-void OverlordGame::ResetViewPort()
-{
-	m_pDeviceContext->RSSetViewports(1, &m_Viewport);
-}
-
-void OverlordGame::SetRenderTarget(RenderTarget* renderTarget)
-{
-	PIX_PROFILE();
-
-	if(renderTarget == nullptr)
-		renderTarget = m_pDefaultRenderTarget;
-
-	auto rtView = renderTarget->GetRenderTargetView();
-	m_pDeviceContext->OMSetRenderTargets(1, &rtView, renderTarget->GetDepthStencilView());
-
-	m_pCurrentRenderTarget = renderTarget;
-}
-
-// Update PP
-RenderTarget* OverlordGame::GetRenderTarget() const
-{
-	return m_pCurrentRenderTarget;
-}
 #pragma endregion METHODS

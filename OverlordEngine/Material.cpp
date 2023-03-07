@@ -74,7 +74,7 @@ bool Material::LoadEffect(const GameContext& gameContext)
 	}
 
 	//Build InputLayout
-	EffectHelper::BuildInputLayout(gameContext.pDevice, m_pTechnique, &m_pInputLayout, m_pInputLayoutDescriptions,
+	EffectHelper::BuildInputLayout(gameContext.pRenderer->GetDevice(), m_pTechnique, &m_pInputLayout, m_pInputLayoutDescriptions,
 	                               m_pInputLayoutSize, m_InputLayoutID);
 
 	auto effectVar = m_pEffect->GetVariableBySemantic("World");
@@ -99,7 +99,7 @@ bool Material::LoadCompiledEffect(const GameContext& gameContext)
 
 	ID3DX11Effect* pEffect;
 	D3DX11CreateEffectFromFile(m_effectFile.c_str(),
-		0, gameContext.pDevice, &pEffect);
+		0, gameContext.pRenderer->GetDevice(), &pEffect);
 	return pEffect;
 }
 

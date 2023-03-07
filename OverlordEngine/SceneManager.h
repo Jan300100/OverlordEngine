@@ -20,7 +20,7 @@ public:
 	void PreviousScene();
 	GameScene* GetActiveScene() const { return m_ActiveScene; }
 	OverlordGame* GetGame() const { return m_pGame; }
-
+	IRenderer* GetRenderer() const { return m_pRenderer; }
 private:
 	// TODO: get rid of this nasty dependency
 	friend class OverlordGame;
@@ -28,7 +28,7 @@ private:
 
 	SceneManager();	
 
-	void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, OverlordGame* pGame);
+	void Initialize(IRenderer* pRenderer, OverlordGame* pGame);
 	void WindowStateChanged(int state, bool active) const;
 	void Update();
 	void Draw() const;
@@ -37,8 +37,7 @@ private:
 	bool m_IsInitialized;
 	GameScene* m_ActiveScene, *m_NewActiveScene;
 
-	ID3D11Device* m_pDevice;
-	ID3D11DeviceContext* m_pDeviceContext;
+	IRenderer* m_pRenderer;
 	OverlordGame* m_pGame;
 
 };
