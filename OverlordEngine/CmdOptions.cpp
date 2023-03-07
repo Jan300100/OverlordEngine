@@ -9,7 +9,8 @@ void CmdOptions::Create(PWSTR pCmdLine)
 {
 	if (m_pInstance == nullptr)
 	{
-		m_pInstance = new CmdOptions();
+		static CmdOptions opts{};
+		m_pInstance = &opts;
 	}
 
 	m_pInstance->Parse(pCmdLine);
