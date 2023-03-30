@@ -4,7 +4,7 @@
 #include "InputManager.h"
 #include "MaterialManager.h"
 #include "ShadowMapRenderer.h"
-#include "Renderer/IRenderer.h"
+#include "Renderer/GARenderer.h"
 
 class CameraComponent;
 
@@ -40,7 +40,7 @@ struct GameContext
 {
 	GameTime* pGameTime;
 	CameraComponent* pCamera;
-	IRenderer* pRenderer;
+	GA::Renderer* pRenderer;
 	InputManager* pInput;
 	MaterialManager* pMaterialManager;
 	ShadowMapRenderer* pShadowMapper;

@@ -1,6 +1,6 @@
 #pragma once
 
-class IRenderer;
+class Renderer;
 class RenderTarget;
 
 class OverlordGame
@@ -18,7 +18,7 @@ public:
 
 	HRESULT Run(HINSTANCE hInstance);
 
-	IRenderer* GetRenderer() const;
+	GA::Renderer* GetRenderer() const;
 
 protected:
 	virtual void OnGamePreparing(GameSettings& gameSettings){ UNREFERENCED_PARAMETER(gameSettings); }
@@ -48,6 +48,6 @@ private:
 	HINSTANCE m_hInstance;
 	HWND m_WindowHandle;	
 
-	IRenderer* m_pRenderer;
+	GA::Renderer* m_pRenderer;
 };
 

@@ -10,7 +10,7 @@
 #include "TextRenderer.h"
 #include "GameScene.h"
 
-#include "Renderer/IRenderer.h"
+#include "Renderer/GARenderer.h"
 #include "Renderer/DX11/DX11Renderer.h"
 #include <CmdOptions.h>
 
@@ -331,7 +331,7 @@ LRESULT OverlordGame::WindowProcedureHook(HWND hWnd, UINT message, WPARAM wParam
 
 #pragma region
 
-IRenderer* OverlordGame::GetRenderer() const
+GA::Renderer* OverlordGame::GetRenderer() const
 {
 	return m_pRenderer;
 }

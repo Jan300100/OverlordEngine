@@ -1,10 +1,10 @@
 #pragma once
 
 #include "RenderTarget.h"
-#include "Renderer/IRenderer.h"
+#include "Renderer/GARenderer.h"
 #include <d3d11.h>
 
-class DX11Renderer : public IRenderer
+class DX11Renderer : public GA::Renderer
 {
 public:
 	DX11Renderer();

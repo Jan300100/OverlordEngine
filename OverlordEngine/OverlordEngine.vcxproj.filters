@@ -189,6 +189,7 @@
       <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\DX11\DX11Renderer.cpp" />
+    <ClCompile Include="Renderer\DX11\DX11Resource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -411,8 +412,9 @@
     <ClInclude Include="CmdOptions.h">
       <Filter>Base</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\IRenderer.h" />
+    <ClInclude Include="Renderer\GARenderer.h" />
     <ClInclude Include="Renderer\DX11\DX11Renderer.h" />
+    <ClInclude Include="Renderer\DX11\DX11Resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Base">

@@ -9,7 +9,7 @@
 #include "ModelComponent.h"
 #include "TransformComponent.h"
 
-#include <Renderer/IRenderer.h>
+#include <Renderer/GARenderer.h>
 
 using namespace DirectX;
 

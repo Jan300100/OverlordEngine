@@ -43,7 +43,7 @@ protected:
 private:
 	friend class SceneManager;
 
-	void RootInitialize(IRenderer* pRenderer);
+	void RootInitialize(GA::Renderer* pRenderer);
 	void RootUpdate();
 	void RootDraw();
 	void RootSceneActivated();

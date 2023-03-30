@@ -288,7 +288,9 @@
     <ClInclude Include="PxConvexMeshLoader.h" />
     <ClInclude Include="PxTriangleMeshLoader.h" />
     <ClInclude Include="Renderer\DX11\DX11Renderer.h" />
-    <ClInclude Include="Renderer\IRenderer.h" />
+    <ClInclude Include="Renderer\DX11\DX11Resource.h" />
+    <ClInclude Include="Renderer\GARenderer.h" />
+    <ClInclude Include="Renderer\GAResource.h" />
     <ClInclude Include="ShadowMapMaterial.h" />
     <ClInclude Include="ShadowMapRenderer.h" />
     <ClInclude Include="SoundManager.h" />
@@ -478,6 +480,8 @@
     <ClCompile Include="PxConvexMeshLoader.cpp" />
     <ClCompile Include="PxTriangleMeshLoader.cpp" />
     <ClCompile Include="Renderer\DX11\DX11Renderer.cpp" />
+    <ClCompile Include="Renderer\DX11\DX11Resource.cpp" />
+    <ClCompile Include="Renderer\GAResource.cpp" />
     <ClCompile Include="ShadowMapMaterial.cpp" />
     <ClCompile Include="ShadowMapRenderer.cpp" />
     <ClCompile Include="SoundManager.cpp" />

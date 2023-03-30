@@ -103,7 +103,7 @@ void GameScene::RemoveChild(GameObject* obj, bool deleteObject)
 		obj->m_pParentScene = nullptr;
 }
 
-void GameScene::RootInitialize(IRenderer* pRenderer)
+void GameScene::RootInitialize(GA::Renderer* pRenderer)
 {
 	PIX_PROFILE();
 

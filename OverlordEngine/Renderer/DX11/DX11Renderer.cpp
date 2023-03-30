@@ -188,7 +188,7 @@ ID3D11DeviceContext* DX11Renderer::GetDeviceContext()
 }
 
 DX11Renderer::DX11Renderer()
-	:IRenderer{}
+	:Renderer{}
 {
 }
 
