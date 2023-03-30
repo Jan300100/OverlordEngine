@@ -41,7 +41,7 @@ inline void ModelComponent::UpdateMaterial(const GameContext& gameContext)
 		m_MaterialSet = false;
 
 		//FORWARD
-		Material* mat = gameContext.pMaterialManager->GetMaterial(m_MaterialId);
+		const Material* mat = gameContext.pMaterialManager->GetMaterial(m_MaterialId);
 		if (mat == nullptr)
 		{
 			Logger::LogFormat(LogLevel::Warning, L"ModelComponent::UpdateMaterial > Material with ID \"%i\" doesn't exist!",
