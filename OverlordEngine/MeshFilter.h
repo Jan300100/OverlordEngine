@@ -105,6 +105,6 @@ private:
 	// Disabling default copy constructor and default 
 	// assignment operator.
 	// -------------------------
-	MeshFilter(const MeshFilter& obj);
-	MeshFilter& operator=(const MeshFilter& obj);
+	MeshFilter(const MeshFilter& obj) = delete;
+	MeshFilter& operator=(const MeshFilter& obj) = delete;
 };
