@@ -12,8 +12,6 @@ float gWindForce = 1.0f;
 float gInfluence = 1.0f;
 float gDistanceInfluence = 5.0f;
 
-
-
 BlendState gBS_EnableBlending
 {
     BlendEnable[0] = TRUE;
@@ -70,12 +68,17 @@ PS_Input MainVS(VS_Vertex vertex, VS_Instance instance)
     //construct WVP
     float4x4 world = float4x4(instance.m0, instance.m1, instance.m2, instance.m3);
     
-    //windEffect
+    // windEffect
     float4 wPos = mul(float4(vertex.Position, 1.0f), world);
     float randomStrength = gNoiseTexture.SampleLevel(gTextureSampler, float2(instance.m3.x / gNoiseUVScale, instance.m3.z / gNoiseUVScale) + gWindDirection * gWindForce * gTimePassed,0).r - 0.5f;
     float distance = wPos.y - instance.m3.y;
     distance = (pow(distance * gDistanceInfluence, 2) * randomStrength) * gInfluence;
     wPos.xz += distance * gWindDirection.xy;
+    
+    // rotate based in height, so dot(normal, windDir) goes closer to one.
+    // also based on wind strength, makes the grassblade rotate with the wind to enhance the lighting
+    
+    
     
     //
     output.WorldPosition = wPos.xyz;
