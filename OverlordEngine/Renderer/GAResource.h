@@ -20,9 +20,7 @@ namespace GA
 			CpuWrite = 4,
 		};
 
-		Access operator|(Access lhs, Access rhs) {
-			return static_cast<Access>(static_cast<int>(lhs) | static_cast<int>(rhs));
-		}
+		Access operator|(Access lhs, Access rhs);
 	};
 
 	class Resource

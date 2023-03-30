@@ -16,10 +16,10 @@ void DX11Resource::Create(const Params& createParams)
 	bufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_FLAG::D3D10_CPU_ACCESS_WRITE;
 	bufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
 	bufferDesc.MiscFlags = 0;
-	m_pRenderer->GetDevice()->CreateBuffer(&bufferDesc, nullptr, &m_pBuffer);
+	//m_pRenderer->GetDevice()->CreateBuffer(&bufferDesc, nullptr, &m_pBuffer);
 }
 
-void DX11Resource::Destroy()
+void DX11Resource::Release()
 {
 	SafeRelease(m_pBuffer);
 }

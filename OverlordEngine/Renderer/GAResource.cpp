@@ -1,12 +1,23 @@
 #include "stdafx.h"
 #include "GAResource.h"
 
-const GA::Resource::Params& GA::Resource::GetParams() const
+namespace GA
 {
-	return m_Params;
-}
+	const Resource::Params& Resource::GetParams() const
+	{
+		return m_Params;
+	}
 
-GA::Resource::~Resource()
-{
-	Release();
+	Resource::~Resource()
+	{
+		Release();
+	}
+
+	namespace Memory
+	{
+		Access operator|(Access lhs, Access rhs)
+		{
+			return static_cast<Access>(static_cast<int>(lhs) | static_cast<int>(rhs));
+		}
+	}
 }
