@@ -14,3 +14,6 @@ OverlordProject/OverlordProject.vcxproj.user
 OverlordProject/OverlordProject.vcxproj.user
 OverlordEngine/OverlordEngine.vcxproj.user
 OverlordEngine/OverlordEngine.vcxproj.user
+OverlordEngine/OverlordEngine.vcxproj
+OverlordEngine/OverlordEngine.vcxproj.filters
+*.vcxproj
