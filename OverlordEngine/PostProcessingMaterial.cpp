@@ -5,6 +5,8 @@
 #include "ContentManager.h"
 #include <GA/DX11/InterfaceDX11.h>
 
+#include <StringHelper.h>
+
 PostProcessingMaterial::PostProcessingMaterial(std::wstring effectFile, unsigned int renderIndex,
                                                std::wstring technique)
 	: m_IsInitialized(false), 
@@ -83,8 +85,7 @@ bool PostProcessingMaterial::LoadEffect(const GameContext& gameContext, const st
 	if (m_TechniqueName != L"")
 	{	
 		// If SET > Use this Technique (+ check if valid)
-		 std::string tName = std::wstring_convert<std::codecvt_utf8<wchar_t>>{}.to_bytes(m_TechniqueName);
-		 m_pTechnique = m_pEffect->GetTechniqueByName(tName.c_str());
+		 m_pTechnique = m_pEffect->GetTechniqueByName(StringHelpers::WStringToString(m_TechniqueName).c_str());
 		 if (!m_pTechnique->IsValid())
 		 {
 			 Logger::LogError(L"PostProcessingMaterial::LoadEffect() - technique does not exist\n");

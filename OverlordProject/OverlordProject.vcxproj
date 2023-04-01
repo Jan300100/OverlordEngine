@@ -134,6 +134,7 @@
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)OverlordEngine;$(OV_LIBS)DX_Tex\Include;$(OV_LIBS)Fmod\Inc;$(OV_LIBS)DX_Effects11\Include;$(OV_LIBS)PhysX\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <SupportJustMyCode>false</SupportJustMyCode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -158,6 +159,7 @@ xcopy "$(OV_LIBS)Fmod\bin\*" "$(OutDir)" /y /D</Command>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)OverlordEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <SupportJustMyCode>false</SupportJustMyCode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -185,6 +187,7 @@ xcopy "$(ProjectDir)Resources\*" "$(OutDir)Resources" /y /D /E /I</Command>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)OverlordEngine;$(OV_LIBS)DX_Tex\Include;$(OV_LIBS)Fmod\Inc;$(OV_LIBS)DX_Effects11\Include;$(OV_LIBS)PhysX\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -210,6 +213,7 @@ xcopy "$(OV_LIBS)Fmod\bin\*" "$(OutDir)" /y /D</Command>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)OverlordEngine;$(OV_LIBS)DX_Tex\Include;$(OV_LIBS)Fmod\Inc;$(OV_LIBS)DX_Effects11\Include;$(OV_LIBS)PhysX\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -235,6 +239,7 @@ xcopy "$(OV_LIBS)Fmod\bin\*" "$(OutDir)" /y /D</Command>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)OverlordEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -261,6 +266,7 @@ xcopy "$(ProjectDir)Resources\*" "$(OutDir)Resources" /y /D /E /I</Command>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)OverlordEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -7,6 +7,7 @@
 #include "TextureData.h"
 #include <GA/DX11/InterfaceDX11.h>
 #include <GA/Buffer.h>
+#include <Logger.h>
 
 TextRenderer::TextRenderer() :
 	m_BufferSize(500),
@@ -112,9 +113,13 @@ void TextRenderer::Draw(const GameContext& gameContext)
 	unsigned int stride = sizeof(TextVertex);
 	unsigned int offset = 0;
 	
-	ID3D11Buffer* internalBuffer = static_cast<ID3D11Buffer*>(m_pVertexBuffer->GetInternal());
-	GA::DX11::QuickCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &internalBuffer, &stride, &offset);
+	ID3D11Buffer* internalBuffer = std::any_cast<ID3D11Buffer*>(m_pVertexBuffer->GetInternal());
+	if (!internalBuffer)
+	{
+		Logger::LogError(L"Cast failed: VertexBuffer was not a ID3D11Buffer");
+	}
 
+	GA::DX11::QuickCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &internalBuffer, &stride, &offset);
 	GA::DX11::QuickCast(gameContext.pRenderer)->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
 
 	for each (SpriteFont* pFont in m_SpriteFonts)

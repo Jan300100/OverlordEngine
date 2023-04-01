@@ -15,7 +15,7 @@ namespace GA
 			BufferDX11(GA::DX11::InterfaceDX11* i, const GA::Buffer::Params& params);
 			~BufferDX11();
 
-			virtual void* GetInternal() override;
+			virtual std::any GetInternal() override;
 			virtual void* Map() override;
 			virtual void Unmap() override;
 		};

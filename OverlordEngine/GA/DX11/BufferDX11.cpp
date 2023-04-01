@@ -40,7 +40,7 @@ GA::DX11::BufferDX11::~BufferDX11()
 	m_pInternalBuffer->Release();
 }
 
-void* GA::DX11::BufferDX11::GetInternal()
+std::any GA::DX11::BufferDX11::GetInternal()
 {
     return m_pInternalBuffer;
 }

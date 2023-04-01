@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <any>
 
 namespace GA
 {
@@ -15,7 +16,7 @@ namespace GA
 		} m_LifeTime;
 
 	public:
-		virtual void* GetInternal() = 0;
+		virtual std::any GetInternal() = 0;
 
 		virtual void* Map() = 0;
 		virtual void Unmap() = 0;

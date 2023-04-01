@@ -120,7 +120,7 @@ void MeshDrawComponent::Draw(const GameContext& gameContext)
 	unsigned int offset = 0;
 	unsigned int stride = sizeof(VertexPosNormCol);
 
-	ID3D11Buffer* internalBuf = static_cast<ID3D11Buffer*>(m_pVertexBuffer->GetInternal());
+	ID3D11Buffer* internalBuf = std::any_cast<ID3D11Buffer*>(m_pVertexBuffer->GetInternal());
 	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &internalBuf, &stride, &offset);
 
 	D3DX11_TECHNIQUE_DESC techDesc;

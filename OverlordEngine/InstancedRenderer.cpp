@@ -5,6 +5,7 @@
 #include "Instance.h"
 #include "ContentManager.h"
 #include <GA/DX11/InterfaceDX11.h>
+#include <StringHelper.h>
 
 
 InstancedRenderer::InstancedRenderer(const GameContext& gameContext)
@@ -213,10 +214,13 @@ void InstancedRenderer::ImGuiInfo()
 		ImGui::Text((std::to_string(m_VerticesDrawn / 3) + " Triangles").c_str());
 		ImGui::Spacing();
 		ImGui::Spacing();
-		wstring_convert < std::codecvt_utf8<wchar_t>> conv;
+
 		for (std::pair<Key, InstanceBuffers> bufs : m_pDataMap)
 		{
-			ImGui::Text((conv.to_bytes(bufs.first.pMeshfilter->m_AssetFile) + " : " + to_string(bufs.second.second.second.size())).c_str());
+			std::string text = StringHelpers::WStringToString(bufs.first.pMeshfilter->m_AssetFile);
+			text += " : ";
+			text += std::to_string(bufs.second.second.second.size());
+			ImGui::Text(text.c_str());
 		}
 
 		ImGui::End();

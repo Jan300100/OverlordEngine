@@ -5,6 +5,8 @@
 #include "GameObject.h"
 #include "GameScene.h"
 
+#include "StringHelper.h"
+
 #pragma warning(push)
 #pragma warning(disable: 26812)
 ControllerComponent::ControllerComponent(physx::PxMaterial* material, float radius, float height, std::wstring name,
@@ -63,15 +65,8 @@ void ControllerComponent::Initialize(const GameContext&)
 		return;
 	}
 
-	//TODO: 4. Set the controller's name (use the value of m_Name) [PxController::setName]
-	//   > Converting 'wstring' to 'string' > Use one of the constructor's of the string class
-	//	 > Converting 'string' to 'char *' > Use one of the string's methods ;)
+	m_pController->getActor()->setName(StringHelpers::WStringToString(m_Name).c_str());
 
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-	std::string name = converter.to_bytes(m_Name);
-	m_pController->getActor()->setName(name.c_str());
-
-	//TODO: 5. Set the controller's actor's userdata > This Component
 	m_pController->getActor()->userData = this;
 	
 

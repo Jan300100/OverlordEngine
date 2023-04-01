@@ -24,7 +24,7 @@ namespace GA
 		Buffer(Interface* i, const Params& params);
 		virtual ~Buffer();
 
-		virtual void* GetInternal() = 0;
+		virtual std::any GetInternal() = 0;
 
 		virtual void* Map() = 0;
 		virtual void Unmap() = 0;

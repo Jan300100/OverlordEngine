@@ -6,6 +6,8 @@
 #include "TransformComponent.h"
 #include <GA/DX11/InterfaceDX11.h>
 
+#include <StringHelper.h>
+
 Material::Material(std::wstring effectFile, std::wstring technique, bool usesTesselation) :
 	m_UsesTesselation{usesTesselation},
 	m_effectFile(std::move(effectFile)), 
@@ -64,10 +66,7 @@ bool Material::LoadEffect(const GameContext& gameContext)
 
 	if (!m_TechniqueName.empty())
 	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-		std::string techString = converter.to_bytes(m_TechniqueName);
-		//auto techString = std::string(m_TechniqueName.begin(), m_TechniqueName.end());
-		m_pTechnique = m_pEffect->GetTechniqueByName(techString.c_str());
+		m_pTechnique = m_pEffect->GetTechniqueByName(StringHelpers::WStringToString(m_TechniqueName).c_str());
 	}
 	else
 	{
