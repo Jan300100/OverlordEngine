@@ -18,7 +18,7 @@ public:
 
 	HRESULT Run(HINSTANCE hInstance);
 
-	GA::Renderer* GetRenderer() const;
+	GA::Interface* GetRenderer() const;
 
 protected:
 	virtual void OnGamePreparing(GameSettings& gameSettings){ UNREFERENCED_PARAMETER(gameSettings); }
@@ -48,6 +48,6 @@ private:
 	HINSTANCE m_hInstance;
 	HWND m_WindowHandle;	
 
-	GA::Renderer* m_pRenderer;
+	GA::Interface* m_pRenderer;
 };
 

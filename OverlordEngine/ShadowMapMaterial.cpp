@@ -3,6 +3,7 @@
 
 #include "ShadowMapMaterial.h"
 #include "ContentManager.h"
+#include <GA/DX11/InterfaceDX11.h>
 
 ShadowMapMaterial::~ShadowMapMaterial()
 {
@@ -26,8 +27,8 @@ void ShadowMapMaterial::Initialize(const GameContext& gameContext)
 
 
 		//input layouts
-		EffectHelper::BuildInputLayout(gameContext.pRenderer->GetDevice(), m_pShadowTechs[ShadowGenType::Static], &m_pInputLayouts[ShadowGenType::Static], m_InputLayoutDescriptions[ShadowGenType::Static], m_InputLayoutSizes[ShadowGenType::Static], m_InputLayoutIds[ShadowGenType::Static]);
-		EffectHelper::BuildInputLayout(gameContext.pRenderer->GetDevice(), m_pShadowTechs[ShadowGenType::Skinned], &m_pInputLayouts[ShadowGenType::Skinned], m_InputLayoutDescriptions[ShadowGenType::Skinned], m_InputLayoutSizes[ShadowGenType::Skinned], m_InputLayoutIds[ShadowGenType::Skinned]);
+		EffectHelper::BuildInputLayout(GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice(), m_pShadowTechs[ShadowGenType::Static], &m_pInputLayouts[ShadowGenType::Static], m_InputLayoutDescriptions[ShadowGenType::Static], m_InputLayoutSizes[ShadowGenType::Static], m_InputLayoutIds[ShadowGenType::Static]);
+		EffectHelper::BuildInputLayout(GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice(), m_pShadowTechs[ShadowGenType::Skinned], &m_pInputLayouts[ShadowGenType::Skinned], m_InputLayoutDescriptions[ShadowGenType::Skinned], m_InputLayoutSizes[ShadowGenType::Skinned], m_InputLayoutIds[ShadowGenType::Skinned]);
 	
 		//shader variables
 		auto effectVar = m_pShadowEffect->GetVariableByName("gWorld");

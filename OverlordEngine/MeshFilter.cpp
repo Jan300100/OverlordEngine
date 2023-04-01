@@ -4,6 +4,7 @@
 #include "Material.h"
 
 #include <algorithm>
+#include <GA/DX11/InterfaceDX11.h>
 
 DirectX::XMFLOAT4 MeshFilter::m_DefaultColor = DirectX::XMFLOAT4(1,0,0,1);
 DirectX::XMFLOAT4 MeshFilter::m_DefaultFloat4 = DirectX::XMFLOAT4(0, 0, 0, 0);
@@ -71,7 +72,7 @@ void MeshFilter::BuildIndexBuffer(const GameContext& gameContext)
 	D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = m_Indices.data();
 
-	auto hr = gameContext.pRenderer->GetDevice()->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
+	auto hr = GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
 	Logger::LogHResult(hr, L"MeshFilter::BuildIndexBuffer()");
 }
 
@@ -192,7 +193,7 @@ void MeshFilter::BuildVertexBuffer(const GameContext& gameContext, UINT inputLay
 	D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = data.pDataStart;
 	//create a ID3D10Buffer in graphics memory containing the vertex info
-	gameContext.pRenderer->GetDevice()->CreateBuffer(&bd, &initData, &data.pVertexBuffer);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&bd, &initData, &data.pVertexBuffer);
 
 	m_VertexBuffers.push_back(data);
 }

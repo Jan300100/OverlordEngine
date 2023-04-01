@@ -6,6 +6,7 @@
 #include "TextureDataLoader.h"
 #include "Particle.h"
 #include "TransformComponent.h"
+#include <GA/DX11/InterfaceDX11.h>
 
 ParticleEmitterComponent::ParticleEmitterComponent(std::wstring  assetFile, int particleCount) :
 	m_pVertexBuffer(nullptr),
@@ -72,7 +73,7 @@ void ParticleEmitterComponent::LoadEffect(const GameContext& gameContext)
 		return;
 	}
 
-	EffectHelper::BuildInputLayout(gameContext.pRenderer->GetDevice(), m_pDefaultTechnique, &m_pInputLayout, m_pInputLayoutSize);
+	EffectHelper::BuildInputLayout(GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice(), m_pDefaultTechnique, &m_pInputLayout, m_pInputLayoutSize);
 }
 
 void ParticleEmitterComponent::CreateVertexBuffer(const GameContext& gameContext)
@@ -87,7 +88,7 @@ void ParticleEmitterComponent::CreateVertexBuffer(const GameContext& gameContext
 	vertexBuffDesc.CPUAccessFlags = D3D10_CPU_ACCESS_FLAG::D3D10_CPU_ACCESS_WRITE;
 	vertexBuffDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
 	vertexBuffDesc.MiscFlags = 0;
-	HRESULT hr = gameContext.pRenderer->GetDevice()->CreateBuffer(&vertexBuffDesc, nullptr, &m_pVertexBuffer);
+	HRESULT hr = GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&vertexBuffDesc, nullptr, &m_pVertexBuffer);
 	Logger::LogHResult(hr, L"failed to create vertexbuffer in particleEmitterComponent\n");
 }
 
@@ -106,7 +107,7 @@ void ParticleEmitterComponent::Update(const GameContext& gameContext)
 
 	//BUFFER MAPPING CODE [PARTIAL :)]
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	gameContext.pRenderer->GetDeviceContext()->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
 	ParticleVertex* pBuffer = (ParticleVertex*) mappedResource.pData;
 	//d
@@ -125,7 +126,7 @@ void ParticleEmitterComponent::Update(const GameContext& gameContext)
 		}
 	}
 
-	gameContext.pRenderer->GetDeviceContext()->Unmap(m_pVertexBuffer, 0);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->Unmap(m_pVertexBuffer, 0);
 
 }
 
@@ -152,19 +153,19 @@ void ParticleEmitterComponent::PostDraw(const GameContext& gameContext)
 	}
 
 
-	gameContext.pRenderer->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
-	gameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	UINT offset = 0;
 	UINT stride = sizeof(ParticleVertex);
-	gameContext.pRenderer->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	m_pDefaultTechnique->GetDesc(&techDesc);
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
-		m_pDefaultTechnique->GetPassByIndex(p)->Apply(0, gameContext.pRenderer->GetDeviceContext());
-		gameContext.pRenderer->GetDeviceContext()->DrawIndexed(m_ActiveParticles,0, 0);
+		m_pDefaultTechnique->GetPassByIndex(p)->Apply(0, GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext());
+		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->DrawIndexed(m_ActiveParticles,0, 0);
 	}
 
 }

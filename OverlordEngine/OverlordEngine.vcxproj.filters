@@ -188,9 +188,9 @@
     <ClCompile Include="CmdOptions.cpp">
       <Filter>Base</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\DX11\DX11Renderer.cpp" />
-    <ClCompile Include="Renderer\GAResource.cpp" />
-    <ClCompile Include="Renderer\DX11\DX11Resource.cpp" />
+    <ClCompile Include="GA\DX11\InterfaceDX11.cpp" />
+    <ClCompile Include="GA\Resource.cpp" />
+    <ClCompile Include="GA\Buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -413,10 +413,10 @@
     <ClInclude Include="CmdOptions.h">
       <Filter>Base</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\GARenderer.h" />
-    <ClInclude Include="Renderer\DX11\DX11Renderer.h" />
-    <ClInclude Include="Renderer\GAResource.h" />
-    <ClInclude Include="Renderer\DX11\DX11Resource.h" />
+    <ClInclude Include="GA\Interface.h" />
+    <ClInclude Include="GA\DX11\InterfaceDX11.h" />
+    <ClInclude Include="GA\Resource.h" />
+    <ClInclude Include="GA\Buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Base">

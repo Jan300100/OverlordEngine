@@ -4,6 +4,7 @@
 #include "CameraComponent.h"
 #include "ModelComponent.h"
 #include "TransformComponent.h"
+#include <GA/DX11/InterfaceDX11.h>
 
 Material::Material(std::wstring effectFile, std::wstring technique, bool usesTesselation) :
 	m_UsesTesselation{usesTesselation},
@@ -74,7 +75,7 @@ bool Material::LoadEffect(const GameContext& gameContext)
 	}
 
 	//Build InputLayout
-	EffectHelper::BuildInputLayout(gameContext.pRenderer->GetDevice(), m_pTechnique, &m_pInputLayout, m_pInputLayoutDescriptions,
+	EffectHelper::BuildInputLayout(GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice(), m_pTechnique, &m_pInputLayout, m_pInputLayoutDescriptions,
 	                               m_pInputLayoutSize, m_InputLayoutID);
 
 	auto effectVar = m_pEffect->GetVariableBySemantic("World");
@@ -99,7 +100,7 @@ bool Material::LoadCompiledEffect(const GameContext& gameContext)
 
 	ID3DX11Effect* pEffect;
 	D3DX11CreateEffectFromFile(m_effectFile.c_str(),
-		0, gameContext.pRenderer->GetDevice(), &pEffect);
+		0, GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice(), &pEffect);
 	return pEffect;
 }
 

@@ -106,7 +106,7 @@ void SceneManager::WindowStateChanged(int state, bool active) const
 	}
 }
 
-void SceneManager::Initialize(GA::Renderer* pRenderer, OverlordGame* pGame)
+void SceneManager::Initialize(GA::Interface* pRenderer, OverlordGame* pGame)
 {
 	PIX_PROFILE();
 

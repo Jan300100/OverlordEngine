@@ -20,7 +20,7 @@ public:
 	void PreviousScene();
 	GameScene* GetActiveScene() const { return m_ActiveScene; }
 	OverlordGame* GetGame() const { return m_pGame; }
-	GA::Renderer* GetRenderer() const { return m_pRenderer; }
+	GA::Interface* GetRenderer() const { return m_pRenderer; }
 private:
 	// TODO: get rid of this nasty dependency
 	friend class OverlordGame;
@@ -28,7 +28,7 @@ private:
 
 	SceneManager();	
 
-	void Initialize(GA::Renderer* pRenderer, OverlordGame* pGame);
+	void Initialize(GA::Interface* pRenderer, OverlordGame* pGame);
 	void WindowStateChanged(int state, bool active) const;
 	void Update();
 	void Draw() const;
@@ -37,7 +37,7 @@ private:
 	bool m_IsInitialized;
 	GameScene* m_ActiveScene, *m_NewActiveScene;
 
-	GA::Renderer* m_pRenderer;
+	GA::Interface* m_pRenderer;
 	OverlordGame* m_pGame;
 
 };

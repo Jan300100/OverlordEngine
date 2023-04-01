@@ -2,6 +2,7 @@
 #include "DebugRenderer.h"
 #include "Logger.h"
 #include "ContentManager.h"
+#include <GA/DX11/InterfaceDX11.h>
 
 ID3DX11Effect* DebugRenderer::m_pEffect = nullptr;
 ID3DX11EffectTechnique* DebugRenderer::m_pTechnique = nullptr;
@@ -219,10 +220,10 @@ void DebugRenderer::Draw(const GameContext& gameContext)
 	{
 		Logger::LogInfo(L"DebugRenderer::Draw() > Increasing Vertexbuffer Size!");
 		m_BufferSize = dynamicSize;
-		CreateVertexBuffer(gameContext.pRenderer->GetDevice());
+		CreateVertexBuffer(GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice());
 	}
 
-	auto pDevContext = gameContext.pRenderer->GetDeviceContext();
+	auto pDevContext = GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext();
 
 	if (dynamicSize > 0)
 	{

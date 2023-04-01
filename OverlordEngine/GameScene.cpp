@@ -14,6 +14,7 @@
 #include <algorithm>
 #include "PostProcessingMaterial.h"
 #include "InstancedRenderer.h"
+#include <GA/DX11/InterfaceDX11.h>
 
 GameScene::GameScene(std::wstring sceneName):
 	m_pChildren(std::vector<GameObject*>()),
@@ -103,7 +104,7 @@ void GameScene::RemoveChild(GameObject* obj, bool deleteObject)
 		obj->m_pParentScene = nullptr;
 }
 
-void GameScene::RootInitialize(GA::Renderer* pRenderer)
+void GameScene::RootInitialize(GA::Interface* pRenderer)
 {
 	PIX_PROFILE();
 
@@ -250,7 +251,7 @@ void GameScene::RootDraw()
 
 		//unbind srv to bind as rt again?
 		ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
-		m_GameContext.pRenderer->GetDeviceContext()->PSSetShaderResources(0, 1	, pSRV);
+		GA::DX11::SafeCast(m_GameContext.pRenderer)->GetDeviceContext()->PSSetShaderResources(0, 1	, pSRV);
 
 
 		m_GameContext.pRenderer->SetRenderTarget(original_rt); //reset rt to original

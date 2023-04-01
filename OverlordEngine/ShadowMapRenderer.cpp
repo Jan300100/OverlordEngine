@@ -9,7 +9,8 @@
 #include "ModelComponent.h"
 #include "TransformComponent.h"
 
-#include <Renderer/GARenderer.h>
+#include <GA/Interface.h>
+#include <GA/DX11/InterfaceDX11.h>
 
 using namespace DirectX;
 
@@ -46,7 +47,7 @@ void ShadowMapRenderer::Initialize(const GameContext& gameContext)
 	m_Viewport.TopLeftX = 0;
 	m_Viewport.TopLeftY = 0;
 
-	m_pShadowRT =  new RenderTarget {gameContext.pRenderer->GetDevice()};
+	m_pShadowRT =  new RenderTarget {GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()};
 	m_pShadowRT->Create(desc);
 
 	m_IsInitialized = true;
@@ -198,10 +199,10 @@ void ShadowMapRenderer::Begin(const GameContext& gameContext)
 {
 	PIX_PROFILE();
 
-	gameContext.pRenderer->GetDeviceContext()->RSSetViewports(1, &m_Viewport);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->RSSetViewports(1, &m_Viewport);
 	//Reset Texture Register 5 (Unbind)
 	ID3D11ShaderResourceView *const pSRV[] = { nullptr,nullptr,nullptr,nullptr };
-	gameContext.pRenderer->GetDeviceContext()->PSSetShaderResources(1, 4, pSRV);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->PSSetShaderResources(1, 4, pSRV);
 
 	//TODO: set the appropriate render target that our shadow generator will write to (hint: use the OverlordGame::SetRenderTarget function through SceneManager)
 	SceneManager::GetInstance()->GetGame()->GetRenderer()->SetRenderTarget(m_pShadowRT);
@@ -252,17 +253,17 @@ void ShadowMapRenderer::Draw(const GameContext& gameContext, MeshFilter* pMeshFi
 	VertexBufferData vBData = pMeshFilter->GetVertexBufferData(gameContext, m_pShadowMat->m_InputLayoutIds[pMeshFilter->m_HasAnimations]);
 	if (vBData.VertexCount == 0) return;
 	
-	gameContext.pRenderer->GetDeviceContext()->IASetInputLayout(m_pShadowMat->m_pInputLayouts[pMeshFilter->m_HasAnimations]);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetInputLayout(m_pShadowMat->m_pInputLayouts[pMeshFilter->m_HasAnimations]);
 
 	//Set Vertex Buffer
 	UINT offset = 0;
-	gameContext.pRenderer->GetDeviceContext()->IASetVertexBuffers(0, 1, &vBData.pVertexBuffer, &vBData.VertexStride, &offset);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &vBData.pVertexBuffer, &vBData.VertexStride, &offset);
 
 	//Set Index Buffer
-	gameContext.pRenderer->GetDeviceContext()->IASetIndexBuffer(pMeshFilter->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(pMeshFilter->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	//Set Primitive Topology
-	gameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//DRAW
 	ID3DX11EffectTechnique* tech = m_pShadowMat->m_pShadowTechs[pMeshFilter->m_HasAnimations];
@@ -270,8 +271,8 @@ void ShadowMapRenderer::Draw(const GameContext& gameContext, MeshFilter* pMeshFi
 	tech->GetDesc(&techDesc);
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
-		tech->GetPassByIndex(p)->Apply(0, gameContext.pRenderer->GetDeviceContext());
-		gameContext.pRenderer->GetDeviceContext()->DrawIndexed(pMeshFilter->m_IndexCount, 0, 0);
+		tech->GetPassByIndex(p)->Apply(0, GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext());
+		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->DrawIndexed(pMeshFilter->m_IndexCount, 0, 0);
 	}
 
 }

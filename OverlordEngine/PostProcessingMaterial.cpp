@@ -3,6 +3,7 @@
 #include "RenderTarget.h"
 #include "OverlordGame.h"
 #include "ContentManager.h"
+#include <GA/DX11/InterfaceDX11.h>
 
 PostProcessingMaterial::PostProcessingMaterial(std::wstring effectFile, unsigned int renderIndex,
                                                std::wstring technique)
@@ -59,7 +60,7 @@ void PostProcessingMaterial::Initialize(const GameContext& gameContext)
 		desc.EnableColorSRV = true;
 		desc.EnableDepthSRV = true;
 		desc.GenerateMipMaps_Color = true;
-		m_pRenderTarget = new RenderTarget{gameContext.pRenderer->GetDevice()};
+		m_pRenderTarget = new RenderTarget{GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()};
 		HRESULT hr = m_pRenderTarget->Create(desc);
 		if (Logger::LogHResult(hr, L"PostProcessingMaterial::Initialize() - creating rendertarget")) return;
 
@@ -99,7 +100,7 @@ bool PostProcessingMaterial::LoadEffect(const GameContext& gameContext, const st
 		}
 	}
 	//create input layout
-	EffectHelper::BuildInputLayout(gameContext.pRenderer->GetDevice(), m_pTechnique, &m_pInputLayout,m_pInputLayoutDescriptions, m_pInputLayoutSize, m_InputLayoutID);
+	EffectHelper::BuildInputLayout(GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice(), m_pTechnique, &m_pInputLayout,m_pInputLayoutDescriptions, m_pInputLayoutSize, m_InputLayoutID);
 
 	//Call LoadEffectVariables
 	LoadEffectVariables();
@@ -117,17 +118,17 @@ void PostProcessingMaterial::Draw(const GameContext& gameContext,RenderTarget* p
 	//2. Call UpdateEffectVariables(...)
 	UpdateEffectVariables(gameContext, pPrevRendertarget, pOriginalRendertarget); //give previous to use as srv
 	//3. Set InputLayout
-	gameContext.pRenderer->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
 
 	// Set the indexbuffer.
-	gameContext.pRenderer->GetDeviceContext()->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	//4. Set VertexBuffer
 	UINT offset = 0;
-	gameContext.pRenderer->GetDeviceContext()->IASetVertexBuffers(0,1,&m_pVertexBuffer, &m_VertexBufferStride, &offset);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0,1,&m_pVertexBuffer, &m_VertexBufferStride, &offset);
 
 	//5. Set PrimitiveTopology (TRIANGLELIST)
-	gameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//6. Draw 
 
@@ -136,12 +137,12 @@ void PostProcessingMaterial::Draw(const GameContext& gameContext,RenderTarget* p
 	m_pTechnique->GetDesc(&techDesc);
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
-		m_pTechnique->GetPassByIndex(p)->Apply(0, gameContext.pRenderer->GetDeviceContext());
-		gameContext.pRenderer->GetDeviceContext()->DrawIndexed(m_NumIndices, 0, 0);
+		m_pTechnique->GetPassByIndex(p)->Apply(0, GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext());
+		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->DrawIndexed(m_NumIndices, 0, 0);
 	}
 
 	// Generate Mips
-	gameContext.pRenderer->GetDeviceContext()->GenerateMips(m_pRenderTarget->GetShaderResourceView());
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->GenerateMips(m_pRenderTarget->GetShaderResourceView());
 }
 
 void PostProcessingMaterial::CreateVertexBuffer(const GameContext& gameContext)
@@ -174,7 +175,7 @@ void PostProcessingMaterial::CreateVertexBuffer(const GameContext& gameContext)
 	InitData.pSysMem = arr;
 
 	//create a ID3D11Buffer in graphics memory containing the vertex info
-	HRESULT hr = gameContext.pRenderer->GetDevice()->CreateBuffer(&desc, &InitData, &m_pVertexBuffer);
+	HRESULT hr = GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&desc, &InitData, &m_pVertexBuffer);
 	Logger::LogHResult(hr, L"failed to create vertexbuffer in postProcessingMaterial\n");
 }
 
@@ -201,6 +202,6 @@ void PostProcessingMaterial::CreateIndexBuffer(const GameContext& gameContext)
 	D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = indices;
 
-	auto hr = gameContext.pRenderer->GetDevice()->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
+	auto hr = GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
 	Logger::LogHResult(hr, L"PostProcessingMaterial::CreateIndexBuffer()");
 }

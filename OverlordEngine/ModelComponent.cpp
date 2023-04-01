@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "ModelAnimator.h"
 #include "TransformComponent.h"
+#include <GA/DX11/InterfaceDX11.h>
 
 ModelComponent::ModelComponent(std::wstring assetFile, bool castShadows):
 	m_AssetFile(std::move(assetFile)),
@@ -87,25 +88,25 @@ void ModelComponent::Draw(const GameContext& gameContext)
 	
 
 	//Set Inputlayout
-	gameContext.pRenderer->GetDeviceContext()->IASetInputLayout(m_pMaterial->GetInputLayout());
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetInputLayout(m_pMaterial->GetInputLayout());
 
 	//Set Vertex Buffer
 	UINT offset = 0;
 	auto vertexBufferData = m_pMeshFilter->GetVertexBufferData(gameContext, m_pMaterial);
-	gameContext.pRenderer->GetDeviceContext()->IASetVertexBuffers(0, 1, &vertexBufferData.pVertexBuffer, &vertexBufferData.VertexStride,
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &vertexBufferData.pVertexBuffer, &vertexBufferData.VertexStride,
 	                                               &offset);
 
 	//Set Index Buffer
-	gameContext.pRenderer->GetDeviceContext()->IASetIndexBuffer(m_pMeshFilter->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(m_pMeshFilter->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	//Set Primitive Topology
 	if (!m_pMaterial->UsesTesselation())
 	{
-		gameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 	else
 	{
-		gameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	}
 
 	//DRAW
@@ -114,8 +115,8 @@ void ModelComponent::Draw(const GameContext& gameContext)
 	tech->GetDesc(&techDesc);
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
-		tech->GetPassByIndex(p)->Apply(0, gameContext.pRenderer->GetDeviceContext());
-		gameContext.pRenderer->GetDeviceContext()->DrawIndexed(m_pMeshFilter->m_IndexCount,0, 0);
+		tech->GetPassByIndex(p)->Apply(0, GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext());
+		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->DrawIndexed(m_pMeshFilter->m_IndexCount,0, 0);
 	}
 
 };

@@ -10,8 +10,8 @@
 #include "TextRenderer.h"
 #include "GameScene.h"
 
-#include "Renderer/GARenderer.h"
-#include "Renderer/DX11/DX11Renderer.h"
+#include "GA/Interface.h"
+#include "GA/DX11/InterfaceDX11.h"
 #include <CmdOptions.h>
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -158,16 +158,17 @@ HRESULT OverlordGame::InitializeWindow()
 	return S_OK;
 }
 
+
 HRESULT OverlordGame::InitializeRenderer()
 {
 	if (CmdOptions::Exists(L"dx11"))
 	{
-		m_pRenderer = new DX11Renderer();
+		m_pRenderer = new GA::DX11::InterfaceDX11();
 	}
 	else
 	{
 		Logger::LogInfo(L"No Render api specified, falling back to directx 11");
-		m_pRenderer = new DX11Renderer();
+		m_pRenderer = new GA::DX11::InterfaceDX11();
 	}
 
 	m_pRenderer->Initialize();
@@ -190,14 +191,14 @@ HRESULT OverlordGame::InitializeImGui()
 
 	if (CmdOptions::Exists(L"dx11"))
 	{
-		DX11Renderer* pRenderer = static_cast<DX11Renderer*>(m_pRenderer);
+		GA::DX11::InterfaceDX11* pRenderer = GA::DX11::SafeCast(m_pRenderer);
 		ImGui_ImplDX11_Init(pRenderer->GetDevice(), pRenderer->GetDeviceContext());
 	}
 	else
 	{
 		Logger::LogInfo(L"No Render api specified: imgui falling back to directx11");
 
-		DX11Renderer* pRenderer = static_cast<DX11Renderer*>(m_pRenderer);
+		GA::DX11::InterfaceDX11* pRenderer = GA::DX11::SafeCast(m_pRenderer);
 		ImGui_ImplDX11_Init(pRenderer->GetDevice(), pRenderer->GetDeviceContext());
 	}
 
@@ -214,10 +215,10 @@ HRESULT OverlordGame::InitializeGame()
 {
 	//******************
 	//MANAGER INITIALIZE
-	ContentManager::Initialize(m_pRenderer->GetDevice());
-	DebugRenderer::InitRenderer(m_pRenderer->GetDevice());
-	SpriteRenderer::GetInstance()->InitRenderer(m_pRenderer->GetDevice());
-	TextRenderer::GetInstance()->InitRenderer(m_pRenderer->GetDevice());
+	ContentManager::Initialize(GA::DX11::SafeCast(m_pRenderer)->GetDevice());
+	DebugRenderer::InitRenderer(GA::DX11::SafeCast(m_pRenderer)->GetDevice());
+	SpriteRenderer::GetInstance()->InitRenderer(GA::DX11::SafeCast(m_pRenderer)->GetDevice());
+	TextRenderer::GetInstance()->InitRenderer(GA::DX11::SafeCast(m_pRenderer)->GetDevice());
 	SoundManager::GetInstance(); //Constructor calls Initialize
 
 	// Update PP
@@ -331,7 +332,7 @@ LRESULT OverlordGame::WindowProcedureHook(HWND hWnd, UINT message, WPARAM wParam
 
 #pragma region
 
-GA::Renderer* OverlordGame::GetRenderer() const
+GA::Interface* OverlordGame::GetRenderer() const
 {
 	return m_pRenderer;
 }

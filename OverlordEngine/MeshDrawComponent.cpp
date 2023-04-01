@@ -5,6 +5,7 @@
 #include "CameraComponent.h"
 #include "GameObject.h"
 #include "GameScene.h"
+#include <GA/DX11/InterfaceDX11.h>
 
 ID3DX11EffectMatrixVariable* MeshDrawComponent::m_pWorldVar = nullptr;
 ID3DX11EffectMatrixVariable* MeshDrawComponent::m_pWvpVar = nullptr;
@@ -47,7 +48,7 @@ void MeshDrawComponent::LoadEffect(const GameContext& gameContext)
 
 	D3DX11_PASS_DESC PassDesc;
 	m_pTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
-	const auto result = gameContext.pRenderer->GetDevice()->CreateInputLayout(layout, numElements, PassDesc.pIAInputSignature,
+	const auto result = GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateInputLayout(layout, numElements, PassDesc.pIAInputSignature,
 	                                                     PassDesc.IAInputSignatureSize, &m_pInputLayout);
 	Logger::LogHResult(result, L"MeshDrawComponent::LoadEffect(...)");
 
@@ -71,7 +72,7 @@ void MeshDrawComponent::InitializeBuffer(const GameContext& gameContext)
 	vertexBuffDesc.CPUAccessFlags = D3D10_CPU_ACCESS_FLAG::D3D10_CPU_ACCESS_WRITE;
 	vertexBuffDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
 	vertexBuffDesc.MiscFlags = 0;
-	gameContext.pRenderer->GetDevice()->CreateBuffer(&vertexBuffDesc, nullptr, &m_pVertexBuffer);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&vertexBuffDesc, nullptr, &m_pVertexBuffer);
 }
 
 void MeshDrawComponent::UpdateBuffer()
@@ -98,9 +99,9 @@ void MeshDrawComponent::UpdateBuffer()
 		}
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		gameContext.pRenderer->GetDeviceContext()->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
+		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
 		memcpy(mappedResource.pData, m_vecTriangles.data(), sizeof(TrianglePosNormCol) * size);
-		gameContext.pRenderer->GetDeviceContext()->Unmap(m_pVertexBuffer, 0);
+		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->Unmap(m_pVertexBuffer, 0);
 	}
 }
 
@@ -121,20 +122,19 @@ void MeshDrawComponent::Draw(const GameContext& gameContext)
 	auto wvp = world * viewProjection;
 	m_pWvpVar->SetMatrix(reinterpret_cast<float*>(&wvp));
 
-	gameContext.pRenderer->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	gameContext.pRenderer->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
 
 	unsigned int offset = 0;
 	unsigned int stride = sizeof(VertexPosNormCol);
-	gameContext.pRenderer->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	m_pTechnique->GetDesc(&techDesc);
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
-		m_pTechnique->GetPassByIndex(p)->Apply(0, gameContext.pRenderer->GetDeviceContext());
-		gameContext.pRenderer->GetDeviceContext()->Draw(static_cast<uint32_t>(m_vecTriangles.size() * 3), 0);
-		
+		m_pTechnique->GetPassByIndex(p)->Apply(0, GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext());
+		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->Draw(static_cast<uint32_t>(m_vecTriangles.size() * 3), 0);
 	}
 }
 

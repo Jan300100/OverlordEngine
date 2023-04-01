@@ -1,6 +1,7 @@
 //Precompiled Header [ALWAYS ON TOP IN CPP]
 #include "stdafx.h"
 #include "RenderTarget.h"
+#include <GA/DX11/InterfaceDX11.h>
 
 RenderTarget::RenderTarget(ID3D11Device* pDevice) :
 	m_pDevice(pDevice)
@@ -274,8 +275,8 @@ void RenderTarget::Clear(const GameContext& gameContext, const FLOAT colorRGBA[4
 	PIX_PROFILE();
 
 	if (m_Desc.EnableColorBuffer)
-		gameContext.pRenderer->GetDeviceContext()->ClearRenderTargetView(GetRenderTargetView(), colorRGBA);
+		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->ClearRenderTargetView(GetRenderTargetView(), colorRGBA);
 
 	if (m_Desc.EnableDepthBuffer)
-		gameContext.pRenderer->GetDeviceContext()->ClearDepthStencilView(GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->ClearDepthStencilView(GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
