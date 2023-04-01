@@ -3,9 +3,10 @@
 
 namespace GA
 {
-	Resource::Resource(Type type, LifeTime lifeTime)
+	Resource::Resource(Interface* i, Type type, LifeTime lifeTime)
 		: m_Type(type)
 		, m_LifeTime(lifeTime)
+		, m_pInterface(i)
 	{
 	}
 }

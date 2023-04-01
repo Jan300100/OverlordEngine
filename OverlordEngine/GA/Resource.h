@@ -3,22 +3,31 @@
 
 namespace GA
 {
+	class Interface;
+
 	class Resource
 	{
+	public:
+		enum class LifeTime
+		{
+			// SingleFrame,
+			Permanent,
+		} m_LifeTime;
+
+	public:
+		virtual void* GetInternal() = 0;
+
+		virtual void* Map() = 0;
+		virtual void Unmap() = 0;
 	protected:
 		enum class Type
 		{
 			Buffer,
-			Texture2D,
 		} m_Type;
 
-		enum class LifeTime
-		{
-			SingleFrame,
-			MultiFrame,
-		} m_LifeTime;
-
-		Resource(Type type, LifeTime lifeTime);
+		Resource(Interface* i, Type type, LifeTime lifeTime);
 		virtual ~Resource() = default;
+
+		Interface* m_pInterface;
 	};
 }

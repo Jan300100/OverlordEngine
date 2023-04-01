@@ -18,6 +18,8 @@ namespace GA
 			virtual void Destroy() override;
 			virtual void Initialize() override;
 
+			virtual std::unique_ptr<GA::Buffer> CreateBuffer(const GA::Buffer::Params& params) override;
+			
 			void ClearBackBuffer() override;
 			void SetRenderTarget(RenderTarget* renderTarget) override;
 			RenderTarget* GetRenderTarget() const override;

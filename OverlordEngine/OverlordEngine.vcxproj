@@ -266,6 +266,7 @@
   <ItemGroup>
     <ClInclude Include="CmdOptions.h" />
     <ClInclude Include="ControllerComponent.h" />
+    <ClInclude Include="GA\DX11\BufferDX11.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -346,6 +347,7 @@
   <ItemGroup>
     <ClCompile Include="CmdOptions.cpp" />
     <ClCompile Include="ControllerComponent.cpp" />
+    <ClCompile Include="GA\DX11\BufferDX11.cpp" />
     <ClCompile Include="imgui\imgui.cpp">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>

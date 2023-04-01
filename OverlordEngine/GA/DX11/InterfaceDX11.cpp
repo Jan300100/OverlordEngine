@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "GA/DX11/InterfaceDX11.h"
+#include "GA/DX11/BufferDX11.h"
 
 #include "OverlordGame.h"
 #include "RenderTarget.h"
@@ -144,6 +145,11 @@ namespace GA
 					}
 				}
 			}
+		}
+
+		std::unique_ptr<GA::Buffer> InterfaceDX11::CreateBuffer(const GA::Buffer::Params& params)
+		{
+			return std::make_unique<GA::DX11::BufferDX11>(this, params);
 		}
 
 		void InterfaceDX11::ClearBackBuffer()

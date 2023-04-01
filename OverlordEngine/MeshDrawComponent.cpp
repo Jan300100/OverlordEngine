@@ -5,6 +5,7 @@
 #include "CameraComponent.h"
 #include "GameObject.h"
 #include "GameScene.h"
+#include <GA/Buffer.h>
 #include <GA/DX11/InterfaceDX11.h>
 
 ID3DX11EffectMatrixVariable* MeshDrawComponent::m_pWorldVar = nullptr;
@@ -21,7 +22,6 @@ MeshDrawComponent::MeshDrawComponent(UINT triangleCapacity):
 MeshDrawComponent::~MeshDrawComponent()
 {
 	SafeRelease(m_pInputLayout);
-	SafeRelease(m_pVertexBuffer);
 }
 
 void MeshDrawComponent::Initialize(const GameContext& gameContext)
@@ -61,18 +61,11 @@ void MeshDrawComponent::LoadEffect(const GameContext& gameContext)
 
 void MeshDrawComponent::InitializeBuffer(const GameContext& gameContext)
 {
-	if (m_pVertexBuffer)
-		SafeRelease(m_pVertexBuffer);
-
-	//*************
-	//VERTEX BUFFER
-	D3D11_BUFFER_DESC vertexBuffDesc;
-	vertexBuffDesc.BindFlags = D3D10_BIND_FLAG::D3D10_BIND_VERTEX_BUFFER;
-	vertexBuffDesc.ByteWidth = sizeof(TrianglePosNormCol) * m_TriangleCapacity;
-	vertexBuffDesc.CPUAccessFlags = D3D10_CPU_ACCESS_FLAG::D3D10_CPU_ACCESS_WRITE;
-	vertexBuffDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
-	vertexBuffDesc.MiscFlags = 0;
-	GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&vertexBuffDesc, nullptr, &m_pVertexBuffer);
+	GA::Buffer::Params params;
+	params.lifeTime = GA::Resource::LifeTime::Permanent;
+	params.sizeInBytes = sizeof(TrianglePosNormCol) * m_TriangleCapacity;
+	params.type = GA::Buffer::Type::Vertex;
+	m_pVertexBuffer = gameContext.pRenderer->CreateBuffer(params);
 }
 
 void MeshDrawComponent::UpdateBuffer()
@@ -98,10 +91,9 @@ void MeshDrawComponent::UpdateBuffer()
 			size = m_TriangleCapacity;
 		}
 
-		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
-		memcpy(mappedResource.pData, m_vecTriangles.data(), sizeof(TrianglePosNormCol) * size);
-		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->Unmap(m_pVertexBuffer, 0);
+		void* pData = m_pVertexBuffer->Map();
+		memcpy(pData, m_vecTriangles.data(), sizeof(TrianglePosNormCol) * size);
+		m_pVertexBuffer->Unmap();
 	}
 }
 
@@ -127,7 +119,9 @@ void MeshDrawComponent::Draw(const GameContext& gameContext)
 
 	unsigned int offset = 0;
 	unsigned int stride = sizeof(VertexPosNormCol);
-	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+
+	ID3D11Buffer* internalBuf = static_cast<ID3D11Buffer*>(m_pVertexBuffer->GetInternal());
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &internalBuf, &stride, &offset);
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	m_pTechnique->GetDesc(&techDesc);

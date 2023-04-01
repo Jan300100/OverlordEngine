@@ -6,6 +6,7 @@
 #include "SpriteFont.h"
 #include "TextureData.h"
 #include <GA/DX11/InterfaceDX11.h>
+#include <GA/Buffer.h>
 
 TextRenderer::TextRenderer() :
 	m_BufferSize(500),
@@ -26,7 +27,6 @@ TextRenderer::TextRenderer() :
 TextRenderer::~TextRenderer()
 {
 	SafeRelease(m_pInputLayout);
-	SafeRelease(m_pVertexBuffer);
 }
 
 void TextRenderer::InitRenderer(ID3D11Device* pDevice)
@@ -111,7 +111,10 @@ void TextRenderer::Draw(const GameContext& gameContext)
 
 	unsigned int stride = sizeof(TextVertex);
 	unsigned int offset = 0;
-	GA::DX11::QuickCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+	
+	ID3D11Buffer* internalBuffer = static_cast<ID3D11Buffer*>(m_pVertexBuffer->GetInternal());
+	GA::DX11::QuickCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &internalBuffer, &stride, &offset);
+
 	GA::DX11::QuickCast(gameContext.pRenderer)->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
 
 	for each (SpriteFont* pFont in m_SpriteFonts)
@@ -146,29 +149,19 @@ void TextRenderer::UpdateBuffer(const GameContext& gameContext)
 
 	if (!m_pVertexBuffer || m_NumCharacters > m_BufferSize)
 	{
-		//Release the buffer if it exists
-		SafeRelease(m_pVertexBuffer);
-
 		//Set buffersize if needed
 		if (m_NumCharacters > m_BufferSize)
 			m_BufferSize = m_NumCharacters;
 
-		//Create a new buffer
-		D3D11_BUFFER_DESC buffDesc;
-		buffDesc.Usage = D3D11_USAGE_DYNAMIC;
-		buffDesc.ByteWidth = sizeof(TextVertex) * m_BufferSize;
-		buffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		buffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		buffDesc.MiscFlags = 0;
-
-		auto hr = GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&buffDesc, nullptr, &m_pVertexBuffer);
-		if (Logger::LogHResult(hr, L"TextRenderer::UpdateBuffer"))
-			return;
+		GA::Buffer::Params params;
+		params.lifeTime = GA::Resource::LifeTime::Permanent;
+		params.sizeInBytes = sizeof(TextVertex) * m_BufferSize;
+		params.type = GA::Buffer::Type::Vertex;
+		m_pVertexBuffer = gameContext.pRenderer->CreateBuffer(params);
 	}
 
 	//Fill Buffer
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
+	void* pData = m_pVertexBuffer->Map();
 	int bufferPosition = 0;
 	for each (SpriteFont* pFont in m_SpriteFonts)
 	{
@@ -176,13 +169,13 @@ void TextRenderer::UpdateBuffer(const GameContext& gameContext)
 		pFont->SetBufferStart(bufferPosition);
 		for (unsigned int i = 0; i < cache.size(); ++i)
 		{
-			CreateTextVertices(pFont, cache[i], static_cast<TextVertex*>(mappedResource.pData), bufferPosition);
+			CreateTextVertices(pFont, cache[i], static_cast<TextVertex*>(pData), bufferPosition);
 		}
 
 		pFont->SetBufferSize(bufferPosition - pFont->GetBufferStart());
 		pFont->ClearCache();
 	}
-	GA::DX11::QuickCast(gameContext.pRenderer)->GetDeviceContext()->Unmap(m_pVertexBuffer, 0);
+	m_pVertexBuffer->Unmap();
 
 	m_NumCharacters = 0;
 }

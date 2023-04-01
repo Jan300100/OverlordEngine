@@ -1,13 +1,19 @@
 #pragma once
 #include <vector>
 #include "BaseComponent.h"
+#include <memory>
+
+namespace GA
+{
+	class Buffer;
+}
 
 class MeshDrawComponent : public BaseComponent
 {
 	static ID3DX11EffectMatrixVariable *m_pWorldVar, *m_pWvpVar;
 
 	std::vector<TrianglePosNormCol> m_vecTriangles;
-	ID3D11Buffer* m_pVertexBuffer;
+	std::unique_ptr<GA::Buffer> m_pVertexBuffer;
 	unsigned int m_TriangleCapacity;
 
 	ID3DX11Effect* m_pEffect;

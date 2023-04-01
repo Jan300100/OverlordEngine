@@ -6,6 +6,11 @@ class SpriteFont;
 class GameScene;
 struct TextCache;
 
+namespace GA
+{
+	class Buffer;
+}
+
 class TextRenderer final : public Singleton<TextRenderer>
 {
 public:
@@ -49,7 +54,8 @@ private:
 	ID3DX11EffectShaderResourceVariable* m_pTextureSRV;
 
 	ID3D11InputLayout* m_pInputLayout;
-	ID3D11Buffer* m_pVertexBuffer;
+
+	std::unique_ptr<GA::Buffer> m_pVertexBuffer;
 
 	std::vector<SpriteFont*> m_SpriteFonts;
 };

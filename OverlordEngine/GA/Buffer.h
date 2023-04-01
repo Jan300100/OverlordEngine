@@ -11,9 +11,7 @@ namespace GA
 		enum class Type
 		{
 			Vertex,
-			Index,
-			Structured,
-			Constant,
+			Unknown
 		};
 
 		struct Params
@@ -22,10 +20,16 @@ namespace GA
 			uint32_t sizeInBytes;
 			Resource::LifeTime lifeTime;
 		};
+	public:
+		Buffer(Interface* i, const Params& params);
+		virtual ~Buffer();
+
+		virtual void* GetInternal() = 0;
+
+		virtual void* Map() = 0;
+		virtual void Unmap() = 0;
 
 	protected:
-		Buffer(const Params& params);
-		virtual ~Buffer();
 		uint32_t m_SizeInBytes;
 		Type m_BufferType;
 	};

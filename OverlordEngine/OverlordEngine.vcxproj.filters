@@ -191,6 +191,7 @@
     <ClCompile Include="GA\DX11\InterfaceDX11.cpp" />
     <ClCompile Include="GA\Resource.cpp" />
     <ClCompile Include="GA\Buffer.cpp" />
+    <ClCompile Include="GA\DX11\BufferDX11.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -417,6 +418,7 @@
     <ClInclude Include="GA\DX11\InterfaceDX11.h" />
     <ClInclude Include="GA\Resource.h" />
     <ClInclude Include="GA\Buffer.h" />
+    <ClInclude Include="GA\DX11\BufferDX11.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Base">
