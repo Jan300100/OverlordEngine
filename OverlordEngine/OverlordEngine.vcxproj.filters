@@ -196,6 +196,7 @@
       <Filter>Helpers</Filter>
     </ClCompile>
     <ClCompile Include="GA\Texture2D.cpp" />
+    <ClCompile Include="GA\Helpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -427,6 +428,7 @@
       <Filter>Helpers</Filter>
     </ClInclude>
     <ClInclude Include="GA\Texture2D.h" />
+    <ClInclude Include="GA\Helpers.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Base">

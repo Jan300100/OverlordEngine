@@ -19,7 +19,7 @@ namespace GA
 
 		enum class LifeTime
 		{
-			// SingleFrame,
+			// Transient,
 			Permanent,
 		};
 
@@ -33,6 +33,7 @@ namespace GA
 		enum class Type
 		{
 			Buffer,
+			Texture2D,
 		} m_Type;
 
 		LifeTime m_LifeTime;

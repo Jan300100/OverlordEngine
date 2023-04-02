@@ -2,6 +2,7 @@
 #include "TextureDataLoader.h"
 #include <GA/Resource.h>
 #include <GA/Texture2D.h>
+#include <GA/Helpers.h>
 
 using namespace DirectX;
 
@@ -79,17 +80,23 @@ TextureData* TextureDataLoader::LoadContent(const std::wstring& assetFile)
 	ID3D11ShaderResourceView* pShaderResourceView;
 
 	std::unique_ptr<DirectX::ScratchImage> initialData = GetInitialData(assetFile);
-	Logger::LogFormat(LogLevel::Info, L"Format: %d", initialData->GetMetadata().format);
 
 	GA::Texture2D::Params params;
+
 	params.lifeTime = GA::Resource::LifeTime::Permanent;
 	params.cpuUpdateFreq = GA::Resource::CPUUpdateFrequency::Never;
+
+	params.format = GA::HELP::DXGIFormatToGAFormat(initialData->GetMetadata().format);
+
+	params.height = initialData->GetMetadata().height;
+	params.width = initialData->GetMetadata().width;
+	params.numMips = initialData->GetMetadata().mipLevels;
 	
-	/*HRESULT hr = CreateTexture(m_pDevice, initialData->GetImages(), initialData->GetImageCount(), initialData->GetMetadata(), &pTexture);
-	if (Logger::LogHResult(hr, L"TextureDataLoader::LoadContent() > CreateTexture Failed!"))
-	{
-		return nullptr;
-	}*/
+	// store subresource information:
+	// slicepitch
+	// rowpitch
+	// initialData
+	// ...
 
 	HRESULT hr = CreateShaderResourceView(m_pDevice, initialData->GetImages(), initialData->GetImageCount(), initialData->GetMetadata(), &pShaderResourceView);
 	if(Logger::LogHResult(hr, L"TextureDataLoader::LoadContent() > CreateShaderResourceView Failed!"))
