@@ -14,6 +14,10 @@ public:
 	TextureDataLoader& operator=(TextureDataLoader&& other) noexcept = delete;
 
 protected:
+	std::unique_ptr<DirectX::ScratchImage> GenerateMips(DirectX::ScratchImage* imageDataWithoutMips);
+	std::unique_ptr<DirectX::ScratchImage> GetInitialData(const std::wstring& assetFile);
+	std::wstring GetExtension(const std::wstring& assetFile);
+
 	TextureData* LoadContent(const std::wstring& assetFile) override;
 	void Destroy(TextureData* objToDestroy) override;
 
