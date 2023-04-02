@@ -3,10 +3,11 @@
 
 namespace GA
 {
-	Resource::Resource(Interface* i, Type type, LifeTime lifeTime)
+	Resource::Resource(Interface* pGAInterface, Type type, LifeTime lifeTime, CPUUpdateFrequency updateFreq)
 		: m_Type(type)
 		, m_LifeTime(lifeTime)
-		, m_pInterface(i)
+		, m_pInterface(pGAInterface)
+		, m_UpdateFreq(updateFreq)
 	{
 	}
 }

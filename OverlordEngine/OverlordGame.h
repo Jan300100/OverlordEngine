@@ -48,6 +48,6 @@ private:
 	HINSTANCE m_hInstance;
 	HWND m_WindowHandle;	
 
-	GA::Interface* m_pRenderer;
+	GA::Interface* m_pGAInterface;
 };
 

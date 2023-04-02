@@ -7,8 +7,9 @@
 #include "TRCrossRoads.h"
 #include <ContentManager.h>
 
+using namespace DirectX;
 
-TRRoad::TRRoad(const XMINT2& position, const XMINT2& direction, Type type, int initRoadRef, int initFreeRef)
+TRRoad::TRRoad(const DirectX::XMINT2& position, const DirectX::XMINT2& direction, Type type, int initRoadRef, int initFreeRef)
 	:TRTile{ position ,direction, initRoadRef, initFreeRef}
 {
 	if (type == Type::Free) {

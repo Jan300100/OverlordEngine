@@ -9,26 +9,38 @@ namespace GA
 	class Resource
 	{
 	public:
+
+		enum class CPUUpdateFrequency
+		{
+			Never,
+			Possible,
+			Frequent,
+		};
+
 		enum class LifeTime
 		{
 			// SingleFrame,
 			Permanent,
-		} m_LifeTime;
+		};
 
 	public:
 		virtual std::any GetInternal() = 0;
 
 		virtual void* Map() = 0;
 		virtual void Unmap() = 0;
+
 	protected:
 		enum class Type
 		{
 			Buffer,
 		} m_Type;
 
-		Resource(Interface* i, Type type, LifeTime lifeTime);
-		virtual ~Resource() = default;
+		LifeTime m_LifeTime;
+		CPUUpdateFrequency m_UpdateFreq;
 
 		Interface* m_pInterface;
+	protected:
+		Resource(Interface* pGAInterface, Type type, LifeTime lifeTime, CPUUpdateFrequency updateFreq);
+		virtual ~Resource() = default;
 	};
 }

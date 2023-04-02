@@ -32,8 +32,6 @@ PostProcessingMaterial::~PostProcessingMaterial()
 	//TODO: delete and/or release necessary objects and/or resources
 	SafeDelete(m_pRenderTarget);
 	SafeRelease(m_pInputLayout);
-	SafeRelease(m_pVertexBuffer);
-	SafeRelease(m_pIndexBuffer);
 //	SafeRelease(m_pEffect);
 //	SafeRelease(m_pTechnique);
 }
@@ -122,11 +120,13 @@ void PostProcessingMaterial::Draw(const GameContext& gameContext,RenderTarget* p
 	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
 
 	// Set the indexbuffer.
-	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	ID3D11Buffer* internalBuf = std::any_cast<ID3D11Buffer*>(m_pIndexBuffer->GetInternal());
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(internalBuf, DXGI_FORMAT_R32_UINT, 0);
 
 	//4. Set VertexBuffer
 	UINT offset = 0;
-	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0,1,&m_pVertexBuffer, &m_VertexBufferStride, &offset);
+	internalBuf = std::any_cast<ID3D11Buffer*>(m_pVertexBuffer->GetInternal());
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0,1,&internalBuf, &m_VertexBufferStride, &offset);
 
 	//5. Set PrimitiveTopology (TRIANGLELIST)
 	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -152,32 +152,25 @@ void PostProcessingMaterial::CreateVertexBuffer(const GameContext& gameContext)
 
 	m_NumVertices = 4;	
 
-	UNREFERENCED_PARAMETER(gameContext);
 	//TODO: complete
 	//Create vertex ARRAY containing three elements in system memory
-	VertexPosTex arr[] = {
-	arr[0] = VertexPosTex{ DirectX::XMFLOAT3{-1,1,0}, DirectX::XMFLOAT2{0,0} },
-	arr[1] = VertexPosTex{ DirectX::XMFLOAT3{-1,-1,0}, DirectX::XMFLOAT2{0,1} },
-	arr[2] = VertexPosTex{ DirectX::XMFLOAT3{1,1,0}, DirectX::XMFLOAT2{1,0} },
-	arr[3] = VertexPosTex{ DirectX::XMFLOAT3{1,-1,0}, DirectX::XMFLOAT2{1,1} },
+	VertexPosTex initialData[] = {
+	initialData[0] = VertexPosTex{ DirectX::XMFLOAT3{-1,1,0}, DirectX::XMFLOAT2{0,0} },
+	initialData[1] = VertexPosTex{ DirectX::XMFLOAT3{-1,-1,0}, DirectX::XMFLOAT2{0,1} },
+	initialData[2] = VertexPosTex{ DirectX::XMFLOAT3{1,1,0}, DirectX::XMFLOAT2{1,0} },
+	initialData[3] = VertexPosTex{ DirectX::XMFLOAT3{1,-1,0}, DirectX::XMFLOAT2{1,1} },
 	};
+
 	m_VertexBufferStride = sizeof(VertexPosTex);
 
-	//fill a buffer description to copy the vertexdata into graphics memory
-	D3D11_BUFFER_DESC desc;
-	desc.ByteWidth = sizeof(VertexPosTex) * 4;
-	desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
-	desc.MiscFlags = 0;
-	desc.CPUAccessFlags = 0;
+	GA::Buffer::Params params;
+	params.type = GA::Buffer::Type::Vertex;
+	params.lifeTime = GA::Resource::LifeTime::Permanent;
+	params.sizeInBytes = sizeof(initialData);
+	params.initialData = initialData;
+	params.cpuUpdateFreq = GA::Resource::CPUUpdateFrequency::Never;
 
-	// Define the resource data.
-	D3D11_SUBRESOURCE_DATA InitData;
-	InitData.pSysMem = arr;
-
-	//create a ID3D11Buffer in graphics memory containing the vertex info
-	HRESULT hr = GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&desc, &InitData, &m_pVertexBuffer);
-	Logger::LogHResult(hr, L"failed to create vertexbuffer in postProcessingMaterial\n");
+	m_pVertexBuffer = gameContext.pRenderer->CreateBuffer(params);
 }
 
 void PostProcessingMaterial::CreateIndexBuffer(const GameContext& gameContext)
@@ -189,20 +182,14 @@ void PostProcessingMaterial::CreateIndexBuffer(const GameContext& gameContext)
 	if (m_pIndexBuffer != nullptr)
 		return;
 
-	//TODO: complete
 	// Create index buffer
 	unsigned int indices[] = { 0,2,1,1,2,3 };
-	// Fill in a buffer description.
-	D3D11_BUFFER_DESC bd = {};
-	bd.Usage = D3D11_USAGE_IMMUTABLE;
-	bd.ByteWidth = sizeof(unsigned int) * 6;
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	bd.MiscFlags = 0;
 
-	D3D11_SUBRESOURCE_DATA initData;
-	initData.pSysMem = indices;
-
-	auto hr = GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
-	Logger::LogHResult(hr, L"PostProcessingMaterial::CreateIndexBuffer()");
+	GA::Buffer::Params params;
+	params.lifeTime = GA::Resource::LifeTime::Permanent;
+	params.cpuUpdateFreq = GA::Resource::CPUUpdateFrequency::Never;
+	params.sizeInBytes = sizeof(unsigned int) * 6;
+	params.initialData = indices;
+	params.type = GA::Buffer::Type::Index;
+	m_pIndexBuffer = gameContext.pRenderer->CreateBuffer(params);
 }

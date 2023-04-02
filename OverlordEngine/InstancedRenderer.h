@@ -2,13 +2,14 @@
 #include <map>
 #include <set>
 
-using namespace DirectX;
-using namespace std;
-
+namespace GA
+{
+	class Buffer;
+}
 
 class InstanceBase;
 typedef std::pair<const char*, uint32_t> TypeInfo;
-typedef pair<ID3D11Buffer*, pair<void*, vector<InstanceBase*>>> InstanceBuffers;
+typedef std::pair<GA::Buffer*, std::pair<void*, std::vector<InstanceBase*>>> InstanceBuffers;
 
 class InstancedRenderer
 {
@@ -31,8 +32,8 @@ private:
 	 bool CreateInstanceBuffer(const Key& key);
 	 void UpdateInstanceBuffers();
 	 bool Register(const Key& key);
-	 void DrawInstanced(uint32_t materialID, MeshFilter* pMeshFilter, uint32_t instances, uint32_t stride, ID3D11Buffer* pBuffer);
-	 void DrawInstancedShadowMap(uint32_t materialID, MeshFilter* pMeshFilter, uint32_t instances, uint32_t stride, ID3D11Buffer* pBuffer);
+	 void DrawInstanced(uint32_t materialID, MeshFilter* pMeshFilter, uint32_t instances, uint32_t stride, GA::Buffer* pBuffer);
+	 void DrawInstancedShadowMap(uint32_t materialID, MeshFilter* pMeshFilter, uint32_t instances, uint32_t stride, GA::Buffer* pBuffer);
 	 //stats
 	 void ImGuiInfo();
 	 int m_VerticesDrawn;

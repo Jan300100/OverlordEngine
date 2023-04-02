@@ -1,5 +1,11 @@
 #pragma once
 #include "BaseComponent.h"
+#include <memory>
+
+namespace GA
+{
+	class Buffer;
+}
 
 struct ParticleEmitterSettings
 {
@@ -63,7 +69,7 @@ class TextureData;
 class ParticleEmitterComponent : public BaseComponent
 {
 	//The actual vertex buffer, containing ParticleVertex information for each Particle
-	ID3D11Buffer* m_pVertexBuffer;
+	std::unique_ptr<GA::Buffer> m_pVertexBuffer;
 
 	//The effect we'll use to render the particles
 	ID3DX11Effect* m_pEffect;

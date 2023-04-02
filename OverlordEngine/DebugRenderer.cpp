@@ -4,10 +4,12 @@
 #include "ContentManager.h"
 #include <GA/DX11/InterfaceDX11.h>
 
+#include <GA/Buffer.h>
+
 ID3DX11Effect* DebugRenderer::m_pEffect = nullptr;
 ID3DX11EffectTechnique* DebugRenderer::m_pTechnique = nullptr;
 unsigned int DebugRenderer::m_BufferSize = 100;
-ID3D11Buffer* DebugRenderer::m_pVertexBuffer = nullptr;
+std::unique_ptr<GA::Buffer> DebugRenderer::m_pVertexBuffer = nullptr;
 physx::PxScene* DebugRenderer::m_pPhysxDebugScene = nullptr;
 ID3D11InputLayout* DebugRenderer::m_pInputLayout = nullptr;
 ID3DX11EffectMatrixVariable* DebugRenderer::m_pWvpVariable = nullptr;
@@ -19,10 +21,9 @@ bool DebugRenderer::m_RendererEnabled = true;
 void DebugRenderer::Release()
 {
 	SafeRelease(m_pInputLayout);
-	SafeRelease(m_pVertexBuffer);
 }
 
-void DebugRenderer::InitRenderer(ID3D11Device* pDevice, unsigned int bufferSize)
+void DebugRenderer::InitRenderer(GA::Interface* pGAInterface, unsigned int bufferSize)
 {
 	m_BufferSize = bufferSize;
 	// TODO: paths shouldn't be hard coded.
@@ -42,39 +43,30 @@ void DebugRenderer::InitRenderer(ID3D11Device* pDevice, unsigned int bufferSize)
 
 	D3DX11_PASS_DESC passDesc;
 	m_pTechnique->GetPassByIndex(0)->GetDesc(&passDesc);
-	pDevice->CreateInputLayout(layout, 2, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &m_pInputLayout);
+
+	GA::DX11::SafeCast(pGAInterface)->GetDevice()->CreateInputLayout(layout, 2, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &m_pInputLayout);
 
 	CreateFixedLineList();
-	CreateVertexBuffer(pDevice);
+	CreateVertexBuffer(pGAInterface);
 }
 
-void DebugRenderer::CreateVertexBuffer(ID3D11Device* pDevice)
+void DebugRenderer::CreateVertexBuffer(GA::Interface* pGAInterface)
 {
-	SafeRelease(m_pVertexBuffer);
+	GA::Buffer::Params params;
+	params.lifeTime = GA::Resource::LifeTime::Permanent;
+	params.sizeInBytes = sizeof(VertexPosCol) * (m_BufferSize + m_FixedBufferSize);
+	params.type = GA::Buffer::Type::Vertex;
+	params.cpuUpdateFreq = GA::Resource::CPUUpdateFrequency::Frequent;
 
-	//Vertexbuffer
-	D3D11_BUFFER_DESC buffDesc;
-	buffDesc.Usage = D3D11_USAGE_DYNAMIC;
-	buffDesc.ByteWidth = sizeof(VertexPosCol) * (m_BufferSize + m_FixedBufferSize);
-	buffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	buffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	buffDesc.MiscFlags = 0;
-
-	pDevice->CreateBuffer(&buffDesc, nullptr, &m_pVertexBuffer);
+	m_pVertexBuffer = pGAInterface->CreateBuffer(params);
 
 	if (m_FixedBufferSize > 0)
 	{
-		//Map Fixed data manually
-		ID3D11DeviceContext* pDeviceContext;
-		pDevice->GetImmediateContext(&pDeviceContext);
-
 		if (m_pVertexBuffer)
 		{
-			D3D11_MAPPED_SUBRESOURCE mappedResource;
-			pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
-			memcpy(mappedResource.pData, &m_FixedLineList[0], sizeof(VertexPosCol) * m_FixedBufferSize);
-			pDeviceContext->Unmap(m_pVertexBuffer, 0);
-			pDeviceContext->Release();
+			void* pData = m_pVertexBuffer->Map();
+			memcpy(pData, &m_FixedLineList[0], sizeof(VertexPosCol) * m_FixedBufferSize);
+			m_pVertexBuffer->Unmap();
 		}
 	}
 }
@@ -220,28 +212,27 @@ void DebugRenderer::Draw(const GameContext& gameContext)
 	{
 		Logger::LogInfo(L"DebugRenderer::Draw() > Increasing Vertexbuffer Size!");
 		m_BufferSize = dynamicSize;
-		CreateVertexBuffer(GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice());
+		CreateVertexBuffer(gameContext.pRenderer);
 	}
 
 	auto pDevContext = GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext();
 
 	if (dynamicSize > 0)
 	{
-		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		pDevContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
+		void* pData = m_pVertexBuffer->Map();
 
 		if (regularSize > 0)
 		{
-			memcpy(&(static_cast<VertexPosCol*>(mappedResource.pData)[m_FixedBufferSize]), &m_LineList[0], sizeof(VertexPosCol)* regularSize); //Engine Lines
+			memcpy(&(static_cast<VertexPosCol*>(pData)[m_FixedBufferSize]), &m_LineList[0], sizeof(VertexPosCol)* regularSize); //Engine Lines
 		}
 
 		if (pxBuffSize > 0)
 		{
 			auto lineBuffer = pPxRenderBuffer->getLines();
-			memcpy(&(static_cast<VertexPosCol*>(mappedResource.pData)[m_FixedBufferSize + regularSize]), &lineBuffer, sizeof(VertexPosCol)* pxBuffSize); //PhysX Lines
+			memcpy(&(static_cast<VertexPosCol*>(pData)[m_FixedBufferSize + regularSize]), &lineBuffer, sizeof(VertexPosCol)* pxBuffSize); //PhysX Lines
 		}
 
-		pDevContext->Unmap(m_pVertexBuffer, 0);
+		m_pVertexBuffer->Unmap();
 
 	}
 
@@ -250,7 +241,9 @@ void DebugRenderer::Draw(const GameContext& gameContext)
 
 	unsigned int stride = sizeof(VertexPosCol);
 	unsigned int offset = 0;
-	pDevContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+
+	ID3D11Buffer* internalBuf = std::any_cast<ID3D11Buffer*>(m_pVertexBuffer->GetInternal());
+	pDevContext->IASetVertexBuffers(0, 1, &internalBuf, &stride, &offset);
 	pDevContext->IASetInputLayout(m_pInputLayout);
 
 	auto viewProj = gameContext.pCamera->GetViewProjection();

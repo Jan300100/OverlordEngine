@@ -162,6 +162,8 @@ void TextRenderer::UpdateBuffer(const GameContext& gameContext)
 		params.lifeTime = GA::Resource::LifeTime::Permanent;
 		params.sizeInBytes = sizeof(TextVertex) * m_BufferSize;
 		params.type = GA::Buffer::Type::Vertex;
+		params.cpuUpdateFreq = GA::Resource::CPUUpdateFrequency::Frequent;
+
 		m_pVertexBuffer = gameContext.pRenderer->CreateBuffer(params);
 	}
 

@@ -257,10 +257,12 @@ void ShadowMapRenderer::Draw(const GameContext& gameContext, MeshFilter* pMeshFi
 
 	//Set Vertex Buffer
 	UINT offset = 0;
-	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &vBData.pVertexBuffer, &vBData.VertexStride, &offset);
+	ID3D11Buffer* internalBuf = std::any_cast<ID3D11Buffer*>(vBData.pVertexBuffer->GetInternal());
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &internalBuf, &vBData.VertexStride, &offset);
 
 	//Set Index Buffer
-	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(pMeshFilter->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(
+		std::any_cast<ID3D11Buffer*>(pMeshFilter->m_pIndexBuffer->GetInternal()), DXGI_FORMAT_R32_UINT, 0);
 
 	//Set Primitive Topology
 	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

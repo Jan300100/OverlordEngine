@@ -1,5 +1,7 @@
 #pragma once
 #include "EffectHelper.h"
+#include <memory>
+#include <GA/Buffer.h>
 
 class RenderTarget;
 struct GameContext;
@@ -46,8 +48,8 @@ private:
 
 	RenderTarget* m_pRenderTarget;
 
-	ID3D11Buffer* m_pVertexBuffer;
-	ID3D11Buffer* m_pIndexBuffer;
+	std::unique_ptr<GA::Buffer> m_pVertexBuffer;
+	std::unique_ptr<GA::Buffer> m_pIndexBuffer;
 	int m_NumVertices, m_NumIndices;
 	unsigned int m_VertexBufferStride;
 

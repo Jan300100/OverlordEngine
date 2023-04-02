@@ -5,6 +5,8 @@
 #include "PhysxManager.h"
 #include <ContentManager.h>
 
+using namespace DirectX;
+
 TRCrossRoads::TRCrossRoads(const XMINT2& position, int initRoadRef, int initFreeRef)
 	:TRRoad{ position, {}, Type::CrossRoads, initRoadRef, initFreeRef }
 	, m_Extensions{ -2,-2,-2,-2 }

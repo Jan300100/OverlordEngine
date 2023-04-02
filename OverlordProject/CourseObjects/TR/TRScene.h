@@ -25,7 +25,7 @@ struct PPVariableSet
 {
 	void Set(PostFog* pFog, PostFilters* pFilters);
 	float brightness, contrast, hue, saturation;
-	XMFLOAT3 fogColor;
+	DirectX::XMFLOAT3 fogColor;
 	float fogFalloff, fogStrength;
 };
 
@@ -94,7 +94,7 @@ private:
 	SpriteFont* m_pFont48;
 
 	//menu
-	SpriteComponent* m_pMenuBanner;
+	SpriteComponent* m_pMenuBanner = nullptr;
 
 
 	//Audio

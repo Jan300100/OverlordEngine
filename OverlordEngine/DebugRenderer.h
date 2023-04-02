@@ -1,4 +1,10 @@
 #pragma once
+#include <memory>
+
+namespace GA
+{
+	class Buffer;
+}
 
 struct VertexPosCol;
 struct GameContext;
@@ -7,7 +13,7 @@ class DebugRenderer final
 {
 public:
 
-	static void InitRenderer(ID3D11Device* pDevice, UINT bufferSize = 100);
+	static void InitRenderer(GA::Interface* pGAInterface, UINT bufferSize = 100);
 	static void ToggleDebugRenderer();
 	static void Release();
 
@@ -26,14 +32,14 @@ public:
 private:
 
 	//RENDERING
-	static void CreateVertexBuffer(ID3D11Device *pDevice);
+	static void CreateVertexBuffer(GA::Interface* pGAInterface);
 	static void CreateFixedLineList();
 	static DirectX::XMFLOAT4 ConvertPxColor(physx::PxU32 color);
 	static ID3DX11Effect* m_pEffect;
 	static ID3DX11EffectTechnique* m_pTechnique;
 	static UINT m_BufferSize, m_FixedBufferSize;
 	static ID3D11InputLayout *m_pInputLayout;
-	static ID3D11Buffer *m_pVertexBuffer;
+	static std::unique_ptr<GA::Buffer> m_pVertexBuffer;
 	static ID3DX11EffectMatrixVariable *m_pWvpVariable;
 	static std::vector<VertexPosCol> m_LineList;
 	static std::vector<VertexPosCol> m_FixedLineList;

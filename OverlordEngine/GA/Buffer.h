@@ -11,6 +11,7 @@ namespace GA
 		enum class Type
 		{
 			Vertex,
+			Index,
 			Unknown
 		};
 
@@ -19,10 +20,17 @@ namespace GA
 			Type type;
 			uint32_t sizeInBytes;
 			Resource::LifeTime lifeTime;
+			Resource::CPUUpdateFrequency cpuUpdateFreq;
+			void* initialData = nullptr;
 		};
 	public:
-		Buffer(Interface* i, const Params& params);
+		Buffer(Interface* pGAInterface, const Params& params);
 		virtual ~Buffer();
+
+		uint32_t GetSizeInBytes() const
+		{
+			return m_SizeInBytes;
+		}
 
 		virtual std::any GetInternal() = 0;
 

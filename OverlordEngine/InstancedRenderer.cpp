@@ -7,6 +7,8 @@
 #include <GA/DX11/InterfaceDX11.h>
 #include <StringHelper.h>
 
+using namespace DirectX;
+using namespace std;
 
 InstancedRenderer::InstancedRenderer(const GameContext& gameContext)
 	:m_GameContext{ gameContext }
@@ -21,7 +23,7 @@ InstancedRenderer::~InstancedRenderer()
 {
 	for (pair<Key, InstanceBuffers> bufs : m_pDataMap)
 	{
-		SafeRelease(bufs.second.first);
+		delete bufs.second.first;
 		free(bufs.second.second.first);
 	}
 }
@@ -30,22 +32,18 @@ bool InstancedRenderer::CreateInstanceBuffer(const Key& key)
 {
 	PIX_PROFILE();
 
-	//build instance buffer
-	D3D11_BUFFER_DESC iBufferDesc{};
-	iBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	iBufferDesc.ByteWidth = key.typeInfo.second * key.maxInstances;
-	iBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	iBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	iBufferDesc.MiscFlags = 0;
-	iBufferDesc.StructureByteStride = 0;
+	//build instance vertex buffer
+	GA::Buffer::Params params;
+	params.lifeTime = GA::Resource::LifeTime::Permanent;
+	params.sizeInBytes = key.typeInfo.second * key.maxInstances;
+	params.type = GA::Buffer::Type::Vertex;
+	params.cpuUpdateFreq = GA::Resource::CPUUpdateFrequency::Frequent;
 
-	ID3D11Buffer* d3dBuffer;
-	HRESULT result = GA::DX11::SafeCast(m_GameContext.pRenderer)->GetDevice()->CreateBuffer(&iBufferDesc, nullptr, &d3dBuffer);
-	if (Logger::LogHResult(result, L"Failed to create instanceBUFFER in InstancedRenderer::createInstanceBuffer"))
-		return false;
+	GA::Buffer* gaBuffer = m_GameContext.pRenderer->CreateBuffer(params).release();
 
-	void* instanceData = malloc(key.typeInfo.second * key.maxInstances);
-	InstanceBuffers iBuffer{ d3dBuffer, make_pair(instanceData, vector<InstanceBase*>{}) };
+	void* instanceData = malloc(size_t(key.typeInfo.second * key.maxInstances));
+
+	InstanceBuffers iBuffer{ gaBuffer, make_pair(instanceData, vector<InstanceBase*>{}) };
 	iBuffer.second.second.reserve(key.maxInstances);
 	return m_pDataMap.emplace(make_pair(key, iBuffer)).second;
 }
@@ -62,11 +60,9 @@ void InstancedRenderer::UpdateInstanceBuffers()
 
 			void* instanceData = bufs.second.first;
 
-			D3D11_MAPPED_SUBRESOURCE data;
-			ZeroMemory(&data, sizeof(D3D11_MAPPED_SUBRESOURCE));
-			GA::DX11::SafeCast(m_GameContext.pRenderer)->GetDeviceContext()->Map(bufs.first, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
-			memcpy(data.pData, instanceData, bufs.second.second.size() * key.typeInfo.second);
-			GA::DX11::SafeCast(m_GameContext.pRenderer)->GetDeviceContext()->Unmap(bufs.first, 0);
+			void* pData = bufs.first->Map();
+			memcpy(pData, instanceData, bufs.second.second.size() * key.typeInfo.second);
+			bufs.first->Unmap();
 		}
 	}
 	
@@ -104,7 +100,7 @@ bool InstancedRenderer::Register(const Key& key)
 	return true;
 }
 
-void InstancedRenderer::DrawInstanced(uint32_t materialID, MeshFilter* pMeshFilter, uint32_t instances, uint32_t stride, ID3D11Buffer* pBuffer)
+void InstancedRenderer::DrawInstanced(uint32_t materialID, MeshFilter* pMeshFilter, uint32_t instances, uint32_t stride, GA::Buffer* pGABuffer)
 {
 	PIX_PROFILE();
 
@@ -124,12 +120,15 @@ void InstancedRenderer::DrawInstanced(uint32_t materialID, MeshFilter* pMeshFilt
 	const VertexBufferData& vBuffer = pMeshFilter->GetVertexBufferData(m_GameContext, pMat);
 	UINT offsets[2] = { 0,0 };
 	UINT strides[2] = { vBuffer.VertexStride, stride };
-	ID3D11Buffer* buffers[2] = { vBuffer.pVertexBuffer, pBuffer };
+
+	ID3D11Buffer* buffers[2] = { std::any_cast<ID3D11Buffer*>(vBuffer.pVertexBuffer->GetInternal()), std::any_cast<ID3D11Buffer*>(pGABuffer->GetInternal())};
 
 	GA::DX11::SafeCast(m_GameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 2, buffers, strides, offsets);
 
 	//Set Index Buffer
-	GA::DX11::SafeCast(m_GameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(pMeshFilter->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	GA::DX11::SafeCast(m_GameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(
+		std::any_cast<ID3D11Buffer*>(pMeshFilter->m_pIndexBuffer->GetInternal()), DXGI_FORMAT_R32_UINT, 0);
 
 	//Set Primitive Topology
 	if (!pMat->UsesTesselation())
@@ -152,7 +151,7 @@ void InstancedRenderer::DrawInstanced(uint32_t materialID, MeshFilter* pMeshFilt
 	}
 }
 
-void InstancedRenderer::DrawInstancedShadowMap(uint32_t materialID, MeshFilter* pMeshFilter, uint32_t instances, uint32_t stride, ID3D11Buffer* pBuffer)
+void InstancedRenderer::DrawInstancedShadowMap(uint32_t materialID, MeshFilter* pMeshFilter, uint32_t instances, uint32_t stride, GA::Buffer* pGABuffer)
 {
 	PIX_PROFILE();
 
@@ -174,12 +173,13 @@ void InstancedRenderer::DrawInstancedShadowMap(uint32_t materialID, MeshFilter* 
 	const VertexBufferData& vBuffer = pMeshFilter->GetVertexBufferData(m_GameContext, pMat);
 	UINT offsets[2] = { 0,0 };
 	UINT strides[2] = { vBuffer.VertexStride, stride };
-	ID3D11Buffer* buffers[2] = { vBuffer.pVertexBuffer, pBuffer };
+	ID3D11Buffer* buffers[2] = { std::any_cast<ID3D11Buffer*>(vBuffer.pVertexBuffer->GetInternal()), std::any_cast<ID3D11Buffer*>(pGABuffer->GetInternal()) };
 
 	GA::DX11::QuickCast(m_GameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 2, buffers, strides, offsets);
 
 	//Set Index Buffer
-	GA::DX11::QuickCast(m_GameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(pMeshFilter->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	GA::DX11::QuickCast(m_GameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(
+		std::any_cast<ID3D11Buffer*>(pMeshFilter->m_pIndexBuffer->GetInternal()), DXGI_FORMAT_R32_UINT, 0);
 
 	//Set Primitive Topology
 	if (!pMat->UsesTesselation())
@@ -236,7 +236,7 @@ void InstancedRenderer::Draw()
 	{
 		uint32_t size = uint32_t(bufs.second.second.second.size());
 		uint32_t stride = bufs.first.typeInfo.second;
-		ID3D11Buffer* pBuffer = bufs.second.first;
+		GA::Buffer* pBuffer = bufs.second.first;
 		if (size > 0)
 		{
 			DrawInstanced(bufs.first.materialID, bufs.first.pMeshfilter, size, stride, pBuffer);
@@ -253,7 +253,7 @@ void InstancedRenderer::DrawShadowMap()
 	{
 		uint32_t size = static_cast<uint32_t>(bufs.second.second.second.size());
 		uint32_t stride = bufs.first.typeInfo.second;
-		ID3D11Buffer* pBuffer = bufs.second.first;
+		GA::Buffer* pBuffer = bufs.second.first;
 		if (size > 0)
 		{
 			DrawInstancedShadowMap(bufs.first.materialID, bufs.first.pMeshfilter, size, stride, pBuffer);

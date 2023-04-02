@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <GA/Buffer.h>
 #include "EffectHelper.h"
 
 class MeshFilterLoader;
@@ -9,17 +10,8 @@ class ModelComponent;
 
 struct VertexBufferData
 {
-	VertexBufferData() :
-		pDataStart(nullptr),
-		pVertexBuffer(nullptr),
-		BufferSize(0),
-		VertexStride(0),
-		VertexCount(0),
-		IndexCount(0),
-		InputLayoutID(0) {}
-
-	void* pDataStart;
-	ID3D11Buffer* pVertexBuffer;
+	void* pDataStart = nullptr;
+	GA::Buffer* pVertexBuffer;
 	UINT BufferSize;
 	UINT VertexStride;
 	UINT VertexCount;
@@ -29,7 +21,7 @@ struct VertexBufferData
 	void VertexBufferData::Destroy()
 	{
 		free(pDataStart);
-		SafeRelease(pVertexBuffer);
+		delete pVertexBuffer;
 	}
 };
 
@@ -91,7 +83,7 @@ private:
 	std::vector<DWORD> m_Indices;
 
 	std::vector<VertexBufferData> m_VertexBuffers;
-	ID3D11Buffer* m_pIndexBuffer;
+	std::unique_ptr<GA::Buffer> m_pIndexBuffer;
 
 	std::wstring m_MeshName;
 	std::wstring m_AssetFile;

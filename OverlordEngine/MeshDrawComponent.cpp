@@ -65,6 +65,8 @@ void MeshDrawComponent::InitializeBuffer(const GameContext& gameContext)
 	params.lifeTime = GA::Resource::LifeTime::Permanent;
 	params.sizeInBytes = sizeof(TrianglePosNormCol) * m_TriangleCapacity;
 	params.type = GA::Buffer::Type::Vertex;
+	params.cpuUpdateFreq = GA::Resource::CPUUpdateFrequency::Frequent;
+
 	m_pVertexBuffer = gameContext.pRenderer->CreateBuffer(params);
 }
 

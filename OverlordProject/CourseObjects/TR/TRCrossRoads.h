@@ -5,7 +5,7 @@
 class TRCrossRoads : public TRRoad
 {
 public:
-	TRCrossRoads(const XMINT2& position, int initRoadRef = 0, int initFreeRef = 0);
+	TRCrossRoads(const DirectX::XMINT2& position, int initRoadRef = 0, int initFreeRef = 0);
 	virtual ~TRCrossRoads() override;
 	virtual void Extend(bool forceFull = false) override;
 private:

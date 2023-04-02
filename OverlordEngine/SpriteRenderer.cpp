@@ -37,8 +37,6 @@ SpriteRenderer::SpriteRenderer() :
 SpriteRenderer::~SpriteRenderer()
 {
 	SafeRelease(m_pInputLayout);
-	SafeRelease(m_pVertexBuffer);
-	SafeRelease(m_pImmediateVertexBuffer);
 
 	m_Sprites.clear();
 	m_Textures.clear();
@@ -103,39 +101,25 @@ void SpriteRenderer::UpdateBuffer(const GameContext& gameContext)
 {
 	PIX_PROFILE();
 
-	UNREFERENCED_PARAMETER(gameContext);
-
-	//TODO:
-	// if the vertex buffer does not exists, or the number of sprites is bigger then the buffer size
-	//		release the buffer
-	//		update the buffer size (if needed)
-	//		Create a new buffer. Make sure the Usage flag is set to Dynamic, you bind to the vertex buffer
-	//		and you set the cpu access flags to access_write
-	//
-	//		Finally create the buffer. You can use the device in the game context. Be sure to log the HResult!
-
 	if (m_pVertexBuffer)
 	{
-		D3D11_BUFFER_DESC Desc{};
-		m_pVertexBuffer->GetDesc(&Desc);
-		if (m_Sprites.size() > Desc.ByteWidth / sizeof(SpriteVertex))
+		if (m_Sprites.size() > m_pVertexBuffer->GetSizeInBytes() / sizeof(SpriteVertex))
 		{
-			m_pVertexBuffer->Release();
+			// needs to be recreated
 			m_pVertexBuffer = nullptr;
 		}
 	}
 
 	if (!m_pVertexBuffer)
 	{
-		D3D11_BUFFER_DESC Desc{};
-		Desc.ByteWidth = (uint32_t)m_Sprites.size() * sizeof(SpriteVertex);
-		Desc.Usage = D3D11_USAGE_DYNAMIC;
-		Desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		Logger::LogHResult(GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&Desc, NULL, &m_pVertexBuffer), L"SpriteRenderer", true);
+		GA::Buffer::Params params;
+		params.sizeInBytes = (uint32_t)m_Sprites.size() * sizeof(SpriteVertex);
+		params.lifeTime = GA::Resource::LifeTime::Permanent;
+		params.type = GA::Buffer::Type::Vertex;
+		params.cpuUpdateFreq = GA::Resource::CPUUpdateFrequency::Frequent;
+
+		m_pVertexBuffer = gameContext.pRenderer->CreateBuffer(params);
 	}
-
-
 
 	//------------------------
 	//Sort Sprites
@@ -160,15 +144,11 @@ void SpriteRenderer::UpdateBuffer(const GameContext& gameContext)
 
 	if (m_pVertexBuffer != nullptr)
 	{
-		//TODO: Fill Buffer
-		// Finally fill the  buffer. You will need to create a D3D11_MAPPED_SUBRESOURCE
-		D3D11_MAPPED_SUBRESOURCE data;
-		// Next you will need to use the device context to map the vertex buffer to the mapped resource
-		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, {}, &data);
+		void* pData = m_pVertexBuffer->Map();
 		// use memcpy to copy all our sprites to the mapped resource
-		memcpy(data.pData, m_Sprites.data(), (uint32_t)m_Sprites.size() * sizeof(SpriteVertex));
+		memcpy(pData, m_Sprites.data(), (uint32_t)m_Sprites.size() * sizeof(SpriteVertex));
 		// unmap the vertex buffer
-		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->Unmap(m_pVertexBuffer, 0);
+		m_pVertexBuffer->Unmap();
 	}
 }
 
@@ -186,7 +166,9 @@ void SpriteRenderer::Draw(const GameContext& gameContext)
 
 	unsigned int stride = sizeof(SpriteVertex);
 	unsigned int offset = 0;
-	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+
+	ID3D11Buffer* internalBuf = std::any_cast<ID3D11Buffer*>(m_pVertexBuffer->GetInternal());
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &internalBuf, &stride, &offset);
 	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
 
 	unsigned int batchSize = 1;
@@ -262,17 +244,13 @@ void SpriteRenderer::DrawImmediate(const GameContext& gameContext, ID3D11ShaderR
 	//Create Immediate VB
 	if (!m_pImmediateVertexBuffer)
 	{
-		//Create a new buffer
-		D3D11_BUFFER_DESC buffDesc;
-		buffDesc.Usage = D3D11_USAGE_DYNAMIC;
-		buffDesc.ByteWidth = sizeof(SpriteVertex);
-		buffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		buffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		buffDesc.MiscFlags = 0;
+		GA::Buffer::Params params;
+		params.sizeInBytes = sizeof(SpriteVertex);
+		params.type = GA::Buffer::Type::Vertex;
+		params.lifeTime = GA::Resource::LifeTime::Permanent;
+		params.cpuUpdateFreq = GA::Resource::CPUUpdateFrequency::Frequent;
 
-		const auto hr = GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&buffDesc, nullptr, &m_pImmediateVertexBuffer);
-		if (Logger::LogHResult(hr, L"SpriteRenderer::DrawImmediate > Immediate Vertexbuffer creation failed!"))
-			return;
+		m_pImmediateVertexBuffer = gameContext.pRenderer->CreateBuffer(params);
 	}
 
 	//Map Vertex
@@ -284,10 +262,10 @@ void SpriteRenderer::DrawImmediate(const GameContext& gameContext, ID3D11ShaderR
 
 	if (!m_ImmediateVertex.Equals(vertex))
 	{
-		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->Map(m_pImmediateVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
-		memcpy(mappedResource.pData, &vertex, sizeof(SpriteVertex));
-		GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->Unmap(m_pImmediateVertexBuffer, 0);
+		void* pData = m_pImmediateVertexBuffer->Map();
+		memcpy(pData, &vertex, sizeof(SpriteVertex));
+		m_pImmediateVertexBuffer->Unmap();
+
 		m_ImmediateVertex = vertex;
 	}
 
@@ -296,7 +274,9 @@ void SpriteRenderer::DrawImmediate(const GameContext& gameContext, ID3D11ShaderR
 
 	unsigned int stride = sizeof(SpriteVertex);
 	unsigned int offset = 0;
-	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pImmediateVertexBuffer, &stride, &offset);
+
+	ID3D11Buffer* internalBuf = std::any_cast<ID3D11Buffer*>(m_pImmediateVertexBuffer->GetInternal());
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &internalBuf, &stride, &offset);
 	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetInputLayout(m_pInputLayout);
 
 	//Set Texture

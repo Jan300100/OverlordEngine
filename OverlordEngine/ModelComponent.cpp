@@ -93,11 +93,13 @@ void ModelComponent::Draw(const GameContext& gameContext)
 	//Set Vertex Buffer
 	UINT offset = 0;
 	auto vertexBufferData = m_pMeshFilter->GetVertexBufferData(gameContext, m_pMaterial);
-	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &vertexBufferData.pVertexBuffer, &vertexBufferData.VertexStride,
+	ID3D11Buffer* internalBuf = std::any_cast<ID3D11Buffer*>(vertexBufferData.pVertexBuffer->GetInternal());
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetVertexBuffers(0, 1, &internalBuf, &vertexBufferData.VertexStride,
 	                                               &offset);
 
 	//Set Index Buffer
-	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(m_pMeshFilter->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	GA::DX11::SafeCast(gameContext.pRenderer)->GetDeviceContext()->IASetIndexBuffer(
+		std::any_cast<ID3D11Buffer*>(m_pMeshFilter->m_pIndexBuffer->GetInternal()), DXGI_FORMAT_R32_UINT, 0);
 
 	//Set Primitive Topology
 	if (!m_pMaterial->UsesTesselation())

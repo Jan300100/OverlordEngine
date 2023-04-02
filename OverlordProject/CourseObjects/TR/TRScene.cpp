@@ -91,14 +91,18 @@ void TRScene::Initialize()
 	m_pFont48 = ContentManager::Load<SpriteFont>(L"./Resources/SpriteFonts/Astrantia_48_Bold.fnt");
 
 	//main menu banner
-	GameObject* bannerObj = new GameObject{};
-	m_pMenuBanner = new SpriteComponent(L"./Resources/Textures/GP2Exam2020_MainMenu.png", DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(1, 1, 1, 1.f));
-	bannerObj->AddComponent(m_pMenuBanner);
-	AddChild(bannerObj);
-	bannerObj->GetTransform()->Translate(0, 0, 0);
-	bannerObj->GetTransform()->Scale(OverlordGame::GetGameSettings().Window.Width / (1920.0f /*width of the banner texture*/)
-		, OverlordGame::GetGameSettings().Window.Height / (1080.f /*width of the banner texture*/), 1);
+	if (CmdOptions::Exists(L"showDAEBanner"))
+	{
+		GameObject* bannerObj = new GameObject{};
 
+		m_pMenuBanner = new SpriteComponent(L"./Resources/Textures/GP2Exam2020_MainMenu.png", DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(1, 1, 1, 1.f));
+		bannerObj->AddComponent(m_pMenuBanner);
+
+		AddChild(bannerObj);
+		bannerObj->GetTransform()->Translate(0, 0, 0);
+		bannerObj->GetTransform()->Scale(OverlordGame::GetGameSettings().Window.Width / (1920.0f /*width of the banner texture*/)
+			, OverlordGame::GetGameSettings().Window.Height / (1080.f /*width of the banner texture*/), 1);
+	}
 
 	InitializePPSets();
 	InitializeSounds();
@@ -204,7 +208,8 @@ void TRScene::Update()
 		{
 			GetGameContext().pInput->ForceMouseToCenter(false);
 			m_Playing = true;
-			m_pMenuBanner->SetColor({ 1,1,1,0 });
+			if (m_pMenuBanner)
+				m_pMenuBanner->SetColor({ 1,1,1,0 });
 			
 			//stop mainmenu audio and start game audio
 			unsigned long long dspclock;
@@ -370,8 +375,11 @@ void TRScene::ExtendTiles(bool forceFull)
 			toExtend.push_back(tile.first);
 	}
 
-	static int calls = 0;
-	std::cout << calls++ << " generating : " << toExtend.size() << "Tiles\n";
+	constexpr uint32_t largeAmount = 40;
+	if (toExtend.size() > largeAmount)
+	{
+		Logger::LogInfo(L"Large Amount of tiles generated during ExtendTiles: " + std::to_wstring(toExtend.size()));
+	}
 
 	for (XMINT2 tileLocation : toExtend)
 	{
@@ -647,7 +655,8 @@ void TRScene::InitializeGame()
 	m_Playing = false;
 	m_GameOver = false;
 	//enable main menu banner
-	m_pMenuBanner->SetColor({ 1,1,1,1 });
+	if (m_pMenuBanner)
+		m_pMenuBanner->SetColor({ 1,1,1,1 });
 }
 
 void PPVariableSet::Set(PostFog* pFog, PostFilters* pFilters)

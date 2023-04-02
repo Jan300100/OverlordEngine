@@ -1,5 +1,7 @@
 #pragma once
 #include "Singleton.h"
+#include <GA/Buffer.h>
+#include <memory>
 
 class TextureData;
 class OverlordGame;
@@ -67,7 +69,10 @@ private:
 	ID3DX11Effect* m_pEffect;
 	ID3DX11EffectTechnique* m_pTechnique;
 	ID3D11InputLayout* m_pInputLayout;
-	ID3D11Buffer *m_pVertexBuffer, *m_pImmediateVertexBuffer;
+
+	std::unique_ptr<GA::Buffer> m_pImmediateVertexBuffer;
+	std::unique_ptr<GA::Buffer> m_pVertexBuffer;
+
 	SpriteVertex m_ImmediateVertex{};
 
 	ID3DX11EffectMatrixVariable* m_pTransfromMatrixV;

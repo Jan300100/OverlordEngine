@@ -12,7 +12,7 @@ namespace GA
 		{
 			ID3D11Buffer* m_pInternalBuffer;
 		public:
-			BufferDX11(GA::DX11::InterfaceDX11* i, const GA::Buffer::Params& params);
+			BufferDX11(GA::DX11::InterfaceDX11* pGAInterface, const GA::Buffer::Params& params);
 			~BufferDX11();
 
 			virtual std::any GetInternal() override;

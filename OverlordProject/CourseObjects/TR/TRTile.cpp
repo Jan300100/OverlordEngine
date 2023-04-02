@@ -9,7 +9,7 @@
 std::vector<InstancedRenderer::Key> TRTile::m_Keys{};
 size_t TRTile::NR_TILES = 0;
 
-TRTile::TRTile(const XMINT2& position, const XMINT2& direction, int initRoadRef, int initFreeRef, size_t level)
+TRTile::TRTile(const DirectX::XMINT2& position, const DirectX::XMINT2& direction, int initRoadRef, int initFreeRef, size_t level)
 	: m_Position{ position }, m_Direction{ direction }, m_FreeRef{ initFreeRef }, m_RoadRef{initRoadRef}, m_pGroundQuad{}
 	, m_Type{Type::Free}
 	, m_Details{}
@@ -49,8 +49,8 @@ void TRTile::GenerateProps()
 	//Rock
 	for (size_t i = 0; i < m_DesiredDetails[size_t(DetailType::Rock)]; i++)
 	{
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[int(KeyIds::Rock)], GetScene()->GetInstancedRenderer() });
-		XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
+		m_Details.push_back(Instance<DirectX::XMFLOAT4X4>{ m_Keys[int(KeyIds::Rock)], GetScene()->GetInstancedRenderer() });
+		DirectX::XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
 		pos.x += TRScene::GetPosition(m_Position).x;
 		pos.z += TRScene::GetPosition(m_Position).y;
 		float scale = randF(0.6f, 0.9f);
@@ -60,8 +60,8 @@ void TRTile::GenerateProps()
 	//Bush
 	for (size_t i = 0; i < m_DesiredDetails[size_t(DetailType::Bush)]; i++)
 	{
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[int(KeyIds::Bush)], GetScene()->GetInstancedRenderer() });
-		XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
+		m_Details.push_back(Instance<DirectX::XMFLOAT4X4>{ m_Keys[int(KeyIds::Bush)], GetScene()->GetInstancedRenderer() });
+		DirectX::XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
 		pos.x += TRScene::GetPosition(m_Position).x;
 		pos.z += TRScene::GetPosition(m_Position).y;
 		float scale = randF(0.5f, 1.4f);
@@ -71,21 +71,21 @@ void TRTile::GenerateProps()
 	//Pillar
 	for (size_t i = 0; i < m_DesiredDetails[size_t(DetailType::Pillar)]; i++)
 	{
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[(size_t)KeyIds::Pillar], GetScene()->GetInstancedRenderer() });
-		XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
+		m_Details.push_back(Instance<DirectX::XMFLOAT4X4>{ m_Keys[(size_t)KeyIds::Pillar], GetScene()->GetInstancedRenderer() });
+		DirectX::XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
 		pos.x += TRScene::GetPosition(m_Position).x;
 		pos.z += TRScene::GetPosition(m_Position).y;
 		float width = randF(0.9f, 1.1f);
 		float height = randF(0.9f, 1.1f);
-		XMFLOAT3 rot = { randF(-0.1f, 0.1f),randF(0, 6.2830f),randF(-0.1f, 0.1f) };
+		DirectX::XMFLOAT3 rot = { randF(-0.1f, 0.1f),randF(0, 6.2830f),randF(-0.1f, 0.1f) };
 		m_Details.back().Initialize(CreateTransform(pos, rot, { width,height,width }));
 	}
 
 	//FireHolder
 	for (size_t i = 0; i < m_DesiredDetails[size_t(DetailType::FireHolder)]; i++)
 	{
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[(size_t)KeyIds::FireHolder], GetScene()->GetInstancedRenderer() });
-		XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
+		m_Details.push_back(Instance<DirectX::XMFLOAT4X4>{ m_Keys[(size_t)KeyIds::FireHolder], GetScene()->GetInstancedRenderer() });
+		DirectX::XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
 		pos.x += TRScene::GetPosition(m_Position).x;
 		pos.z += TRScene::GetPosition(m_Position).y;
 		float scale = randF(0.9f, 1.1f);
@@ -95,8 +95,8 @@ void TRTile::GenerateProps()
 	//Brick
 	for (size_t i = 0; i < m_DesiredDetails[size_t(DetailType::Brick)]; i++)
 	{
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[(size_t)KeyIds::Brick], GetScene()->GetInstancedRenderer() });
-		XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), -1 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
+		m_Details.push_back(Instance<DirectX::XMFLOAT4X4>{ m_Keys[(size_t)KeyIds::Brick], GetScene()->GetInstancedRenderer() });
+		DirectX::XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), -1 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
 		pos.x += TRScene::GetPosition(m_Position).x;
 		pos.z += TRScene::GetPosition(m_Position).y;
 		m_Details.back().Initialize(CreateTransform(pos, { randF(-0.1f, 0.1f),randF(0, 6.2830f),randF(-0.1f, 0.1f) }, { randF(0.6f, 1.0f),randF(0.3f, 0.5f),randF(0.6f, 1.0f) }));
@@ -106,23 +106,23 @@ void TRTile::GenerateProps()
 	for (size_t i =0; i < m_DesiredDetails[size_t(DetailType::Conifer)]; i++)
 	{
 		int key = int(KeyIds::Conifer1_t) + (rand() % 3 == 0);
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[key], GetScene()->GetInstancedRenderer() });
-		XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
+		m_Details.push_back(Instance<DirectX::XMFLOAT4X4>{ m_Keys[key], GetScene()->GetInstancedRenderer() });
+		DirectX::XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
 		pos.x += TRScene::GetPosition(m_Position).x;
 		pos.z += TRScene::GetPosition(m_Position).y;
 		float scale = randF(0.4f, 0.6f);
-		XMFLOAT3 rot = { randF(-0.05f, 0.05f),randF(0, 6.2830f),randF(-0.05f, 0.05f) };
+		DirectX::XMFLOAT3 rot = { randF(-0.05f, 0.05f),randF(0, 6.2830f),randF(-0.05f, 0.05f) };
 		m_Details.back().Initialize(CreateTransform(pos, rot, { scale,scale,scale }));
 		////leaves
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[key + 2], GetScene()->GetInstancedRenderer() });
+		m_Details.push_back(Instance<DirectX::XMFLOAT4X4>{ m_Keys[key + 2], GetScene()->GetInstancedRenderer() });
 		m_Details.back().Initialize(CreateTransform(pos, rot, { scale,scale,scale }));
 	}
 
 	//grass
 	for (size_t i = 0; i < m_DesiredDetails[size_t(DetailType::Grass)]; i++)
 	{
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[int(KeyIds::Grass2_1) + rand()%2], GetScene()->GetInstancedRenderer() });
-		XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
+		m_Details.push_back(Instance<DirectX::XMFLOAT4X4>{ m_Keys[int(KeyIds::Grass2_1) + rand()%2], GetScene()->GetInstancedRenderer() });
+		DirectX::XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
 		pos.x += TRScene::GetPosition(m_Position).x;
 		pos.z += TRScene::GetPosition(m_Position).y;
 		float scale = randF(0.35f, 0.6f);
@@ -132,8 +132,8 @@ void TRTile::GenerateProps()
 	//zont
 	for (size_t i = 0; i < m_DesiredDetails[size_t(DetailType::Zont)]; i++)
 	{
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[(size_t)KeyIds::Zont], GetScene()->GetInstancedRenderer() });
-		XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
+		m_Details.push_back(Instance<DirectX::XMFLOAT4X4>{ m_Keys[(size_t)KeyIds::Zont], GetScene()->GetInstancedRenderer() });
+		DirectX::XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
 		pos.x += TRScene::GetPosition(m_Position).x;
 		pos.z += TRScene::GetPosition(m_Position).y;
 		float scale = randF(0.35f, 0.6f);
@@ -143,8 +143,8 @@ void TRTile::GenerateProps()
 	//nettle
 	for (size_t i = 0; i < m_DesiredDetails[size_t(DetailType::Nettle)]; i++)
 	{
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[(size_t)KeyIds::Nettle], GetScene()->GetInstancedRenderer() });
-		XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
+		m_Details.push_back(Instance<DirectX::XMFLOAT4X4>{ m_Keys[(size_t)KeyIds::Nettle], GetScene()->GetInstancedRenderer() });
+		DirectX::XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
 		pos.x += TRScene::GetPosition(m_Position).x;
 		pos.z += TRScene::GetPosition(m_Position).y;
 		float scale = randF(0.35f, 0.6f);
@@ -154,8 +154,8 @@ void TRTile::GenerateProps()
 	//oduvanchik
 	for (size_t i = 0; i < m_DesiredDetails[size_t(DetailType::Oduvanchik)]; i++)
 	{
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[(size_t)KeyIds::Oduvanchik], GetScene()->GetInstancedRenderer() });
-		XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
+		m_Details.push_back(Instance<DirectX::XMFLOAT4X4>{ m_Keys[(size_t)KeyIds::Oduvanchik], GetScene()->GetInstancedRenderer() });
+		DirectX::XMFLOAT3 pos = { randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f), 0 , randF(-TRScene::TILE_SIZE / 2.0f, TRScene::TILE_SIZE / 2.0f) };
 		pos.x += TRScene::GetPosition(m_Position).x;
 		pos.z += TRScene::GetPosition(m_Position).y;
 		float scale = randF(0.35f, 0.6f);
@@ -172,7 +172,7 @@ void TRTile::Initialize(const GameContext& gameContext)
 	//*********
 
 	//create groundQuad
-	m_pGroundQuad = new Instance<XMFLOAT2>{ m_Keys[(int)KeyIds::Ground], GetScene()->GetInstancedRenderer() };
+	m_pGroundQuad = new Instance<DirectX::XMFLOAT2>{ m_Keys[(int)KeyIds::Ground], GetScene()->GetInstancedRenderer() };
 	m_pGroundQuad->Initialize( TRScene::GetPosition(m_Position));
 
 	for (size_t i = 0; i < size_t(DetailType::Size); i++)
@@ -200,26 +200,26 @@ void TRTile::CreateKeys()
 {
 	PIX_PROFILE();
 
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Grass, 30000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Grass2_2.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Grass, 30000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Grass2_4.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Zont,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Zont.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Nettle,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Nettle.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Oduvanchik,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Oduvanchik.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Grass, 30000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Grass2_2.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Grass, 30000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Grass2_4.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Zont,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Zont.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Nettle,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Nettle.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Oduvanchik,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Oduvanchik.ovm") });
 
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Rock,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Rock3.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Props,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Pillar.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Props,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/FireHolder.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Props,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Brick.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Bush,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Bush1.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Bark,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer1_Trunk.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Bark,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer3_Trunk.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Conifer,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer1_Leaves.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Conifer,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer3_Leaves.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Rock,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Rock3.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Props,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Pillar.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Props,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/FireHolder.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Props,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Brick.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Bush,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Bush1.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Bark,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer1_Trunk.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Bark,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer3_Trunk.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Conifer,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer1_Leaves.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Conifer,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer3_Leaves.ovm") });
 
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Obstacle.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT2>::m_TypeInfo, (int)MatIds::Ground,1500, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/TileQuad.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Road.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/GapRoad.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/HalfRoad.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Base,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Base.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Obstacle.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT2>::m_TypeInfo, (int)MatIds::Ground,1500, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/TileQuad.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Road.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/GapRoad.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/HalfRoad.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Base,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Base.ovm") });
 }

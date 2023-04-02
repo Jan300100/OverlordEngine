@@ -53,7 +53,6 @@ MeshFilter::~MeshFilter()
 	});
 
 	m_VertexBuffers.clear();
-	SafeRelease(m_pIndexBuffer);
 }
 
 void MeshFilter::BuildIndexBuffer(const GameContext& gameContext)
@@ -63,17 +62,13 @@ void MeshFilter::BuildIndexBuffer(const GameContext& gameContext)
 	if (m_pIndexBuffer != nullptr)
 		return;
 
-	D3D11_BUFFER_DESC bd = {};
-	bd.Usage = D3D11_USAGE_IMMUTABLE;
-	bd.ByteWidth = static_cast<uint32_t>(sizeof(DWORD) * m_Indices.size());
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	bd.MiscFlags = 0;
-	D3D11_SUBRESOURCE_DATA initData;
-	initData.pSysMem = m_Indices.data();
-
-	auto hr = GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
-	Logger::LogHResult(hr, L"MeshFilter::BuildIndexBuffer()");
+	GA::Buffer::Params params;
+	params.lifeTime = GA::Resource::LifeTime::Permanent;
+	params.cpuUpdateFreq = GA::Resource::CPUUpdateFrequency::Never;
+	params.sizeInBytes = static_cast<uint32_t>(sizeof(DWORD) * m_Indices.size());
+	params.initialData = m_Indices.data();
+	params.type = GA::Buffer::Type::Index;
+	m_pIndexBuffer = gameContext.pRenderer->CreateBuffer(params);
 }
 
 int MeshFilter::GetVertexBufferId(UINT inputLayoutId)
@@ -179,21 +174,15 @@ void MeshFilter::BuildVertexBuffer(const GameContext& gameContext, UINT inputLay
 		}
 	}
 
-
-
-
 	//fill a buffer description to copy the vertexdata into graphics memory
-	D3D11_BUFFER_DESC bd = {};
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = data.BufferSize;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	bd.MiscFlags = 0;
+	GA::Buffer::Params params;
+	params.cpuUpdateFreq = GA::Resource::CPUUpdateFrequency::Possible;
+	params.lifeTime = GA::Resource::LifeTime::Permanent;
+	params.sizeInBytes = data.BufferSize;
+	params.type = GA::Buffer::Type::Vertex;
+	params.initialData = data.pDataStart;
 
-	D3D11_SUBRESOURCE_DATA initData;
-	initData.pSysMem = data.pDataStart;
-	//create a ID3D10Buffer in graphics memory containing the vertex info
-	GA::DX11::SafeCast(gameContext.pRenderer)->GetDevice()->CreateBuffer(&bd, &initData, &data.pVertexBuffer);
+	data.pVertexBuffer = gameContext.pRenderer->CreateBuffer(params).release();
 
 	m_VertexBuffers.push_back(data);
 }
