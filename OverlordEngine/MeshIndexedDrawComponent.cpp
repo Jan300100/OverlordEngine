@@ -5,6 +5,8 @@
 #include "CameraComponent.h"
 #include "GameObject.h"
 #include "GameScene.h"
+
+// todo: dx11
 #include <GA/DX11/InterfaceDX11.h>
 
 ID3DX11EffectMatrixVariable* MeshIndexedDrawComponent::m_pWorldVar = nullptr;

@@ -5,6 +5,8 @@
 #include "Material.h"
 #include "ModelAnimator.h"
 #include "TransformComponent.h"
+
+// todo: dx11
 #include <GA/DX11/InterfaceDX11.h>
 
 ModelComponent::ModelComponent(std::wstring assetFile, bool castShadows):

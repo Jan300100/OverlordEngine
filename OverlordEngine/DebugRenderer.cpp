@@ -2,9 +2,10 @@
 #include "DebugRenderer.h"
 #include "Logger.h"
 #include "ContentManager.h"
-#include <GA/DX11/InterfaceDX11.h>
-
 #include <GA/Buffer.h>
+
+// todo: dx11
+#include <GA/DX11/InterfaceDX11.h>
 
 ID3DX11Effect* DebugRenderer::m_pEffect = nullptr;
 ID3DX11EffectTechnique* DebugRenderer::m_pTechnique = nullptr;

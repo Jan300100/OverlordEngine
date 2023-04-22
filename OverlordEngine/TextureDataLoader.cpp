@@ -4,9 +4,6 @@
 #include <GA/Texture2D.h>
 #include <GA/Helpers.h>
 
-//
-#include <GA/DX11/InterfaceDX11.h>
-
 using namespace DirectX;
 
 std::unique_ptr<DirectX::ScratchImage> TextureDataLoader::GenerateMips(DirectX::ScratchImage* imageDataWithoutMips)

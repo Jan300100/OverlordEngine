@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "EffectLoader.h"
-//
+
+// todo: dx11
 #include <GA/DX11/InterfaceDX11.h>
 
 std::shared_ptr<ID3DX11Effect> EffectLoader::LoadContent(const std::wstring& assetFile)

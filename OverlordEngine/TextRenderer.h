@@ -40,7 +40,7 @@ private:
 	TextRenderer();
 	~TextRenderer();
 
-	void InitRenderer(ID3D11Device* pDevice);
+	void InitRenderer(GA::Interface* pGAInterface);
 	void Draw(const GameContext& gameContext);
 	void UpdateBuffer(const GameContext& gameContext);
 	static void CreateTextVertices(const SpriteFont* pFont, const TextCache& info, TextVertex* pBuffer, int& bufferPosition);

@@ -12,6 +12,7 @@
 
 #include "GA/Interface.h"
 #include "GA/DX11/InterfaceDX11.h"
+
 #include <CmdOptions.h>
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -217,8 +218,8 @@ HRESULT OverlordGame::InitializeGame()
 	//MANAGER INITIALIZE
 	ContentManager::Initialize(m_pGAInterface);
 	DebugRenderer::InitRenderer(m_pGAInterface);
-	SpriteRenderer::GetInstance()->InitRenderer(GA::DX11::SafeCast(m_pGAInterface)->GetDevice());
-	TextRenderer::GetInstance()->InitRenderer(GA::DX11::SafeCast(m_pGAInterface)->GetDevice());
+	SpriteRenderer::GetInstance()->InitRenderer(m_pGAInterface);
+	TextRenderer::GetInstance()->InitRenderer(m_pGAInterface);
 	SoundManager::GetInstance(); //Constructor calls Initialize
 
 	// Update PP

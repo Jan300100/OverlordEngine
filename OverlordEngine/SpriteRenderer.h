@@ -62,7 +62,7 @@ private:
 	SpriteRenderer();
 	~SpriteRenderer();
 
-	void InitRenderer(ID3D11Device* pDevice);
+	void InitRenderer(GA::Interface* pGAInterface);
 	void Draw(const GameContext& gameContext);
 	void UpdateBuffer(const GameContext& gameContext);
 

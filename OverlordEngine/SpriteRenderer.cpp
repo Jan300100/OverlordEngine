@@ -46,7 +46,7 @@ SpriteRenderer::~SpriteRenderer()
 	m_Textures.clear();
 }
 
-void SpriteRenderer::InitRenderer(ID3D11Device* pDevice)
+void SpriteRenderer::InitRenderer(GA::Interface* pGAInterface)
 {
 	PIX_PROFILE();
 
@@ -76,7 +76,7 @@ void SpriteRenderer::InitRenderer(ID3D11Device* pDevice)
 		return;
 	}
 
-	EffectHelper::BuildInputLayout(pDevice, m_pTechnique, &m_pInputLayout, m_InputLayoutSize);
+	EffectHelper::BuildInputLayout(GA::DX11::SafeCast(pGAInterface)->GetDevice(), m_pTechnique, &m_pInputLayout, m_InputLayoutSize);
 
 	//Transform Matrix
 	const auto settings = OverlordGame::GetGameSettings();

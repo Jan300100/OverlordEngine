@@ -6,6 +6,8 @@
 #include "GameObject.h"
 #include "GameScene.h"
 #include <GA/Buffer.h>
+
+// todo: dx11
 #include <GA/DX11/InterfaceDX11.h>
 
 ID3DX11EffectMatrixVariable* MeshDrawComponent::m_pWorldVar = nullptr;

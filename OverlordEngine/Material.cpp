@@ -4,9 +4,10 @@
 #include "CameraComponent.h"
 #include "ModelComponent.h"
 #include "TransformComponent.h"
-#include <GA/DX11/InterfaceDX11.h>
-
 #include <StringHelper.h>
+
+// todo: dx11
+#include <GA/DX11/InterfaceDX11.h>
 
 Material::Material(std::wstring effectFile, std::wstring technique, bool usesTesselation) :
 	m_UsesTesselation{usesTesselation},
