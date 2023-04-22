@@ -3,7 +3,7 @@
 
 class GameObject;
 struct GameContext;
-class TextureData;
+class GA::Texture2D;
 
 enum class Direction
 {

@@ -3,14 +3,19 @@
 #include <typeinfo>
 #include "ContentLoader.h"
 
+namespace GA
+{
+	class Interface;
+}
+
 class ContentManager
 {
 public:
-	static void Initialize(ID3D11Device* pDevice);
+	static void Initialize(GA::Interface* pGAInterface);
 	static void AddLoader(BaseLoader* loader);
 
 	template<class T> 
-	static T* Load(const std::wstring& assetFile)
+	static std::shared_ptr<T> Load(const std::wstring& assetFile)
 	{
 		const type_info& ti = typeid(T);
 		for(BaseLoader* loader:m_Loaders)
@@ -32,7 +37,7 @@ private:
 	~ContentManager() = default;
 
 	static std::vector<BaseLoader*> m_Loaders;
-	static ID3D11Device* m_pDevice;
+	static GA::Interface* m_pGAInterface;
 	static bool m_IsInitialized;
 
 private:

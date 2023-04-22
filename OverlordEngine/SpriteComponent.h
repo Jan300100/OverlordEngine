@@ -1,11 +1,14 @@
 #pragma once
 #include "BaseComponent.h"
 
-class TextureData;
+namespace GA
+{
+	class Texture2D;
+}
 
 class SpriteComponent : public BaseComponent
 {
-	TextureData* m_pTexture;
+	GA::Texture2D* m_pTexture;
 	std::wstring m_SpriteAsset;
 	DirectX::XMFLOAT2 m_Pivot;
 	DirectX::XMFLOAT4 m_Color;

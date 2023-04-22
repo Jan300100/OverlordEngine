@@ -2,7 +2,10 @@
 
 #include "PbrMaterial_Shadow.h"
 
-class TextureData;
+namespace GA
+{
+	class Texture2D;
+}
 using namespace DirectX;
 using namespace std;
 
@@ -27,7 +30,7 @@ protected:
 
 private:
 	//statics
-	static TextureData* m_pNoiseTexture;
+	static GA::Texture2D* m_pNoiseTexture;
 	static float m_WindForce;
 	static XMFLOAT2 m_WindDirection;
 	static float m_NoiseUvScale;

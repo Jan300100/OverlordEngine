@@ -3,8 +3,6 @@
 #pragma once
 #include "TRMaterial.h"
 
-class TextureData;
-
 class TRSkinnedMaterial final : public TRMaterial
 {
 public:

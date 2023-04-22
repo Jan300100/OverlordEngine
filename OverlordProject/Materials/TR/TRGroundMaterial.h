@@ -1,7 +1,7 @@
 #pragma once
 #include "TRMaterial.h"
 
-class TextureData;
+class GA::Texture2D;
 using namespace DirectX;
 using namespace std;
 
@@ -37,7 +37,7 @@ private:
 	static ID3DX11EffectScalarVariable* m_pNoiseHeightVariable;
 	float m_NoiseUVScale;
 	static ID3DX11EffectScalarVariable* m_pNoiseUvScaleVariable;
-	TextureData* m_pNoiseTexture;
+	GA::Texture2D* m_pNoiseTexture;
 	static ID3DX11EffectShaderResourceVariable* m_pNoiseTextureVariable;
 
 	//WORLDUVS

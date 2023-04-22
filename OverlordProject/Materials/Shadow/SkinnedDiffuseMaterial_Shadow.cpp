@@ -5,10 +5,12 @@
 #include "GeneralStructs.h"
 #include "Logger.h"
 #include "ContentManager.h"
-#include "TextureData.h"
 #include "ModelComponent.h"
 #include "ModelAnimator.h"
 #include "Components.h"
+
+// todo: dx11
+#include <GA/DX11/Texture2DDX11.h>
 
 ID3DX11EffectShaderResourceVariable* SkinnedDiffuseMaterial_Shadow::m_pDiffuseSRVvariable = nullptr;
 ID3DX11EffectMatrixVariable* SkinnedDiffuseMaterial_Shadow::m_pBoneTransforms = nullptr;
@@ -22,7 +24,7 @@ SkinnedDiffuseMaterial_Shadow::SkinnedDiffuseMaterial_Shadow() : Material(L"./Re
 
 void SkinnedDiffuseMaterial_Shadow::SetDiffuseTexture(const std::wstring& assetFile)
 {
-	m_pDiffuseTexture = ContentManager::Load<TextureData>(assetFile);
+	m_pDiffuseTexture = ContentManager::Load<GA::Texture2D>(assetFile).get();
 
 }
 
@@ -92,7 +94,7 @@ void SkinnedDiffuseMaterial_Shadow::UpdateEffectVariables(const GameContext& gam
 
 	if (m_pDiffuseTexture && m_pDiffuseSRVvariable)
 	{
-		m_pDiffuseSRVvariable->SetResource(m_pDiffuseTexture->GetShaderResourceView());
+		m_pDiffuseSRVvariable->SetResource(GA::DX11::SafeCast(m_pDiffuseTexture)->GetSRV());
 	}
 
 	if (m_pLightDirectionVariable)

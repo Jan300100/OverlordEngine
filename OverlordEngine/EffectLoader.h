@@ -11,6 +11,5 @@ public:
 	EffectLoader() = default;
 	virtual ~EffectLoader() = default;
 protected:
-	ID3DX11Effect* LoadContent(const std::wstring& assetFile) override;
-	void Destroy(ID3DX11Effect* objToDestroy) override;
+	std::shared_ptr<ID3DX11Effect> LoadContent(const std::wstring& assetFile) override;
 };

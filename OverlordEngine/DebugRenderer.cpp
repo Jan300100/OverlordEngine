@@ -27,7 +27,7 @@ void DebugRenderer::InitRenderer(GA::Interface* pGAInterface, unsigned int buffe
 {
 	m_BufferSize = bufferSize;
 	// TODO: paths shouldn't be hard coded.
-	m_pEffect = ContentManager::Load<ID3DX11Effect>(L"./Resources/Effects/DebugRenderer.fx");
+	m_pEffect = ContentManager::Load<ID3DX11Effect>(L"./Resources/Effects/DebugRenderer.fx").get();
 	m_pTechnique = m_pEffect->GetTechniqueByIndex(0);
 	m_pWvpVariable = m_pEffect->GetVariableBySemantic("WORLDVIEWPROJECTION")->AsMatrix();
 

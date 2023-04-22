@@ -19,6 +19,7 @@ namespace GA
 			virtual void Initialize() override;
 
 			virtual std::unique_ptr<GA::Buffer> CreateBuffer(const GA::Buffer::Params& params) override;
+			virtual std::unique_ptr<GA::Texture2D> CreateTexture2D(const GA::Texture2D::Params& params) override;
 			
 			void ClearBackBuffer() override;
 			void SetRenderTarget(RenderTarget* renderTarget) override;

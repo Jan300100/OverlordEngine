@@ -62,7 +62,7 @@ bool Material::LoadEffect(const GameContext& gameContext)
 	PIX_PROFILE();
 
 	//Load Effect
-	m_pEffect = ContentManager::Load<ID3DX11Effect>(m_effectFile);
+	m_pEffect = ContentManager::Load<ID3DX11Effect>(m_effectFile).get();
 
 	if (!m_TechniqueName.empty())
 	{

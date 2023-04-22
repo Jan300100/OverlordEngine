@@ -33,7 +33,10 @@ struct FontMetric
 	DirectX::XMFLOAT2 TexCoord;
 };
 
-class TextureData;
+namespace GA
+{
+	class Texture2D;
+}
 class TextRenderer;
 
 class SpriteFont final
@@ -64,7 +67,7 @@ public:
 	void SetBufferStart(int start) { m_BufferStart = start; }
 	int GetBufferSize() const { return m_BufferSize; }
 	void SetBufferSize(int size) { m_BufferSize = size; }
-	TextureData* GetTexture() const { return m_pTexture; }
+	GA::Texture2D* GetTexture() const { return m_pTexture; }
 	bool IsAddedToRenderer() const { return m_IsAddedToRenderer; }
 	void SetAddedToRenderer(bool set) { m_IsAddedToRenderer = set; }
 	int GetTextureWidth() const { return m_TextureWidth; }
@@ -84,7 +87,7 @@ private:
 	int m_TextureWidth;
 	int m_TextureHeight;
 	int m_BufferStart, m_BufferSize;
-	TextureData* m_pTexture;
+	GA::Texture2D* m_pTexture;
 	short m_FontSize;
 	bool m_IsAddedToRenderer;
 };

@@ -9,7 +9,7 @@
 #include "SpriteFontLoader.h"
 
 std::vector<BaseLoader*> ContentManager::m_Loaders = std::vector<BaseLoader*>();
-ID3D11Device* ContentManager::m_pDevice = nullptr;
+GA::Interface* ContentManager::m_pGAInterface = nullptr;
 bool ContentManager::m_IsInitialized = false;
 
 void ContentManager::Release()
@@ -23,11 +23,11 @@ void ContentManager::Release()
 	m_Loaders.clear();
 }
 
-void ContentManager::Initialize(ID3D11Device* pDevice)
+void ContentManager::Initialize(GA::Interface* pGAInterface)
 {
 	if(!m_IsInitialized)
 	{
-		m_pDevice = pDevice;
+		m_pGAInterface = pGAInterface;
 		m_IsInitialized = true;
 		AddLoader(new EffectLoader());
 		AddLoader(new MeshFilterLoader());
@@ -50,5 +50,5 @@ void ContentManager::AddLoader(BaseLoader* loader)
 	}
 
 	m_Loaders.push_back(loader);
-	loader->SetDevice(m_pDevice);
+	loader->SetGAInterface(m_pGAInterface);
 }

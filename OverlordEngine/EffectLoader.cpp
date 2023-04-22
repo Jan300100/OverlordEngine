@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "EffectLoader.h"
+//
+#include <GA/DX11/InterfaceDX11.h>
 
-ID3DX11Effect* EffectLoader::LoadContent(const std::wstring& assetFile)
+std::shared_ptr<ID3DX11Effect> EffectLoader::LoadContent(const std::wstring& assetFile)
 {
 	PIX_PROFILE();
 
@@ -20,7 +22,7 @@ ID3DX11Effect* EffectLoader::LoadContent(const std::wstring& assetFile)
 		D3D_COMPILE_STANDARD_FILE_INCLUDE,
 		shaderFlags,
 		0,
-		m_pDevice,
+		GA::DX11::SafeCast(m_pGAInterface)->GetDevice(),
 		&pEffect,
 		&pErrorBlob);
 
@@ -50,10 +52,5 @@ ID3DX11Effect* EffectLoader::LoadContent(const std::wstring& assetFile)
 		}
 	}
 
-	return pEffect;
-}
-
-void EffectLoader::Destroy(ID3DX11Effect* objToDestroy)
-{
-	SafeRelease(objToDestroy);
+	return std::shared_ptr<ID3DX11Effect>{pEffect, [](ID3DX11Effect* pEffect) {SafeRelease(pEffect); }};
 }

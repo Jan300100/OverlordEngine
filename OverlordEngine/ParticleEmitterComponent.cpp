@@ -6,8 +6,11 @@
 #include "TextureDataLoader.h"
 #include "Particle.h"
 #include "TransformComponent.h"
-#include <GA/DX11/InterfaceDX11.h>
 #include <GA/Buffer.h>
+
+// TODO: dx11
+#include <GA/DX11/InterfaceDX11.h>
+#include <GA/DX11/Texture2DDX11.h>
 
 ParticleEmitterComponent::ParticleEmitterComponent(std::wstring  assetFile, int particleCount) :
 	m_pVertexBuffer(nullptr),
@@ -44,7 +47,7 @@ void ParticleEmitterComponent::Initialize(const GameContext& gameContext)
 
 	LoadEffect(gameContext);
 	CreateVertexBuffer(gameContext);
-	m_pParticleTexture = ContentManager::Load<TextureData>(m_AssetFile);
+	m_pParticleTexture = ContentManager::Load<GA::Texture2D>(m_AssetFile).get();
 }
 
 void ParticleEmitterComponent::LoadEffect(const GameContext& gameContext)
@@ -52,7 +55,7 @@ void ParticleEmitterComponent::LoadEffect(const GameContext& gameContext)
 	PIX_PROFILE();
 
 	UNREFERENCED_PARAMETER(gameContext);
-	m_pEffect = ContentManager::Load<ID3DX11Effect>(L"./Resources/Effects/ParticleRenderer.fx");
+	m_pEffect = ContentManager::Load<ID3DX11Effect>(L"./Resources/Effects/ParticleRenderer.fx").get();
 	m_pDefaultTechnique = m_pEffect->GetTechniqueByIndex(0);
 	m_pWvpVariable = m_pEffect->GetVariableByName("matWvp")->AsMatrix();
 	if (!m_pWvpVariable->IsValid())
@@ -143,7 +146,7 @@ void ParticleEmitterComponent::PostDraw(const GameContext& gameContext)
 
 	if (m_pParticleTexture && m_pTextureVariable)
 	{
-		m_pTextureVariable->SetResource(m_pParticleTexture->GetShaderResourceView());
+		m_pTextureVariable->SetResource(GA::DX11::SafeCast(m_pParticleTexture)->GetSRV());
 	}
 
 

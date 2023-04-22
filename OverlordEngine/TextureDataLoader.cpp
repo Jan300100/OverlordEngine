@@ -4,6 +4,9 @@
 #include <GA/Texture2D.h>
 #include <GA/Helpers.h>
 
+//
+#include <GA/DX11/InterfaceDX11.h>
+
 using namespace DirectX;
 
 std::unique_ptr<DirectX::ScratchImage> TextureDataLoader::GenerateMips(DirectX::ScratchImage* imageDataWithoutMips)
@@ -27,7 +30,7 @@ std::unique_ptr<DirectX::ScratchImage> TextureDataLoader::GenerateMips(DirectX::
 	return imageMips;
 }
 
-std::unique_ptr<DirectX::ScratchImage> TextureDataLoader::GetInitialData(const std::wstring& assetFile)
+std::unique_ptr<DirectX::ScratchImage> TextureDataLoader::GetInitialData(const std::wstring& assetFile, bool generateMips)
 {
 	// even though it uses DirectXTex Library, seems pretty cross platform to me.
 
@@ -54,7 +57,10 @@ std::unique_ptr<DirectX::ScratchImage> TextureDataLoader::GetInitialData(const s
 			return nullptr;
 	}
 
-	image = std::move(GenerateMips(image.get()));
+	if (generateMips)
+	{
+		image = std::move(GenerateMips(image.get()));
+	}
 
 	return image;
 }
@@ -72,14 +78,11 @@ std::wstring TextureDataLoader::GetExtension(const std::wstring& assetFile)
 	}
 }
 
-TextureData* TextureDataLoader::LoadContent(const std::wstring& assetFile)
+std::shared_ptr<GA::Texture2D> TextureDataLoader::LoadContent(const std::wstring& assetFile)
 {
 	PIX_PROFILE();
 
-	ID3D11Resource* pTexture;
-	ID3D11ShaderResourceView* pShaderResourceView;
-
-	std::unique_ptr<DirectX::ScratchImage> initialData = GetInitialData(assetFile);
+	std::unique_ptr<DirectX::ScratchImage> initialData = GetInitialData(assetFile, true);
 
 	GA::Texture2D::Params params;
 
@@ -88,27 +91,16 @@ TextureData* TextureDataLoader::LoadContent(const std::wstring& assetFile)
 
 	params.format = GA::HELP::DXGIFormatToGAFormat(initialData->GetMetadata().format);
 
-	params.height = initialData->GetMetadata().height;
-	params.width = initialData->GetMetadata().width;
-	params.numMips = initialData->GetMetadata().mipLevels;
+	params.height = static_cast<uint32_t>(initialData->GetMetadata().height);
+	params.width = static_cast<uint32_t>(initialData->GetMetadata().width);
 	
-	// store subresource information:
-	// slicepitch
-	// rowpitch
-	// initialData
-	// ...
-
-	HRESULT hr = CreateShaderResourceView(m_pDevice, initialData->GetImages(), initialData->GetImageCount(), initialData->GetMetadata(), &pShaderResourceView);
-	if(Logger::LogHResult(hr, L"TextureDataLoader::LoadContent() > CreateShaderResourceView Failed!"))
+	//subresourceData
+	params.numSubresources = static_cast<uint32_t>(initialData->GetImageCount());
+	std::vector<void*> subResourceData{ params.numSubresources };
+	for (uint32_t i = 0; i < params.numSubresources; i++)
 	{
-		return nullptr;
+		subResourceData[i] = initialData->GetImages()[i].pixels;
 	}
-
-	pShaderResourceView->GetResource(&pTexture);
-	return new TextureData(pTexture, pShaderResourceView);
-}
-
-void TextureDataLoader::Destroy(TextureData* objToDestroy)
-{
-	SafeDelete(objToDestroy);
+	params.subresourceData = subResourceData.data();
+	return m_pGAInterface->CreateTexture2D(params);
 }

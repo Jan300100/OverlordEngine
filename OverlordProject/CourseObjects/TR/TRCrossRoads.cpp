@@ -86,7 +86,7 @@ void TRCrossRoads::Initialize(const GameContext& gameContext)
 
 	physx::PxMaterial* pMaterial = PhysxManager::GetInstance()->GetPhysics()->createMaterial(0.f, 0.f, 0.f);
 	std::shared_ptr<physx::PxGeometry> pGeometry{
-			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/Base.ovpc") } };
+			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/Base.ovpc").get() } };
 	AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos)} });
 
 

@@ -77,7 +77,7 @@ bool PostProcessingMaterial::LoadEffect(const GameContext& gameContext, const st
 
 	//TODO: complete
 	//Load Effect through ContentManager
-	m_pEffect = ContentManager::Load<ID3DX11Effect>(effectFile);
+	m_pEffect = ContentManager::Load<ID3DX11Effect>(effectFile).get();
 	//Check if m_TechniqueName (default constructor parameter) is set
 
 	if (m_TechniqueName != L"")

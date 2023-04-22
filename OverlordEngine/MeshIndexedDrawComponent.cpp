@@ -43,7 +43,7 @@ void MeshIndexedDrawComponent::Initialize(const GameContext& gameContext)
 
 void MeshIndexedDrawComponent::LoadEffect(const GameContext& gameContext)
 {
-	m_pEffect = ContentManager::Load<ID3DX11Effect>(L"./Resources/Effects/PosNormCol3D.fx");
+	m_pEffect = ContentManager::Load<ID3DX11Effect>(L"./Resources/Effects/PosNormCol3D.fx").get();
 	m_pTechnique = m_pEffect->GetTechniqueByIndex(0);
 
 	//*****************

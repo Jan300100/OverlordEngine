@@ -4,12 +4,15 @@
 
 #include "StringHelper.h"
 
-physx::PxConvexMesh* PxConvexMeshLoader::LoadContent(const std::wstring& assetFile)
+std::shared_ptr<physx::PxConvexMesh> PxConvexMeshLoader::LoadContent(const std::wstring& assetFile)
 {
 	PIX_PROFILE();
 
 	auto inputStream = physx::PxDefaultFileInputData(StringHelpers::WStringToString(assetFile).c_str());
-	return PhysxManager::GetInstance()->GetPhysics()->createConvexMesh(inputStream);
+	std::shared_ptr<physx::PxConvexMesh> result{ PhysxManager::GetInstance()->GetPhysics()->createConvexMesh(inputStream),
+		[](physx::PxConvexMesh* pMesh)
+		{
+			pMesh->release();
+		} };
+	return result;
 }
-
-void PxConvexMeshLoader::Destroy(physx::PxConvexMesh* ) {}

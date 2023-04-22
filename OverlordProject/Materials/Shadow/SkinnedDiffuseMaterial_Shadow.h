@@ -1,7 +1,7 @@
 #pragma once
 #include "Material.h"
 
-class TextureData;
+class GA::Texture2D;
 
 class SkinnedDiffuseMaterial_Shadow final : public Material
 {
@@ -17,7 +17,7 @@ protected:
 	void UpdateEffectVariables(const GameContext& gameContext, ModelComponent* pModelComponent) override;
 
 private:
-	TextureData* m_pDiffuseTexture;
+	GA::Texture2D* m_pDiffuseTexture;
 	DirectX::XMFLOAT3 m_LightDirection = { -0.577f, -0.577f, 0.577f };
 
 	static ID3DX11EffectShaderResourceVariable* m_pDiffuseSRVvariable;

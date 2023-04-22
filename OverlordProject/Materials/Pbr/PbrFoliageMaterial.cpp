@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "PbrFoliageMaterial.h"
-#include "TextureData.h"
 #include <ContentManager.h>
+
+// todo: dx11
+#include <GA/DX11/Texture2DDX11.h>
 
 ID3DX11EffectShaderResourceVariable* PbrFoliageMaterial::m_pNoiseTextureVariable = nullptr;
 ID3DX11EffectScalarVariable* PbrFoliageMaterial::m_pNoiseUvScaleVariable = nullptr;
@@ -10,7 +12,7 @@ ID3DX11EffectVectorVariable* PbrFoliageMaterial::m_pWindDirectionVariable = null
 ID3DX11EffectScalarVariable* PbrFoliageMaterial::m_pInfluenceVariable = nullptr;
 ID3DX11EffectScalarVariable* PbrFoliageMaterial::m_pTimePassedVariable = nullptr;
 
-TextureData* PbrFoliageMaterial::m_pNoiseTexture = nullptr;
+GA::Texture2D* PbrFoliageMaterial::m_pNoiseTexture = nullptr;
 float PbrFoliageMaterial::m_WindForce = 0.2f;
 XMFLOAT2 PbrFoliageMaterial::m_WindDirection = XMFLOAT2{0,1};
 float PbrFoliageMaterial::m_NoiseUvScale = 0.01f;
@@ -88,7 +90,7 @@ void PbrFoliageMaterial::UpdateEffectVariables(const GameContext& gameContext, M
 
 	if (m_pNoiseTextureVariable && m_pNoiseTexture)
 	{
-		m_pNoiseTextureVariable->SetResource(m_pNoiseTexture->GetShaderResourceView());
+		m_pNoiseTextureVariable->SetResource(GA::DX11::SafeCast(m_pNoiseTexture)->GetSRV());
 	}
 
 	if (m_pTimePassedVariable)
@@ -115,7 +117,7 @@ void PbrFoliageMaterial::UpdateEffectVariables(const GameContext& gameContext, M
 
 void PbrFoliageMaterial::SetNoiseTexture(const wstring& assetFile)
 {
-	m_pNoiseTexture = ContentManager::Load<TextureData>(assetFile);
+	m_pNoiseTexture = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 void PbrFoliageMaterial::SetNoiseUvScale(float scale)

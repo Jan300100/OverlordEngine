@@ -2,7 +2,7 @@
 #include <Material.h>
 
 
-class TextureData;
+class GA::Texture2D;
 using namespace DirectX;
 using namespace std;
 
@@ -71,7 +71,7 @@ private:
 	//*******
 	bool m_bDiffuseTexture;
 	static ID3DX11EffectScalarVariable* m_pUseDiffuseTextureVariable;
-	TextureData* m_pDiffuseTexture;
+	GA::Texture2D* m_pDiffuseTexture;
 	static ID3DX11EffectShaderResourceVariable* m_pDiffuseSRVvariable;
 	XMFLOAT4 m_ColorDiffuse;
 	static ID3DX11EffectVectorVariable* m_pDiffuseColorVariable;
@@ -81,7 +81,7 @@ private:
 	static ID3DX11EffectVectorVariable* m_pSpecularColorVariable;
 	bool m_bSpecularLevelTexture;
 	static ID3DX11EffectScalarVariable* m_pUseSpecularLevelTextureVariable;
-	TextureData* m_pSpecularLevelTexture;
+	GA::Texture2D* m_pSpecularLevelTexture;
 	static ID3DX11EffectShaderResourceVariable* m_pSpecularLevelSRVvariable;
 	int m_Shininess;
 	static ID3DX11EffectScalarVariable* m_pShininessVariable;
@@ -98,13 +98,13 @@ private:
 	static ID3DX11EffectScalarVariable* m_pFlipGreenChannelVariable;
 	bool m_bNormalMapping;
 	static ID3DX11EffectScalarVariable* m_pUseNormalMappingVariable;
-	TextureData* m_pNormalMappingTexture;
+	GA::Texture2D* m_pNormalMappingTexture;
 	static ID3DX11EffectShaderResourceVariable* m_pNormalMappingSRVvariable;
 	//ENVIRONMENT MAPPING
 	//*******************
 	bool m_bEnvironmentMapping;
 	static ID3DX11EffectScalarVariable* m_pUseEnvironmentMappingVariable;
-	TextureData* m_pEnvironmentCube;
+	GA::Texture2D* m_pEnvironmentCube;
 	static ID3DX11EffectShaderResourceVariable* m_pEnvironmentSRVvariable;
 	float m_ReflectionStrength;
 	static ID3DX11EffectScalarVariable* m_pReflectionStrengthVariable;
@@ -118,7 +118,7 @@ private:
 	static ID3DX11EffectScalarVariable* m_pOpacityVariable;
 	bool m_bOpacityMap;
 	static ID3DX11EffectScalarVariable* m_pUseOpacityMapVariable;
-	TextureData* m_pOpacityMap;
+	GA::Texture2D* m_pOpacityMap;
 	static ID3DX11EffectShaderResourceVariable* m_pOpacitySRVvariable;
 	//SPECULAR MODELS
 	//***************

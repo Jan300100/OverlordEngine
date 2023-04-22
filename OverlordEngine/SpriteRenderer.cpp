@@ -2,10 +2,14 @@
 #include "SpriteRenderer.h"
 #include "ContentManager.h"
 #include "EffectHelper.h"
-#include "TextureData.h"
 #include <algorithm>
 #include "OverlordGame.h"
+
+#include <GA/Buffer.h>
+
+// todo: dx11
 #include <GA/DX11/InterfaceDX11.h>
+#include <GA/DX11/Texture2DDX11.h>
 
 bool SpriteRenderer::SpriteSortByTexture(const SpriteVertex& v0, const SpriteVertex& v1)
 {
@@ -19,7 +23,7 @@ bool SpriteRenderer::SpriteSortByDepth(const SpriteVertex& v0, const SpriteVerte
 
 SpriteRenderer::SpriteRenderer() :
 	m_Sprites(std::vector<SpriteVertex>()),
-	m_Textures(std::vector<TextureData*>()),
+	m_Textures(std::vector<GA::Texture2D*>()),
 	m_BufferSize(50),
 	m_InputLayoutSize(0),
 	m_pEffect(nullptr),
@@ -47,7 +51,7 @@ void SpriteRenderer::InitRenderer(ID3D11Device* pDevice)
 	PIX_PROFILE();
 
 	//Effect
-	m_pEffect = ContentManager::Load<ID3DX11Effect>(L"./Resources/Effects/SpriteRenderer.fx");
+	m_pEffect = ContentManager::Load<ID3DX11Effect>(L"./Resources/Effects/SpriteRenderer.fx").get();
 
 	m_pTechnique = m_pEffect->GetTechniqueByIndex(0);
 
@@ -183,11 +187,12 @@ void SpriteRenderer::Draw(const GameContext& gameContext)
 		}
 
 		//Set Texture
-		const auto texData = m_Textures[m_Sprites[i].TextureId];
-		m_pTextureSRV->SetResource(texData->GetShaderResourceView());
+		const GA::Texture2D* texData = m_Textures[m_Sprites[i].TextureId];
+		const GA::DX11::Texture2DDX11* dx11TexData = GA::DX11::SafeCast(texData);
+		m_pTextureSRV->SetResource(dx11TexData->GetSRV());
 
 		//Set Texture Size
-		auto texSize = texData->GetDimension();
+		DirectX::XMFLOAT2 texSize = {static_cast<float>(texData->GetWidth()), static_cast<float>(texData->GetHeight()) };
 		m_pTextureSizeV->SetFloatVector(reinterpret_cast<float*>(&texSize));
 
 		//Set Transform
@@ -209,7 +214,7 @@ void SpriteRenderer::Draw(const GameContext& gameContext)
 	m_Textures.clear();
 }
 
-void SpriteRenderer::Draw(TextureData* pTexture, DirectX::XMFLOAT2 position, DirectX::XMFLOAT4 color,
+void SpriteRenderer::Draw(GA::Texture2D* pTexture, DirectX::XMFLOAT2 position, DirectX::XMFLOAT4 color,
                           DirectX::XMFLOAT2 pivot, DirectX::XMFLOAT2 scale, float rotation, float depth)
 {
 	PIX_PROFILE();
@@ -305,7 +310,7 @@ void SpriteRenderer::DrawImmediate(const GameContext& gameContext, ID3D11ShaderR
 	}
 }
 
-void SpriteRenderer::Draw(TextureData* pTexture, SpriteVertex& v) const
+void SpriteRenderer::Draw(GA::Texture2D* pTexture, SpriteVertex& v) const
 {
 	PIX_PROFILE();
 

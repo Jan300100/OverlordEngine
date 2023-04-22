@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "PbrPropsMaterial.h"
-#include "TextureData.h"
 #include "ContentManager.h"
+
+// todo: dx11
+#include <GA/DX11/Texture2DDX11.h>
 
 ID3DX11EffectScalarVariable* PbrPropsMaterial::m_pNoiseHeightVariable = nullptr;
 ID3DX11EffectScalarVariable* PbrPropsMaterial::m_pNoiseUvScaleVariable = nullptr;
@@ -13,7 +15,7 @@ ID3DX11EffectScalarVariable* PbrPropsMaterial::m_pHeightInfluenceVariable = null
 ID3DX11EffectScalarVariable* PbrPropsMaterial::m_pTimePassedVariable = nullptr;
 
 
-TextureData* PbrPropsMaterial::m_pNoiseTexture = nullptr;
+GA::Texture2D* PbrPropsMaterial::m_pNoiseTexture = nullptr;
 float PbrPropsMaterial::m_WindForce = 0.01f;
 XMFLOAT2 PbrPropsMaterial::m_WindDirection = XMFLOAT2{ 1,1 };
 float PbrPropsMaterial::m_NoiseUvScale = 100.f;
@@ -23,7 +25,7 @@ float PbrPropsMaterial::m_NoiseHeight = 10.0f;
 
 void PbrPropsMaterial::SetNoiseTexture(const wstring& assetFile)
 {
-	m_pNoiseTexture = ContentManager::Load<TextureData>(assetFile);
+	m_pNoiseTexture = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 void PbrPropsMaterial::SetNoiseHeight(float height)
@@ -172,7 +174,7 @@ void PbrPropsMaterial::UpdateEffectVariables(const GameContext& gameContext, Mod
 	}
 	if (m_pNoiseTexture && m_pNoiseTextureVariable)
 	{
-		m_pNoiseTextureVariable->SetResource(m_pNoiseTexture->GetShaderResourceView());
+		m_pNoiseTextureVariable->SetResource(GA::DX11::SafeCast(m_pNoiseTexture)->GetSRV());
 	}
 
 	if (m_pTimePassedVariable)

@@ -1,8 +1,10 @@
 #pragma once
 #include <Material.h>
 
-
-class TextureData;
+namespace
+{
+	class Texture2D;
+}
 
 class DiffuseMaterial :
 	public Material
@@ -18,7 +20,7 @@ private:
 	virtual void LoadEffectVariables();
 	virtual void UpdateEffectVariables(const GameContext& gameContext, ModelComponent* pModelComponent);
 
-	TextureData* m_pDiffuseTexture;
+	GA::Texture2D* m_pDiffuseTexture;
 	static ID3DX11EffectShaderResourceVariable* m_pDiffuseSRVvariable;
 
 };

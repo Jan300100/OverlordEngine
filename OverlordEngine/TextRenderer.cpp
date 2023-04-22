@@ -4,10 +4,12 @@
 #include "EffectHelper.h"
 #include "OverlordGame.h"
 #include "SpriteFont.h"
-#include "TextureData.h"
-#include <GA/DX11/InterfaceDX11.h>
 #include <GA/Buffer.h>
 #include <Logger.h>
+
+// todo: dx11
+#include <GA/DX11/InterfaceDX11.h>
+#include <GA/DX11/Texture2DDX11.h>
 
 TextRenderer::TextRenderer() :
 	m_BufferSize(500),
@@ -35,7 +37,7 @@ void TextRenderer::InitRenderer(ID3D11Device* pDevice)
 	PIX_PROFILE();
 
 	//Effect
-	m_pEffect = ContentManager::Load<ID3DX11Effect>(L"./Resources/Effects/TextRenderer.fx");
+	m_pEffect = ContentManager::Load<ID3DX11Effect>(L"./Resources/Effects/TextRenderer.fx").get();
 	m_pTechnique = m_pEffect->GetTechniqueByIndex(0);
 
 	m_pTransfromMatrixV = m_pEffect->GetVariableByName("gTransform")->AsMatrix();
@@ -125,10 +127,11 @@ void TextRenderer::Draw(const GameContext& gameContext)
 	for each (SpriteFont* pFont in m_SpriteFonts)
 	{
 		//Set Texture
-		m_pTextureSRV->SetResource(pFont->GetTexture()->GetShaderResourceView());
+		const GA::DX11::Texture2DDX11* dx11Tex = GA::DX11::SafeCast(pFont->GetTexture());
+		m_pTextureSRV->SetResource(dx11Tex->GetSRV());
 
 		//Set Texture Size
-		auto texSize = pFont->GetTexture()->GetDimension();
+		DirectX::XMFLOAT2 texSize = { static_cast<float>(pFont->GetTexture()->GetWidth()), static_cast<float>(pFont->GetTexture()->GetHeight()) };
 		m_pTextureSizeV->SetFloatVector(reinterpret_cast<float*>(&texSize));
 
 		//Set Transform

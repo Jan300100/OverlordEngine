@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "PbrGroundMaterial.h"
 #include "ContentManager.h"
-#include "TextureData.h"
+
+// todo: dx11
+#include <GA/DX11/Texture2DDX11.h>
 
 ID3DX11EffectScalarVariable* PbrGroundMaterial::m_pWorldUvScaleVariable = nullptr;
 
@@ -34,7 +36,7 @@ void PbrGroundMaterial::SetWorldUvScale(float scale)
 
 void PbrGroundMaterial::SetNoiseTexture(const wstring& assetFile)
 {
-	m_pNoiseTexture = ContentManager::Load<TextureData>(assetFile);
+	m_pNoiseTexture = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 void PbrGroundMaterial::SetNoiseHeight(float height)
@@ -142,7 +144,7 @@ void PbrGroundMaterial::UpdateEffectVariables(const GameContext& gameContext, Mo
 	}
 	if (m_pNoiseTexture && m_pNoiseTextureVariable)
 	{
-		m_pNoiseTextureVariable->SetResource(m_pNoiseTexture->GetShaderResourceView());
+		m_pNoiseTextureVariable->SetResource(GA::DX11::SafeCast(m_pNoiseTexture)->GetSRV());
 	}
 
 	//worldUV

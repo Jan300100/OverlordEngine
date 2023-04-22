@@ -4,8 +4,10 @@
 #include "GeneralStructs.h"
 #include "Logger.h"
 #include "ContentManager.h"
-#include "TextureData.h"
 #include "Components.h"
+
+// todo: dx11
+#include <GA/DX11/Texture2DDX11.h>
 
 ID3DX11EffectShaderResourceVariable* DiffuseMaterial_Shadow::m_pDiffuseSRVvariable = nullptr;
 ID3DX11EffectShaderResourceVariable* DiffuseMaterial_Shadow::m_pShadowSRVvariable = nullptr;
@@ -18,7 +20,7 @@ DiffuseMaterial_Shadow::DiffuseMaterial_Shadow() : Material(L"./Resources/Effect
 
 void DiffuseMaterial_Shadow::SetDiffuseTexture(const std::wstring& assetFile)
 {
-	m_pDiffuseTexture = ContentManager::Load<TextureData>(assetFile);
+	m_pDiffuseTexture = ContentManager::Load<GA::Texture2D>(assetFile).get();
 
 }
 
@@ -78,7 +80,7 @@ void DiffuseMaterial_Shadow::UpdateEffectVariables(const GameContext& gameContex
 	UNREFERENCED_PARAMETER(gameContext);
 	if (m_pDiffuseTexture && m_pDiffuseSRVvariable)
 	{
-		m_pDiffuseSRVvariable->SetResource(m_pDiffuseTexture->GetShaderResourceView());
+		m_pDiffuseSRVvariable->SetResource(GA::DX11::SafeCast(m_pDiffuseTexture)->GetSRV());
 	}
 
 	if (m_pLightDirectionVariable)

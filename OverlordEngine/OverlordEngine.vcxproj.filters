@@ -164,9 +164,6 @@
     <ClCompile Include="ShadowMapMaterial.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="TextureData.cpp">
-      <Filter>Graphics\Generic</Filter>
-    </ClCompile>
     <ClCompile Include="ModelAnimator.cpp">
       <Filter>Graphics\Generic</Filter>
     </ClCompile>
@@ -197,6 +194,7 @@
     </ClCompile>
     <ClCompile Include="GA\Texture2D.cpp" />
     <ClCompile Include="GA\Helpers.cpp" />
+    <ClCompile Include="GA\DX11\Texture2DDX11.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -398,9 +396,6 @@
     <ClInclude Include="MeshFilter.h">
       <Filter>Graphics\Generic</Filter>
     </ClInclude>
-    <ClInclude Include="TextureData.h">
-      <Filter>Graphics\Generic</Filter>
-    </ClInclude>
     <ClInclude Include="ModelAnimator.h">
       <Filter>Graphics\Generic</Filter>
     </ClInclude>
@@ -429,6 +424,7 @@
     </ClInclude>
     <ClInclude Include="GA\Texture2D.h" />
     <ClInclude Include="GA\Helpers.h" />
+    <ClInclude Include="GA\DX11\Texture2DDX11.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Base">

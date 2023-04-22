@@ -87,8 +87,8 @@ void TRScene::Initialize()
 	InitializeMaterials();
 	
 	//font
-	m_pFont64 = ContentManager::Load<SpriteFont>(L"./Resources/SpriteFonts/Astrantia_64_Bold.fnt");
-	m_pFont48 = ContentManager::Load<SpriteFont>(L"./Resources/SpriteFonts/Astrantia_48_Bold.fnt");
+	m_pFont64 = ContentManager::Load<SpriteFont>(L"./Resources/SpriteFonts/Astrantia_64_Bold.fnt").get();
+	m_pFont48 = ContentManager::Load<SpriteFont>(L"./Resources/SpriteFonts/Astrantia_48_Bold.fnt").get();
 
 	//main menu banner
 	if (CmdOptions::Exists(L"showDAEBanner"))

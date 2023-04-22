@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "DiffuseMaterial.h"
-
 #include "ContentManager.h"
-#include "TextureData.h"
+
+// todo: dx11
+#include <GA/DX11/Texture2DDX11.h>
 
 ID3DX11EffectShaderResourceVariable* DiffuseMaterial::m_pDiffuseSRVvariable = nullptr;
 
@@ -18,7 +19,7 @@ DiffuseMaterial::~DiffuseMaterial()
 
 void DiffuseMaterial::SetDiffuseTexture(const std::wstring& assetFile)
 {
-	m_pDiffuseTexture = ContentManager::Load<TextureData>(assetFile);
+	m_pDiffuseTexture = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 void DiffuseMaterial::LoadEffectVariables()
@@ -41,6 +42,7 @@ void DiffuseMaterial::UpdateEffectVariables(const GameContext& gameContext, Mode
 
 	if (m_pDiffuseTexture && m_pDiffuseSRVvariable)
 	{
-		m_pDiffuseSRVvariable->SetResource(m_pDiffuseTexture->GetShaderResourceView());
+		const GA::DX11::Texture2DDX11* dx11Tex = GA::DX11::SafeCast(m_pDiffuseTexture);
+		m_pDiffuseSRVvariable->SetResource(dx11Tex->GetSRV());
 	}
 }

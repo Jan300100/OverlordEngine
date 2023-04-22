@@ -2,9 +2,8 @@
 #include "SpriteFontLoader.h"
 #include "BinaryReader.h"
 #include "ContentManager.h"
-#include "TextureData.h"
 
-SpriteFont* SpriteFontLoader::LoadContent(const std::wstring& assetFile)
+std::shared_ptr<SpriteFont> SpriteFontLoader::LoadContent(const std::wstring& assetFile)
 {
 	PIX_PROFILE();
 
@@ -124,7 +123,7 @@ SpriteFont* SpriteFontLoader::LoadContent(const std::wstring& assetFile)
 		texturePath.pop_back();
 	}
 	texturePath += pageName;
-	pSpriteFont->m_pTexture = ContentManager::Load<TextureData>(texturePath);
+	pSpriteFont->m_pTexture = ContentManager::Load<GA::Texture2D>(texturePath).get();
 
 
 	//**********
@@ -207,10 +206,5 @@ SpriteFont* SpriteFontLoader::LoadContent(const std::wstring& assetFile)
 	//DONE :)
 
 	delete pBinReader;
-	return pSpriteFont;
-}
-
-void SpriteFontLoader::Destroy(SpriteFont* objToDestroy)
-{
-	SafeDelete(objToDestroy);
+	return std::shared_ptr<SpriteFont>(pSpriteFont);
 }

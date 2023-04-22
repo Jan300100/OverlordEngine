@@ -1,12 +1,13 @@
 #include <stdafx.h>
 #include "PbrMaterial.h"
 #include <ContentManager.h>
-#include "TextureData.h"
 
+// todo: dx11
+#include <GA/DX11/Texture2DDX11.h>
 
 DirectX::XMFLOAT3 PbrMaterial::m_LightDirection = DirectX::XMFLOAT3{ -0.577f, -0.577f, 0.577f };
 float PbrMaterial::m_LightIntensity = 5.0f;
-TextureData* PbrMaterial::m_pEnvironmentCube = nullptr;
+GA::Texture2D* PbrMaterial::m_pEnvironmentCube = nullptr;
 
 PbrMaterial::PbrMaterial(const wstring& effectPath, const wstring& defaultTechnique, bool usesTesselation, bool generateShadows)
 	:Material{effectPath, defaultTechnique, usesTesselation}
@@ -78,7 +79,7 @@ void PbrMaterial::SetRDAM(const wstring& id, bool roughness, bool displacement, 
 	}
 	if (roughness || metalness || ao || displacement)
 	{
-		m_pRDAMTexture = ContentManager::Load<TextureData>(L"./Resources/Textures/PBR/" + id + L"_RoughDispAO." + ext);
+		m_pRDAMTexture = ContentManager::Load<GA::Texture2D>(L"./Resources/Textures/PBR/" + id + L"_RoughDispAO." + ext).get();
 	}
 }
 
@@ -95,7 +96,7 @@ void PbrMaterial::SetLightIntensity(float intensity)
 void PbrMaterial::SetAlbedoTexture(const wstring& assetFile)
 {
 	SetUseAlbedo(true);
-	m_pAlbedoTexture = ContentManager::Load<TextureData>(assetFile);
+	m_pAlbedoTexture = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 
@@ -158,12 +159,12 @@ void PbrMaterial::SetUseNormalMap(bool use)
 void PbrMaterial::SetNormalMap(const wstring& assetFile)
 {
 	SetUseNormalMap(true);
-	m_pNormalMap = ContentManager::Load<TextureData>(assetFile);
+	m_pNormalMap = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 void PbrMaterial::SetEnvironmentCube(const wstring& assetFile)
 {
-	m_pEnvironmentCube = ContentManager::Load<TextureData>(assetFile);
+	m_pEnvironmentCube = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 void PbrMaterial::SetRefractionIndex(float index)
@@ -371,7 +372,7 @@ void PbrMaterial::UpdateEffectVariables(const GameContext& gameContext, ModelCom
 	//Albedo
 	if (m_pAlbedoTexture && m_pAlbedoSRVvariable)
 	{
-		m_pAlbedoSRVvariable->SetResource(m_pAlbedoTexture->GetShaderResourceView());
+		m_pAlbedoSRVvariable->SetResource(GA::DX11::SafeCast(m_pAlbedoTexture)->GetSRV());
 	}
 	if (m_pAlbedoColorVariable)
 	{
@@ -393,7 +394,7 @@ void PbrMaterial::UpdateEffectVariables(const GameContext& gameContext, ModelCom
 	//rdam
 	if (m_pRDAMSRVvariable && m_pRDAMTexture)
 	{
-		m_pRDAMSRVvariable->SetResource(m_pRDAMTexture->GetShaderResourceView());
+		m_pRDAMSRVvariable->SetResource(GA::DX11::SafeCast(m_pRDAMTexture)->GetSRV());
 	}
 
 
@@ -429,7 +430,7 @@ void PbrMaterial::UpdateEffectVariables(const GameContext& gameContext, ModelCom
 	}
 	if (m_pNormalMap && m_pNormalMapSRVvariable)
 	{
-		m_pNormalMapSRVvariable->SetResource(m_pNormalMap->GetShaderResourceView());
+		m_pNormalMapSRVvariable->SetResource(GA::DX11::SafeCast(m_pNormalMap)->GetSRV());
 	}
 
 	//environment
@@ -439,7 +440,7 @@ void PbrMaterial::UpdateEffectVariables(const GameContext& gameContext, ModelCom
 	}
 	if (m_pEnvironmentCube && m_pEnvironmentSRVvariable)
 	{
-		m_pEnvironmentSRVvariable->SetResource(m_pEnvironmentCube->GetShaderResourceView());
+		m_pEnvironmentSRVvariable->SetResource(GA::DX11::SafeCast(m_pEnvironmentCube)->GetSRV());
 	}
 	if (m_pRefractionIndexVariable)
 	{

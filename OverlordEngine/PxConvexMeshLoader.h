@@ -13,7 +13,6 @@ public:
 	PxConvexMeshLoader& operator=(PxConvexMeshLoader&& other) noexcept = delete;
 protected:
 
-	physx::PxConvexMesh* LoadContent(const std::wstring& assetFile) override;
-	void Destroy(physx::PxConvexMesh* objToDestroy) override;
+	std::shared_ptr<physx::PxConvexMesh> LoadContent(const std::wstring& assetFile) override;
 };
 

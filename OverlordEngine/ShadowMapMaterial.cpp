@@ -18,7 +18,7 @@ void ShadowMapMaterial::Initialize(const GameContext& gameContext)
 	if (!m_IsInitialized)
 	{
 		//Load Effect
-		m_pShadowEffect = ContentManager::Load<ID3DX11Effect>(L"./Resources/Effects/Shadow/ShadowMapGenerator.fx");
+		m_pShadowEffect = ContentManager::Load<ID3DX11Effect>(L"./Resources/Effects/Shadow/ShadowMapGenerator.fx").get();
 
 
 		//effects

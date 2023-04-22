@@ -1,7 +1,7 @@
 #pragma once
 #include "Material.h"
 
-class TextureData;
+class GA::Texture2D;
 
 class SpikeyMaterial final: public Material
 {
@@ -15,7 +15,7 @@ protected:
 	virtual void LoadEffectVariables();
 	virtual void UpdateEffectVariables(const GameContext& gameContext, ModelComponent* pModelComponent);
 
-	TextureData* m_pDiffuseTexture;
+	GA::Texture2D* m_pDiffuseTexture;
 	static ID3DX11EffectShaderResourceVariable* m_pDiffuseSRVvariable;
 
 private:

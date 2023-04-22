@@ -1,8 +1,9 @@
 #include <stdafx.h>
 #include "TRMaterial.h"
 #include <ContentManager.h>
-#include "TextureData.h"
 
+// todo: dx11
+#include <GA/DX11/Texture2DDX11.h>
 
 DirectX::XMFLOAT3 TRMaterial::m_LightDirection = DirectX::XMFLOAT3{ -0.577f, -0.577f, 0.577f };
 float TRMaterial::m_LightIntensity = 5.0f;
@@ -75,7 +76,7 @@ void TRMaterial::SetRDAM(const wstring& id, bool roughness, bool displacement, b
 	}
 	if (roughness || metalness || ao || displacement)
 	{
-		m_pRDAMTexture = ContentManager::Load<TextureData>(L"./Resources/Textures/TR/" + id + L"_RoughDispAO." + ext);
+		m_pRDAMTexture = ContentManager::Load<GA::Texture2D>(L"./Resources/Textures/TR/" + id + L"_RoughDispAO." + ext).get();
 	}
 }
 
@@ -92,7 +93,7 @@ void TRMaterial::SetLightIntensity(float intensity)
 void TRMaterial::SetAlbedoTexture(const wstring& assetFile)
 {
 	SetUseAlbedo(true);
-	m_pAlbedoTexture = ContentManager::Load<TextureData>(assetFile);
+	m_pAlbedoTexture = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 
@@ -150,7 +151,7 @@ void TRMaterial::SetUseNormalMap(bool use)
 void TRMaterial::SetNormalMap(const wstring& assetFile)
 {
 	SetUseNormalMap(true);
-	m_pNormalMap = ContentManager::Load<TextureData>(assetFile);
+	m_pNormalMap = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 void TRMaterial::LoadEffectVariables()
@@ -347,7 +348,7 @@ void TRMaterial::UpdateEffectVariables(const GameContext& gameContext, ModelComp
 	//Albedo
 	if (m_pAlbedoTexture && m_pAlbedoSRVvariable)
 	{
-		m_pAlbedoSRVvariable->SetResource(m_pAlbedoTexture->GetShaderResourceView());
+		m_pAlbedoSRVvariable->SetResource(GA::DX11::SafeCast(m_pAlbedoTexture)->GetSRV());
 	}
 	if (m_pAlbedoColorVariable)
 	{
@@ -369,7 +370,7 @@ void TRMaterial::UpdateEffectVariables(const GameContext& gameContext, ModelComp
 	//rdam
 	if (m_pRDAMSRVvariable && m_pRDAMTexture)
 	{
-		m_pRDAMSRVvariable->SetResource(m_pRDAMTexture->GetShaderResourceView());
+		m_pRDAMSRVvariable->SetResource(GA::DX11::SafeCast(m_pRDAMTexture)->GetSRV());
 	}
 
 
@@ -405,7 +406,7 @@ void TRMaterial::UpdateEffectVariables(const GameContext& gameContext, ModelComp
 	}
 	if (m_pNormalMap && m_pNormalMapSRVvariable)
 	{
-		m_pNormalMapSRVvariable->SetResource(m_pNormalMap->GetShaderResourceView());
+		m_pNormalMapSRVvariable->SetResource(GA::DX11::SafeCast(m_pNormalMap)->GetSRV());
 	}
 
 	//shadows

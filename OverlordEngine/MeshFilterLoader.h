@@ -29,6 +29,5 @@ public:
 	virtual ~MeshFilterLoader() = default;
 
 protected:
-	MeshFilter* LoadContent(const std::wstring& assetFile) override;
-	void Destroy(MeshFilter* objToDestroy) override;
+	std::shared_ptr<MeshFilter> LoadContent(const std::wstring& assetFile) override;
 };

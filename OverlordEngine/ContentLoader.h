@@ -3,6 +3,11 @@
 #include <unordered_map>
 #include <sys/stat.h>
 
+namespace GA
+{
+	class Interface;
+}
+
 class BaseLoader
 {
 public:
@@ -15,16 +20,16 @@ public:
 
 	virtual const type_info& GetType() const = 0;
 	virtual void Unload() = 0;
-	virtual void SetDevice(ID3D11Device* pDevice) { m_pDevice = pDevice; }
+	virtual void SetGAInterface(GA::Interface* pGAInterface) { m_pGAInterface = pGAInterface; }
 
 protected:
-	ID3D11Device* m_pDevice {nullptr};
+	GA::Interface* m_pGAInterface{nullptr};
 };
 
 template <class T>
 class ContentLoader : public BaseLoader
 {
-	static std::unordered_map<std::wstring, T*> m_contentReferences;
+	static std::unordered_map<std::wstring, std::shared_ptr<T>> m_contentReferences;
 	static int m_loaderReferences;
 
 public:
@@ -36,12 +41,11 @@ public:
 	virtual ~ContentLoader() = default;
 
 	const type_info& GetType() const override { return typeid(T); }
-	T* GetContent(const std::wstring& assetFile);
+	std::shared_ptr<T> GetContent(const std::wstring& assetFile);
 	void Unload() override;
 
 protected:
-	virtual T* LoadContent(const std::wstring& assetFile) = 0;
-	virtual void Destroy(T* objToDestroy) = 0;
+	virtual std::shared_ptr<T> LoadContent(const std::wstring& assetFile) = 0;
 };
 
 template <class T>
@@ -51,9 +55,9 @@ ContentLoader<T>::ContentLoader()
 }
 
 template <class T>
-T* ContentLoader<T>::GetContent(const std::wstring& assetFile)
+std::shared_ptr<T> ContentLoader<T>::GetContent(const std::wstring& assetFile)
 {
-	for (std::pair<std::wstring, T*> kvp : m_contentReferences)
+	for (std::pair<std::wstring, std::shared_ptr<T>> kvp : m_contentReferences)
 	{
 		if (kvp.first.compare(assetFile) == 0)
 			return kvp.second;
@@ -72,8 +76,8 @@ T* ContentLoader<T>::GetContent(const std::wstring& assetFile)
 	}
 
 
-	T* content = LoadContent(assetFile);
-	if (content != nullptr)m_contentReferences.insert(std::pair<std::wstring, T*>(assetFile, content));
+	std::shared_ptr<T> content = LoadContent(assetFile);
+	if (content != nullptr)m_contentReferences.insert(std::pair<std::wstring, std::shared_ptr<T>>(assetFile, content));
 
 	return content;
 }
@@ -83,22 +87,12 @@ T* ContentLoader<T>::GetContent(const std::wstring& assetFile)
 template <class T>
 void ContentLoader<T>::Unload()
 {
-	--m_loaderReferences;
-
-	if (m_loaderReferences <= 0)
-	{
-		for (std::pair<std::wstring, T*> kvp : m_contentReferences)
-		{
-			Destroy(kvp.second);
-		}
-
-		m_contentReferences.clear();
-	}
+	m_contentReferences.clear();
 }
 #pragma warning(pop)
 
 template <class T>
-std::unordered_map<std::wstring, T*> ContentLoader<T>::m_contentReferences = std::unordered_map<std::wstring, T*>();
+std::unordered_map<std::wstring, std::shared_ptr<T>> ContentLoader<T>::m_contentReferences = std::unordered_map<std::wstring, std::shared_ptr<T>>();
 
 template <class T>
 int ContentLoader<T>::m_loaderReferences = 0;

@@ -64,7 +64,7 @@ struct ParticleVertex
 };
 
 class Particle;
-class TextureData;
+class GA::Texture2D;
 
 class ParticleEmitterComponent : public BaseComponent
 {
@@ -80,7 +80,7 @@ class ParticleEmitterComponent : public BaseComponent
 	//Shader texture variable
 	ID3DX11EffectShaderResourceVariable* m_pTextureVariable{};
 	//ShaderResourceView, containing the particle texture
-	TextureData* m_pParticleTexture;
+	GA::Texture2D* m_pParticleTexture;
 
 	//Vertex input layout variables
 	ID3D11InputLayout* m_pInputLayout;

@@ -1,7 +1,11 @@
 #pragma once
 #include <Material.h>
 
-class TextureData;
+namespace
+{
+	class Texture2D;
+}
+
 using namespace DirectX;
 using namespace std;
 
@@ -65,13 +69,13 @@ private:
 	//*******
 	bool m_bUseAlbedoTexture;
 	ID3DX11EffectScalarVariable* m_pUseAlbedoTextureVariable;
-	TextureData* m_pAlbedoTexture;
+	GA::Texture2D* m_pAlbedoTexture;
 	ID3DX11EffectShaderResourceVariable* m_pAlbedoSRVvariable;
 	XMFLOAT3 m_AlbedoColor;
 	ID3DX11EffectVectorVariable* m_pAlbedoColorVariable;
 
 	//RDAM packed texture
-	TextureData* m_pRDAMTexture;
+	GA::Texture2D* m_pRDAMTexture;
 	ID3DX11EffectShaderResourceVariable* m_pRDAMSRVvariable;
 	//ROUGHNESS
 	//********
@@ -100,13 +104,13 @@ private:
 	ID3DX11EffectScalarVariable* m_pFlipGreenChannelVariable;
 	bool m_bUseNormalMap;
 	ID3DX11EffectScalarVariable* m_pUseNormalMapVariable;
-	TextureData* m_pNormalMap;
+	GA::Texture2D* m_pNormalMap;
 	ID3DX11EffectShaderResourceVariable* m_pNormalMapSRVvariable;
 	//ENVIRONMENT MAPPING
 	//*******************
 	bool m_bEnvironmentMapping;
 	ID3DX11EffectScalarVariable* m_pUseEnvironmentMappingVariable;
-	static TextureData* m_pEnvironmentCube;
+	static GA::Texture2D* m_pEnvironmentCube;
 	ID3DX11EffectShaderResourceVariable* m_pEnvironmentSRVvariable;
 	float m_RefractionIndex;
 	ID3DX11EffectScalarVariable* m_pRefractionIndexVariable;

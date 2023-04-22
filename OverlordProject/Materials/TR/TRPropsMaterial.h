@@ -13,7 +13,7 @@ private:
 	static float m_NoiseUvScale;
 	static ID3DX11EffectScalarVariable* m_pNoiseHeightVariable;
 	static ID3DX11EffectScalarVariable* m_pNoiseUvScaleVariable;
-	static TextureData* m_pNoiseTexture;
+	static GA::Texture2D* m_pNoiseTexture;
 	static ID3DX11EffectShaderResourceVariable* m_pNoiseTextureVariable;
 	//noise, scale, height
 

@@ -5,7 +5,6 @@
 #include "../../Materials/Pbr/PbrPropsMaterial.h"
 #include "../../Materials/Pbr/PbrFoliageMaterial.h"
 #include "GameObject.h"
-#include "TextureData.h"
 #include "Components.h"
 
 

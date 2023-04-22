@@ -273,6 +273,7 @@
     <ClInclude Include="CmdOptions.h" />
     <ClInclude Include="ControllerComponent.h" />
     <ClInclude Include="GA\DX11\BufferDX11.h" />
+    <ClInclude Include="GA\DX11\Texture2DDX11.h" />
     <ClInclude Include="GA\Helpers.h" />
     <ClInclude Include="GA\Texture2D.h" />
     <ClInclude Include="Instance.h" />
@@ -326,7 +327,6 @@
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="TextRenderer.h" />
-    <ClInclude Include="TextureData.h" />
     <ClInclude Include="TextureDataLoader.h" />
     <ClInclude Include="VertexHelper.h" />
     <ClInclude Include="MathHelper.h" />
@@ -357,6 +357,7 @@
     <ClCompile Include="CmdOptions.cpp" />
     <ClCompile Include="ControllerComponent.cpp" />
     <ClCompile Include="GA\DX11\BufferDX11.cpp" />
+    <ClCompile Include="GA\DX11\Texture2DDX11.cpp" />
     <ClCompile Include="GA\Helpers.cpp" />
     <ClCompile Include="GA\Texture2D.cpp" />
     <ClCompile Include="imgui\imgui.cpp">
@@ -518,7 +519,6 @@
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="StringHelper.cpp" />
     <ClCompile Include="TextRenderer.cpp" />
-    <ClCompile Include="TextureData.cpp" />
     <ClCompile Include="TextureDataLoader.cpp" />
     <ClCompile Include="VertexHelper.cpp" />
     <ClCompile Include="PhysxProxy.cpp" />

@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "UberMaterial.h"
 #include "ContentManager.h"
-#include "TextureData.h"
+
+// todo: dx11
+#include <GA/DX11/Texture2DDX11.h>
 
 ID3DX11EffectShaderResourceVariable* UberMaterial::m_pDiffuseSRVvariable = nullptr;
 ID3DX11EffectShaderResourceVariable* UberMaterial::m_pSpecularLevelSRVvariable = nullptr;
@@ -93,7 +95,7 @@ void UberMaterial::EnableDiffuseTexture(bool enable)
 
 void UberMaterial::SetDiffuseTexture(const wstring& assetFile)
 {
-	m_pDiffuseTexture = ContentManager::Load<TextureData>(assetFile);
+	m_pDiffuseTexture = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 void UberMaterial::SetDiffuseColor(XMFLOAT4 color)
@@ -113,7 +115,7 @@ void UberMaterial::EnableSpecularLevelTexture(bool enable)
 
 void UberMaterial::SetSpecularLevelTexture(const wstring& assetFile)
 {
-	m_pSpecularLevelTexture = ContentManager::Load<TextureData>(assetFile);
+	m_pSpecularLevelTexture = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 void UberMaterial::SetShininess(int shininess)
@@ -143,7 +145,7 @@ void UberMaterial::EnableNormalMapping(bool enable)
 
 void UberMaterial::SetNormalMapTexture(const wstring& assetFile)
 {
-	m_pNormalMappingTexture = ContentManager::Load<TextureData>(assetFile);
+	m_pNormalMappingTexture = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 void UberMaterial::EnableEnvironmentMapping(bool enable)
@@ -153,7 +155,7 @@ void UberMaterial::EnableEnvironmentMapping(bool enable)
 
 void UberMaterial::SetEnvironmentCube(const wstring& assetFile)
 {
-	m_pEnvironmentCube = ContentManager::Load<TextureData>(assetFile);
+	m_pEnvironmentCube = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 void UberMaterial::SetReflectionStrength(float strength)
@@ -183,7 +185,7 @@ void UberMaterial::EnableOpacityMap(bool enable)
 
 void UberMaterial::SetOpacityTexture(const wstring& assetFile)
 {
-	m_pOpacityMap = ContentManager::Load<TextureData>(assetFile);
+	m_pOpacityMap = ContentManager::Load<GA::Texture2D>(assetFile).get();
 }
 
 void UberMaterial::EnableSpecularBlinn(bool enable)
@@ -506,7 +508,7 @@ void UberMaterial::UpdateEffectVariables(const GameContext& gameContext, ModelCo
 	}
 	if (m_pDiffuseTexture && m_pDiffuseSRVvariable)
 	{
-		m_pDiffuseSRVvariable->SetResource(m_pDiffuseTexture->GetShaderResourceView());
+		m_pDiffuseSRVvariable->SetResource(GA::DX11::SafeCast(m_pDiffuseTexture)->GetSRV());
 	}
 	if (m_pDiffuseColorVariable)
 	{
@@ -523,7 +525,7 @@ void UberMaterial::UpdateEffectVariables(const GameContext& gameContext, ModelCo
 	}
 	if (m_pSpecularLevelTexture && m_pSpecularLevelSRVvariable)
 	{
-		m_pSpecularLevelSRVvariable->SetResource(m_pSpecularLevelTexture->GetShaderResourceView());
+		m_pSpecularLevelSRVvariable->SetResource(GA::DX11::SafeCast(m_pSpecularLevelTexture)->GetSRV());
 	}
 	if (m_pShininessVariable)
 	{
@@ -549,7 +551,7 @@ void UberMaterial::UpdateEffectVariables(const GameContext& gameContext, ModelCo
 	}
 	if (m_pNormalMappingTexture && m_pNormalMappingSRVvariable)
 	{
-		m_pNormalMappingSRVvariable->SetResource(m_pNormalMappingTexture->GetShaderResourceView());
+		m_pNormalMappingSRVvariable->SetResource(GA::DX11::SafeCast(m_pNormalMappingTexture)->GetSRV());
 	}
 
 	//environment
@@ -560,7 +562,7 @@ void UberMaterial::UpdateEffectVariables(const GameContext& gameContext, ModelCo
 	}
 	if (m_pEnvironmentCube && m_pEnvironmentSRVvariable)
 	{
-		m_pEnvironmentSRVvariable->SetResource(m_pEnvironmentCube->GetShaderResourceView());
+		m_pEnvironmentSRVvariable->SetResource(GA::DX11::SafeCast(m_pEnvironmentCube)->GetSRV());
 	}
 	if (m_pReflectionStrengthVariable)
 	{
@@ -585,7 +587,7 @@ void UberMaterial::UpdateEffectVariables(const GameContext& gameContext, ModelCo
 	}
 	if (m_pOpacityMap && m_pOpacitySRVvariable)
 	{
-		m_pOpacitySRVvariable->SetResource(m_pOpacityMap->GetShaderResourceView());
+		m_pOpacitySRVvariable->SetResource(GA::DX11::SafeCast(m_pOpacityMap)->GetSRV());
 	}
 	//specular models
 	if (m_pUseBlinnVariable)

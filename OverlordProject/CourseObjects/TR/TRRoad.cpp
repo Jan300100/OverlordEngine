@@ -158,7 +158,7 @@ void TRRoad::Initialize(const GameContext& gameContext)
 		m_Details.back().Initialize(CreateTransform(visualPos, { 0,XM_PIDIV2 * rotation + randomRotation,0 }, scale));
 		//collider
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/Road.ovpc") } };
+			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/Road.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * rotation,0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		//chance for an obstacle
@@ -196,7 +196,7 @@ void TRRoad::Initialize(const GameContext& gameContext)
 		m_Details.back().Initialize(CreateTransform(visualPos, { 0,XM_PIDIV2 * rotation + randomRotation,0 }, scale));
 		//collider
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/GapRoad.ovpc") } };
+			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/GapRoad.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * rotation,0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		break;
@@ -205,7 +205,7 @@ void TRRoad::Initialize(const GameContext& gameContext)
 		m_Details.back().Initialize(CreateTransform(visualPos, { 0,XM_PIDIV2 * (rotation+2) + randomRotation,0 }, scale));
 		//collider
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/GapRoad.ovpc") } };
+			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/GapRoad.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * (rotation+2),0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		break;
@@ -217,12 +217,12 @@ void TRRoad::Initialize(const GameContext& gameContext)
 		m_Details.back().Initialize(CreateTransform(visualPos, { 0,XM_PIDIV2 * (rotation + 2) + randomRotation,0 }, scale));
 		//collider
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/HalfRoad.ovpc") } };
+			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/HalfRoad.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * (rotation + 2),0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		//
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/GapRoad.ovpc") } };
+			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/GapRoad.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * rotation,0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		break;
@@ -231,7 +231,7 @@ void TRRoad::Initialize(const GameContext& gameContext)
 		m_Details.back().Initialize(CreateTransform(visualPos, { 0,XM_PIDIV2 * (rotation + 2) + randomRotation,0 }, scale));
 		//collider
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/HalfRoad.ovpc") } };
+			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/HalfRoad.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * (rotation + 2),0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		break;
@@ -243,30 +243,30 @@ void TRRoad::Initialize(const GameContext& gameContext)
 		m_Details.back().Initialize(CreateTransform(visualPos, { 0,XM_PIDIV2 * (rotation + 2) + randomRotation,0 }, scale));
 		//collider
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-					new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/HalfRoad.ovpc") } };
+					new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/HalfRoad.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * (rotation + 2),0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		//
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/GapRoad.ovpc") } };	
+			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/GapRoad.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * (rotation + 2),0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		break;
 	case TRTile::Type::FullToLeft:
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[(int)KeyIds::GapRoad], pScene->GetInstancedRenderer() });
+		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[(int)KeyIds::GapRoad], pScene->GetInstancedRenderer()});
 		m_Details.back().Initialize(CreateTransform(visualPos, { 0,XM_PIDIV2 * rotation + randomRotation,0 }, scale));
 		//
-		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[(int)KeyIds::HalfRoad], pScene->GetInstancedRenderer() });
+		m_Details.push_back(Instance<XMFLOAT4X4>{ m_Keys[(int)KeyIds::HalfRoad], pScene->GetInstancedRenderer()});
 		m_Details.back().Initialize(CreateTransform(visualPos, { 0,XM_PIDIV2 * rotation + randomRotation,0 }, scale));
 		
 		//collider
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-					new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/HalfRoad.ovpc") } };
+					new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/HalfRoad.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * rotation,0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		//
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/GapRoad.ovpc") } };
+			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/GapRoad.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * rotation,0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		break;
@@ -275,7 +275,7 @@ void TRRoad::Initialize(const GameContext& gameContext)
 		m_Details.back().Initialize(CreateTransform(visualPos, { 0,XM_PIDIV2 * rotation + randomRotation,0 }, scale));
 		//collider
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-					new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/HalfRoad.ovpc") } };
+					new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/HalfRoad.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * rotation,0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		break;
@@ -288,12 +288,12 @@ void TRRoad::Initialize(const GameContext& gameContext)
 		
 		//collider
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-					new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/HalfRoad.ovpc") } };
+					new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/HalfRoad.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * rotation,0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		//
 		pGeometry = std::shared_ptr<physx::PxGeometry>{
-			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/GapRoad.ovpc") } };
+			new physx::PxConvexMeshGeometry{ContentManager::Load<physx::PxConvexMesh>(L"Resources/Meshes/TR/GapRoad.ovpc").get() } };
 		XMStoreFloat4(&quat, XMQuaternionRotationRollPitchYawFromVector(XMVECTOR{ 0, XM_PIDIV2 * (rotation + 2),0 }));
 		AddComponent(new ColliderComponent{ pGeometry, *pMaterial , physx::PxTransform{ToPxVec3(pos),ToPxQuat(quat) } });
 		break;

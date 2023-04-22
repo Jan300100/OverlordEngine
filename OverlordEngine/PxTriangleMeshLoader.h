@@ -12,7 +12,6 @@ public:
 	PxTriangleMeshLoader& operator=(const PxTriangleMeshLoader& other) = delete;
 	PxTriangleMeshLoader& operator=(PxTriangleMeshLoader&& other) noexcept = delete;
 protected:
-	physx::PxTriangleMesh* LoadContent(const std::wstring& assetFile) override;
-	void Destroy(physx::PxTriangleMesh* objToDestroy) override;
+	std::shared_ptr<physx::PxTriangleMesh> LoadContent(const std::wstring& assetFile) override;
 };
 

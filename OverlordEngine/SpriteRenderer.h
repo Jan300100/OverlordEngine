@@ -1,9 +1,12 @@
 #pragma once
 #include "Singleton.h"
-#include <GA/Buffer.h>
 #include <memory>
 
-class TextureData;
+namespace
+{
+	class Buffer;
+	class Texture2D;
+}
 class OverlordGame;
 class GameScene;
 
@@ -40,8 +43,8 @@ public:
 	SpriteRenderer& operator=(const SpriteRenderer& other) = delete;
 	SpriteRenderer& operator=(SpriteRenderer&& other) noexcept = delete;
 
-	void Draw(TextureData* pTexture, SpriteVertex& v) const;
-	void Draw(TextureData* pTexture, DirectX::XMFLOAT2 position,
+	void Draw(GA::Texture2D* pTexture, SpriteVertex& v) const;
+	void Draw(GA::Texture2D* pTexture, DirectX::XMFLOAT2 position,
 	          DirectX::XMFLOAT4 color = static_cast<DirectX::XMFLOAT4>(DirectX::Colors::White),
 	          DirectX::XMFLOAT2 pivot = DirectX::XMFLOAT2(0, 0), DirectX::XMFLOAT2 scale = DirectX::XMFLOAT2(1, 1),
 	          float rotation = 0.f, float depth = 0.f);
@@ -64,7 +67,7 @@ private:
 	void UpdateBuffer(const GameContext& gameContext);
 
 	std::vector<SpriteVertex> m_Sprites;
-	std::vector<TextureData*> m_Textures;
+	std::vector<GA::Texture2D*> m_Textures;
 	unsigned int m_BufferSize, m_InputLayoutSize;
 	ID3DX11Effect* m_pEffect;
 	ID3DX11EffectTechnique* m_pTechnique;

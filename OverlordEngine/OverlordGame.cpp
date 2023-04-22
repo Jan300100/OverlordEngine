@@ -215,7 +215,7 @@ HRESULT OverlordGame::InitializeGame()
 {
 	//******************
 	//MANAGER INITIALIZE
-	ContentManager::Initialize(GA::DX11::SafeCast(m_pGAInterface)->GetDevice());
+	ContentManager::Initialize(m_pGAInterface);
 	DebugRenderer::InitRenderer(m_pGAInterface);
 	SpriteRenderer::GetInstance()->InitRenderer(GA::DX11::SafeCast(m_pGAInterface)->GetDevice());
 	TextRenderer::GetInstance()->InitRenderer(GA::DX11::SafeCast(m_pGAInterface)->GetDevice());

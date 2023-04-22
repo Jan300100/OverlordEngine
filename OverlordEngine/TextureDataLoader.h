@@ -1,8 +1,12 @@
 #pragma once
 #include "ContentLoader.h"
-#include "TextureData.h"
 
-class TextureDataLoader : public ContentLoader<TextureData>
+namespace GA
+{
+	class Texture2D;
+}
+
+class TextureDataLoader : public ContentLoader<GA::Texture2D>
 {
 public:
 	TextureDataLoader() = default;
@@ -15,11 +19,10 @@ public:
 
 protected:
 	std::unique_ptr<DirectX::ScratchImage> GenerateMips(DirectX::ScratchImage* imageDataWithoutMips);
-	std::unique_ptr<DirectX::ScratchImage> GetInitialData(const std::wstring& assetFile);
+	std::unique_ptr<DirectX::ScratchImage> GetInitialData(const std::wstring& assetFile, bool generateMips);
 	std::wstring GetExtension(const std::wstring& assetFile);
 
-	TextureData* LoadContent(const std::wstring& assetFile) override;
-	void Destroy(TextureData* objToDestroy) override;
+	std::shared_ptr<GA::Texture2D> LoadContent(const std::wstring& assetFile) override;
 
 };
 

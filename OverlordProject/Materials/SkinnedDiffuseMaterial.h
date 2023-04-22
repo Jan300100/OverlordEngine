@@ -1,7 +1,7 @@
 #pragma once
 #include "Material.h"
 
-class TextureData;
+class GA::Texture2D;
 
 class SkinnedDiffuseMaterial final : public Material
 {
@@ -21,7 +21,7 @@ protected:
 	void UpdateEffectVariables(const GameContext& gameContext, ModelComponent* pModelComponent) override;
 
 private:
-	TextureData* m_pDiffuseTexture;
+	GA::Texture2D* m_pDiffuseTexture;
 	static ID3DX11EffectShaderResourceVariable* m_pDiffuseSRVvariable;
 	static ID3DX11EffectMatrixVariable* m_pBoneTransforms;
 };

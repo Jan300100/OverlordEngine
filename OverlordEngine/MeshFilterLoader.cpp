@@ -12,7 +12,7 @@
 #endif
 
 
-MeshFilter* MeshFilterLoader::LoadContent(const std::wstring& assetFile)
+std::shared_ptr<MeshFilter> MeshFilterLoader::LoadContent(const std::wstring& assetFile)
 {
 	PIX_PROFILE();
 
@@ -36,7 +36,7 @@ MeshFilter* MeshFilterLoader::LoadContent(const std::wstring& assetFile)
 	unsigned int vertexCount = 0;
 	unsigned int indexCount = 0;
 
-	auto pMesh = new MeshFilter();
+	auto pMesh = std::make_shared<MeshFilter>();
 	pMesh->m_AssetFile = assetFile;
 
 	for (;;)
@@ -304,7 +304,3 @@ MeshFilter* MeshFilterLoader::LoadContent(const std::wstring& assetFile)
 	return pMesh;
 }
 
-void MeshFilterLoader::Destroy(MeshFilter* objToDestroy)
-{
-	SafeDelete(objToDestroy);
-}

@@ -200,26 +200,26 @@ void TRTile::CreateKeys()
 {
 	PIX_PROFILE();
 
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Grass, 30000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Grass2_2.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Grass, 30000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Grass2_4.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Zont,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Zont.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Nettle,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Nettle.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Oduvanchik,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Oduvanchik.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Grass, 30000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Grass2_2.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Grass, 30000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Grass2_4.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Zont,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Zont.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Nettle,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Nettle.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Oduvanchik,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Oduvanchik.ovm").get() });
 
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Rock,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Rock3.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Props,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Pillar.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Props,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/FireHolder.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Props,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Brick.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Bush,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Bush1.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Bark,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer1_Trunk.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Bark,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer3_Trunk.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Conifer,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer1_Leaves.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Conifer,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer3_Leaves.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Rock,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Rock3.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Props,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Pillar.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Props,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/FireHolder.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Props,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Brick.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Bush,1000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Bush1.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Bark,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer1_Trunk.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Bark,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer3_Trunk.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Conifer,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer1_Leaves.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Conifer,10000, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Conifer3_Leaves.ovm").get() });
 
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Obstacle.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT2>::m_TypeInfo, (int)MatIds::Ground,1500, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/TileQuad.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Road.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/GapRoad.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/HalfRoad.ovm") });
-	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Base,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Base.ovm") });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Obstacle.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT2>::m_TypeInfo, (int)MatIds::Ground,1500, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/TileQuad.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Road.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/GapRoad.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Road,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/HalfRoad.ovm").get() });
+	m_Keys.push_back(InstancedRenderer::Key{ Instance<DirectX::XMFLOAT4X4>::m_TypeInfo, (int)MatIds::Base,150, ContentManager::Load<MeshFilter>(L"./Resources/Meshes/TR/Base.ovm").get() });
 }

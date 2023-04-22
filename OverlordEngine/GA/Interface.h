@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "GA/Buffer.h"
+#include "GA/Texture2D.h"
 
 namespace GA
 {
@@ -16,6 +17,7 @@ namespace GA
 
 		// creation interface
 		virtual std::unique_ptr<GA::Buffer> CreateBuffer(const GA::Buffer::Params& params) = 0;
+		virtual std::unique_ptr<GA::Texture2D> CreateTexture2D(const GA::Texture2D::Params& params) = 0;
 
 		// potential temporary interface
 		virtual void ClearBackBuffer() = 0;

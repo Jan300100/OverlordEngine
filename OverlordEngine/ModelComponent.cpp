@@ -20,7 +20,7 @@ ModelComponent::~ModelComponent()
 
 void ModelComponent::Initialize(const GameContext& gameContext)
 {
-	m_pMeshFilter = ContentManager::Load<MeshFilter>(m_AssetFile);
+	m_pMeshFilter = ContentManager::Load<MeshFilter>(m_AssetFile).get();
 	m_pMeshFilter->BuildIndexBuffer(gameContext);
 	m_pMeshFilter->m_MeshName = m_AssetFile;
 

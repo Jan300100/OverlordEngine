@@ -14,7 +14,6 @@ public:
 	SpriteFontLoader& operator=(SpriteFontLoader&& other) noexcept = delete;
 
 protected:
-	SpriteFont* LoadContent(const std::wstring& assetFile) override;
-	void Destroy(SpriteFont* objToDestroy) override;
+	std::shared_ptr<SpriteFont> LoadContent(const std::wstring& assetFile) override;
 };
 
