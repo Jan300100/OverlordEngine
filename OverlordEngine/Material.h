@@ -8,7 +8,7 @@ struct GameContext;
 class Material
 {
 public:
-	Material(std::wstring  effectFile, std::wstring  technique = L"", bool usesTesselation = false);
+	Material(std::wstring  effectFile, std::wstring technique = L"", bool usesTesselation = false);
 	virtual ~Material();
 
 	Material(const Material& other) = delete;

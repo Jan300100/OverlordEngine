@@ -195,6 +195,9 @@
     <ClCompile Include="GA\Texture2D.cpp" />
     <ClCompile Include="GA\Helpers.cpp" />
     <ClCompile Include="GA\DX11\Texture2DDX11.cpp" />
+    <ClCompile Include="MaterialBase.cpp">
+      <Filter>Graphics\DirectX11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -425,6 +428,9 @@
     <ClInclude Include="GA\Texture2D.h" />
     <ClInclude Include="GA\Helpers.h" />
     <ClInclude Include="GA\DX11\Texture2DDX11.h" />
+    <ClInclude Include="MaterialBase.h">
+      <Filter>Graphics\DirectX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Base">
